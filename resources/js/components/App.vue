@@ -4,6 +4,7 @@
         <div class="Page__Content">
             <Body />
         </div>
+        <router-view></router-view>
     </div>
 </template>
 
@@ -24,7 +25,7 @@ export default {
     display: flex;
     .Page__Content {
         flex: 0.8;
-        background: gray;
+        background: rgb(245 245 245);
     }
 }
 </style>

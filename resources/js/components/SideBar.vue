@@ -70,11 +70,14 @@ export default {
     .Dzuka__Logo {
         padding: 25px;
         color: #fff;
+        font-weight: 800;
+        font-size: 20px;
+        cursor: pointer;
     }
     .Nav__Options {
         display: flex;
         flex-direction: column;
-        margin-top: 20px;
+        margin-top: 10px;
 
         .Nav__Option {
             display: flex;
