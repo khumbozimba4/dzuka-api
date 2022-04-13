@@ -18,6 +18,40 @@
                     Filters
                 </div>
                 <div class="Right__Side">
+                    <div class="Add__Category">
+                        Add Category
+                        <AddCategory />
+                    </div>
+                    <PrinterIcon class="Icon" />
+                </div>
+            </div>
+            <div class="Table__Container">
+                <table class="Table">
+                    <thead class="Table__Head">
+                        <tr class="Tr">
+                            <td>Product Category</td>
+                            <td>Available products</td>
+                            <td>View</td>
+                        </tr>
+                    </thead>
+                    <tbody class="Table__Body">
+                        <tr class="Tr">
+                            <td>School Shoe</td>
+                            <td>25</td>
+                            <td><ArrowNarrowRightIcon class="Icon" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="Contents__Container">
+            <div class="Heading">
+                <div class="Left__Side">
+                    <AdjustmentsIcon class="Icon" />
+                    Filters
+                </div>
+                <div class="Right__Side">
+                    <div class="Add__Category">Add Product</div>
                     <PrinterIcon class="Icon" />
                 </div>
             </div>
@@ -61,12 +95,17 @@ import {
     UsersIcon,
     SearchIcon,
     PrinterIcon,
+    ArrowNarrowRightIcon,
 } from "@heroicons/vue/outline";
+import AddCategory from "./AddCategory.vue";
 export default {
     components: {
+        AddCategory,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
+        PrinterIcon,
+        ArrowNarrowRightIcon,
         PrinterIcon,
     },
 };
@@ -100,7 +139,7 @@ export default {
         .Search__Bar {
             display: flex;
             align-items: center;
-            background-color: gray;
+            background-color: rgb(212 212 212);
             border-radius: 5px;
             .Input {
                 background: none;
@@ -116,7 +155,7 @@ export default {
             .Search__Icon {
                 padding: 5px 20px;
                 height: 30px;
-                color: blue;
+                color: rgb(115 115 115);
             }
         }
     }
@@ -130,39 +169,71 @@ export default {
             display: flex;
             justify-content: space-between;
             padding: 20px;
-            border-bottom: 1px solid gray;
+            border-bottom: 1px solid rgb(163 163 163);
             .Left__Side {
                 display: flex;
                 gap: 10px;
                 align-items: center;
                 font-weight: 700;
+                cursor: pointer;
+
                 .Icon {
                     height: 20px;
                     object-fit: contain;
+                    cursor: pointer;
                 }
             }
             .Right__Side {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                .Add__Category {
+                    position: relative;
+                    padding: 5px 20px;
+                    border: 1px solid rgb(115 115 115);
+                    border-radius: 3px;
+                    color: rgb(115 115 115);
+                    cursor: pointer;
+                    font-size: 15px;
+
+                    &:hover {
+                        color: rgb(82 82 82);
+                    }
+                }
                 .Icon {
                     height: 30px;
                     object-fit: contain;
                     padding: 5px 20px;
-                    border: 1px solid gray;
+                    border: 1px solid rgb(115 115 115);
                     border-radius: 3px;
+                    color: rgb(115 115 115);
+                    cursor: pointer;
                 }
             }
         }
         .Table__Container {
+            padding: 20px;
             .Table {
                 width: 100%;
 
                 .Table__Head {
-                    font-weight: 500;
+                    font-weight: 800;
+                    color: rgb(38 38 38);
                     .Tr {
+                        height: 40px;
                     }
                 }
                 .Table__Body {
                     .Tr {
-                        border-top: 1px solid gray;
+                        border-top: 1px solid rgb(229 229 229);
+                        height: 40px;
+                        td {
+                            .Icon {
+                                height: 30px;
+                                object-fit: contain;
+                                cursor: pointer;
+                            }
+                        }
                     }
                 }
             }

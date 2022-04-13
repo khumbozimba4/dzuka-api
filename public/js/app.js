@@ -5615,6 +5615,263 @@ function parse(template, options = {}) {
 
 /***/ }),
 
+/***/ "./node_modules/@vue/devtools-api/lib/esm/const.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/@vue/devtools-api/lib/esm/const.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "HOOK_PLUGIN_SETTINGS_SET": () => (/* binding */ HOOK_PLUGIN_SETTINGS_SET),
+/* harmony export */   "HOOK_SETUP": () => (/* binding */ HOOK_SETUP)
+/* harmony export */ });
+const HOOK_SETUP = 'devtools-plugin:setup';
+const HOOK_PLUGIN_SETTINGS_SET = 'plugin:settings:set';
+
+
+/***/ }),
+
+/***/ "./node_modules/@vue/devtools-api/lib/esm/env.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/@vue/devtools-api/lib/esm/env.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getDevtoolsGlobalHook": () => (/* binding */ getDevtoolsGlobalHook),
+/* harmony export */   "getTarget": () => (/* binding */ getTarget),
+/* harmony export */   "isProxyAvailable": () => (/* binding */ isProxyAvailable)
+/* harmony export */ });
+function getDevtoolsGlobalHook() {
+    return getTarget().__VUE_DEVTOOLS_GLOBAL_HOOK__;
+}
+function getTarget() {
+    // @ts-ignore
+    return (typeof navigator !== 'undefined' && typeof window !== 'undefined')
+        ? window
+        : typeof __webpack_require__.g !== 'undefined'
+            ? __webpack_require__.g
+            : {};
+}
+const isProxyAvailable = typeof Proxy === 'function';
+
+
+/***/ }),
+
+/***/ "./node_modules/@vue/devtools-api/lib/esm/index.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/@vue/devtools-api/lib/esm/index.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isPerformanceSupported": () => (/* reexport safe */ _time__WEBPACK_IMPORTED_MODULE_0__.isPerformanceSupported),
+/* harmony export */   "now": () => (/* reexport safe */ _time__WEBPACK_IMPORTED_MODULE_0__.now),
+/* harmony export */   "setupDevtoolsPlugin": () => (/* binding */ setupDevtoolsPlugin)
+/* harmony export */ });
+/* harmony import */ var _env__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./env */ "./node_modules/@vue/devtools-api/lib/esm/env.js");
+/* harmony import */ var _const__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./const */ "./node_modules/@vue/devtools-api/lib/esm/const.js");
+/* harmony import */ var _proxy__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./proxy */ "./node_modules/@vue/devtools-api/lib/esm/proxy.js");
+/* harmony import */ var _time__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./time */ "./node_modules/@vue/devtools-api/lib/esm/time.js");
+
+
+
+
+
+
+function setupDevtoolsPlugin(pluginDescriptor, setupFn) {
+    const descriptor = pluginDescriptor;
+    const target = (0,_env__WEBPACK_IMPORTED_MODULE_1__.getTarget)();
+    const hook = (0,_env__WEBPACK_IMPORTED_MODULE_1__.getDevtoolsGlobalHook)();
+    const enableProxy = _env__WEBPACK_IMPORTED_MODULE_1__.isProxyAvailable && descriptor.enableEarlyProxy;
+    if (hook && (target.__VUE_DEVTOOLS_PLUGIN_API_AVAILABLE__ || !enableProxy)) {
+        hook.emit(_const__WEBPACK_IMPORTED_MODULE_2__.HOOK_SETUP, pluginDescriptor, setupFn);
+    }
+    else {
+        const proxy = enableProxy ? new _proxy__WEBPACK_IMPORTED_MODULE_3__.ApiProxy(descriptor, hook) : null;
+        const list = target.__VUE_DEVTOOLS_PLUGINS__ = target.__VUE_DEVTOOLS_PLUGINS__ || [];
+        list.push({
+            pluginDescriptor: descriptor,
+            setupFn,
+            proxy,
+        });
+        if (proxy)
+            setupFn(proxy.proxiedTarget);
+    }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/@vue/devtools-api/lib/esm/proxy.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/@vue/devtools-api/lib/esm/proxy.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ApiProxy": () => (/* binding */ ApiProxy)
+/* harmony export */ });
+/* harmony import */ var _const__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./const */ "./node_modules/@vue/devtools-api/lib/esm/const.js");
+/* harmony import */ var _time__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./time */ "./node_modules/@vue/devtools-api/lib/esm/time.js");
+
+
+class ApiProxy {
+    constructor(plugin, hook) {
+        this.target = null;
+        this.targetQueue = [];
+        this.onQueue = [];
+        this.plugin = plugin;
+        this.hook = hook;
+        const defaultSettings = {};
+        if (plugin.settings) {
+            for (const id in plugin.settings) {
+                const item = plugin.settings[id];
+                defaultSettings[id] = item.defaultValue;
+            }
+        }
+        const localSettingsSaveId = `__vue-devtools-plugin-settings__${plugin.id}`;
+        let currentSettings = Object.assign({}, defaultSettings);
+        try {
+            const raw = localStorage.getItem(localSettingsSaveId);
+            const data = JSON.parse(raw);
+            Object.assign(currentSettings, data);
+        }
+        catch (e) {
+            // noop
+        }
+        this.fallbacks = {
+            getSettings() {
+                return currentSettings;
+            },
+            setSettings(value) {
+                try {
+                    localStorage.setItem(localSettingsSaveId, JSON.stringify(value));
+                }
+                catch (e) {
+                    // noop
+                }
+                currentSettings = value;
+            },
+            now() {
+                return (0,_time__WEBPACK_IMPORTED_MODULE_0__.now)();
+            },
+        };
+        if (hook) {
+            hook.on(_const__WEBPACK_IMPORTED_MODULE_1__.HOOK_PLUGIN_SETTINGS_SET, (pluginId, value) => {
+                if (pluginId === this.plugin.id) {
+                    this.fallbacks.setSettings(value);
+                }
+            });
+        }
+        this.proxiedOn = new Proxy({}, {
+            get: (_target, prop) => {
+                if (this.target) {
+                    return this.target.on[prop];
+                }
+                else {
+                    return (...args) => {
+                        this.onQueue.push({
+                            method: prop,
+                            args,
+                        });
+                    };
+                }
+            },
+        });
+        this.proxiedTarget = new Proxy({}, {
+            get: (_target, prop) => {
+                if (this.target) {
+                    return this.target[prop];
+                }
+                else if (prop === 'on') {
+                    return this.proxiedOn;
+                }
+                else if (Object.keys(this.fallbacks).includes(prop)) {
+                    return (...args) => {
+                        this.targetQueue.push({
+                            method: prop,
+                            args,
+                            resolve: () => { },
+                        });
+                        return this.fallbacks[prop](...args);
+                    };
+                }
+                else {
+                    return (...args) => {
+                        return new Promise(resolve => {
+                            this.targetQueue.push({
+                                method: prop,
+                                args,
+                                resolve,
+                            });
+                        });
+                    };
+                }
+            },
+        });
+    }
+    async setRealTarget(target) {
+        this.target = target;
+        for (const item of this.onQueue) {
+            this.target.on[item.method](...item.args);
+        }
+        for (const item of this.targetQueue) {
+            item.resolve(await this.target[item.method](...item.args));
+        }
+    }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/@vue/devtools-api/lib/esm/time.js":
+/*!********************************************************!*\
+  !*** ./node_modules/@vue/devtools-api/lib/esm/time.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isPerformanceSupported": () => (/* binding */ isPerformanceSupported),
+/* harmony export */   "now": () => (/* binding */ now)
+/* harmony export */ });
+let supported;
+let perf;
+function isPerformanceSupported() {
+    var _a;
+    if (supported !== undefined) {
+        return supported;
+    }
+    if (typeof window !== 'undefined' && window.performance) {
+        supported = true;
+        perf = window.performance;
+    }
+    else if (typeof __webpack_require__.g !== 'undefined' && ((_a = __webpack_require__.g.perf_hooks) === null || _a === void 0 ? void 0 : _a.performance)) {
+        supported = true;
+        perf = __webpack_require__.g.perf_hooks.performance;
+    }
+    else {
+        supported = false;
+    }
+    return supported;
+}
+function now() {
+    return isPerformanceSupported() ? perf.now() : Date.now();
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js":
 /*!*********************************************************************!*\
   !*** ./node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js ***!
@@ -17207,6 +17464,2938 @@ const getGlobalThis = () => {
 
 /***/ }),
 
+/***/ "./node_modules/alpinejs/dist/module.esm.js":
+/*!**************************************************!*\
+  !*** ./node_modules/alpinejs/dist/module.esm.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ module_default)
+/* harmony export */ });
+// packages/alpinejs/src/scheduler.js
+var flushPending = false;
+var flushing = false;
+var queue = [];
+function scheduler(callback) {
+  queueJob(callback);
+}
+function queueJob(job) {
+  if (!queue.includes(job))
+    queue.push(job);
+  queueFlush();
+}
+function dequeueJob(job) {
+  let index = queue.indexOf(job);
+  if (index !== -1)
+    queue.splice(index, 1);
+}
+function queueFlush() {
+  if (!flushing && !flushPending) {
+    flushPending = true;
+    queueMicrotask(flushJobs);
+  }
+}
+function flushJobs() {
+  flushPending = false;
+  flushing = true;
+  for (let i = 0; i < queue.length; i++) {
+    queue[i]();
+  }
+  queue.length = 0;
+  flushing = false;
+}
+
+// packages/alpinejs/src/reactivity.js
+var reactive;
+var effect;
+var release;
+var raw;
+var shouldSchedule = true;
+function disableEffectScheduling(callback) {
+  shouldSchedule = false;
+  callback();
+  shouldSchedule = true;
+}
+function setReactivityEngine(engine) {
+  reactive = engine.reactive;
+  release = engine.release;
+  effect = (callback) => engine.effect(callback, {scheduler: (task) => {
+    if (shouldSchedule) {
+      scheduler(task);
+    } else {
+      task();
+    }
+  }});
+  raw = engine.raw;
+}
+function overrideEffect(override) {
+  effect = override;
+}
+function elementBoundEffect(el) {
+  let cleanup2 = () => {
+  };
+  let wrappedEffect = (callback) => {
+    let effectReference = effect(callback);
+    if (!el._x_effects) {
+      el._x_effects = new Set();
+      el._x_runEffects = () => {
+        el._x_effects.forEach((i) => i());
+      };
+    }
+    el._x_effects.add(effectReference);
+    cleanup2 = () => {
+      if (effectReference === void 0)
+        return;
+      el._x_effects.delete(effectReference);
+      release(effectReference);
+    };
+    return effectReference;
+  };
+  return [wrappedEffect, () => {
+    cleanup2();
+  }];
+}
+
+// packages/alpinejs/src/mutation.js
+var onAttributeAddeds = [];
+var onElRemoveds = [];
+var onElAddeds = [];
+function onElAdded(callback) {
+  onElAddeds.push(callback);
+}
+function onElRemoved(el, callback) {
+  if (typeof callback === "function") {
+    if (!el._x_cleanups)
+      el._x_cleanups = [];
+    el._x_cleanups.push(callback);
+  } else {
+    callback = el;
+    onElRemoveds.push(callback);
+  }
+}
+function onAttributesAdded(callback) {
+  onAttributeAddeds.push(callback);
+}
+function onAttributeRemoved(el, name, callback) {
+  if (!el._x_attributeCleanups)
+    el._x_attributeCleanups = {};
+  if (!el._x_attributeCleanups[name])
+    el._x_attributeCleanups[name] = [];
+  el._x_attributeCleanups[name].push(callback);
+}
+function cleanupAttributes(el, names) {
+  if (!el._x_attributeCleanups)
+    return;
+  Object.entries(el._x_attributeCleanups).forEach(([name, value]) => {
+    if (names === void 0 || names.includes(name)) {
+      value.forEach((i) => i());
+      delete el._x_attributeCleanups[name];
+    }
+  });
+}
+var observer = new MutationObserver(onMutate);
+var currentlyObserving = false;
+function startObservingMutations() {
+  observer.observe(document, {subtree: true, childList: true, attributes: true, attributeOldValue: true});
+  currentlyObserving = true;
+}
+function stopObservingMutations() {
+  flushObserver();
+  observer.disconnect();
+  currentlyObserving = false;
+}
+var recordQueue = [];
+var willProcessRecordQueue = false;
+function flushObserver() {
+  recordQueue = recordQueue.concat(observer.takeRecords());
+  if (recordQueue.length && !willProcessRecordQueue) {
+    willProcessRecordQueue = true;
+    queueMicrotask(() => {
+      processRecordQueue();
+      willProcessRecordQueue = false;
+    });
+  }
+}
+function processRecordQueue() {
+  onMutate(recordQueue);
+  recordQueue.length = 0;
+}
+function mutateDom(callback) {
+  if (!currentlyObserving)
+    return callback();
+  stopObservingMutations();
+  let result = callback();
+  startObservingMutations();
+  return result;
+}
+var isCollecting = false;
+var deferredMutations = [];
+function deferMutations() {
+  isCollecting = true;
+}
+function flushAndStopDeferringMutations() {
+  isCollecting = false;
+  onMutate(deferredMutations);
+  deferredMutations = [];
+}
+function onMutate(mutations) {
+  if (isCollecting) {
+    deferredMutations = deferredMutations.concat(mutations);
+    return;
+  }
+  let addedNodes = [];
+  let removedNodes = [];
+  let addedAttributes = new Map();
+  let removedAttributes = new Map();
+  for (let i = 0; i < mutations.length; i++) {
+    if (mutations[i].target._x_ignoreMutationObserver)
+      continue;
+    if (mutations[i].type === "childList") {
+      mutations[i].addedNodes.forEach((node) => node.nodeType === 1 && addedNodes.push(node));
+      mutations[i].removedNodes.forEach((node) => node.nodeType === 1 && removedNodes.push(node));
+    }
+    if (mutations[i].type === "attributes") {
+      let el = mutations[i].target;
+      let name = mutations[i].attributeName;
+      let oldValue = mutations[i].oldValue;
+      let add2 = () => {
+        if (!addedAttributes.has(el))
+          addedAttributes.set(el, []);
+        addedAttributes.get(el).push({name, value: el.getAttribute(name)});
+      };
+      let remove = () => {
+        if (!removedAttributes.has(el))
+          removedAttributes.set(el, []);
+        removedAttributes.get(el).push(name);
+      };
+      if (el.hasAttribute(name) && oldValue === null) {
+        add2();
+      } else if (el.hasAttribute(name)) {
+        remove();
+        add2();
+      } else {
+        remove();
+      }
+    }
+  }
+  removedAttributes.forEach((attrs, el) => {
+    cleanupAttributes(el, attrs);
+  });
+  addedAttributes.forEach((attrs, el) => {
+    onAttributeAddeds.forEach((i) => i(el, attrs));
+  });
+  for (let node of removedNodes) {
+    if (addedNodes.includes(node))
+      continue;
+    onElRemoveds.forEach((i) => i(node));
+    if (node._x_cleanups) {
+      while (node._x_cleanups.length)
+        node._x_cleanups.pop()();
+    }
+  }
+  addedNodes.forEach((node) => {
+    node._x_ignoreSelf = true;
+    node._x_ignore = true;
+  });
+  for (let node of addedNodes) {
+    if (removedNodes.includes(node))
+      continue;
+    if (!node.isConnected)
+      continue;
+    delete node._x_ignoreSelf;
+    delete node._x_ignore;
+    onElAddeds.forEach((i) => i(node));
+    node._x_ignore = true;
+    node._x_ignoreSelf = true;
+  }
+  addedNodes.forEach((node) => {
+    delete node._x_ignoreSelf;
+    delete node._x_ignore;
+  });
+  addedNodes = null;
+  removedNodes = null;
+  addedAttributes = null;
+  removedAttributes = null;
+}
+
+// packages/alpinejs/src/scope.js
+function scope(node) {
+  return mergeProxies(closestDataStack(node));
+}
+function addScopeToNode(node, data2, referenceNode) {
+  node._x_dataStack = [data2, ...closestDataStack(referenceNode || node)];
+  return () => {
+    node._x_dataStack = node._x_dataStack.filter((i) => i !== data2);
+  };
+}
+function refreshScope(element, scope2) {
+  let existingScope = element._x_dataStack[0];
+  Object.entries(scope2).forEach(([key, value]) => {
+    existingScope[key] = value;
+  });
+}
+function closestDataStack(node) {
+  if (node._x_dataStack)
+    return node._x_dataStack;
+  if (typeof ShadowRoot === "function" && node instanceof ShadowRoot) {
+    return closestDataStack(node.host);
+  }
+  if (!node.parentNode) {
+    return [];
+  }
+  return closestDataStack(node.parentNode);
+}
+function mergeProxies(objects) {
+  let thisProxy = new Proxy({}, {
+    ownKeys: () => {
+      return Array.from(new Set(objects.flatMap((i) => Object.keys(i))));
+    },
+    has: (target, name) => {
+      return objects.some((obj) => obj.hasOwnProperty(name));
+    },
+    get: (target, name) => {
+      return (objects.find((obj) => {
+        if (obj.hasOwnProperty(name)) {
+          let descriptor = Object.getOwnPropertyDescriptor(obj, name);
+          if (descriptor.get && descriptor.get._x_alreadyBound || descriptor.set && descriptor.set._x_alreadyBound) {
+            return true;
+          }
+          if ((descriptor.get || descriptor.set) && descriptor.enumerable) {
+            let getter = descriptor.get;
+            let setter = descriptor.set;
+            let property = descriptor;
+            getter = getter && getter.bind(thisProxy);
+            setter = setter && setter.bind(thisProxy);
+            if (getter)
+              getter._x_alreadyBound = true;
+            if (setter)
+              setter._x_alreadyBound = true;
+            Object.defineProperty(obj, name, {
+              ...property,
+              get: getter,
+              set: setter
+            });
+          }
+          return true;
+        }
+        return false;
+      }) || {})[name];
+    },
+    set: (target, name, value) => {
+      let closestObjectWithKey = objects.find((obj) => obj.hasOwnProperty(name));
+      if (closestObjectWithKey) {
+        closestObjectWithKey[name] = value;
+      } else {
+        objects[objects.length - 1][name] = value;
+      }
+      return true;
+    }
+  });
+  return thisProxy;
+}
+
+// packages/alpinejs/src/interceptor.js
+function initInterceptors(data2) {
+  let isObject2 = (val) => typeof val === "object" && !Array.isArray(val) && val !== null;
+  let recurse = (obj, basePath = "") => {
+    Object.entries(Object.getOwnPropertyDescriptors(obj)).forEach(([key, {value, enumerable}]) => {
+      if (enumerable === false || value === void 0)
+        return;
+      let path = basePath === "" ? key : `${basePath}.${key}`;
+      if (typeof value === "object" && value !== null && value._x_interceptor) {
+        obj[key] = value.initialize(data2, path, key);
+      } else {
+        if (isObject2(value) && value !== obj && !(value instanceof Element)) {
+          recurse(value, path);
+        }
+      }
+    });
+  };
+  return recurse(data2);
+}
+function interceptor(callback, mutateObj = () => {
+}) {
+  let obj = {
+    initialValue: void 0,
+    _x_interceptor: true,
+    initialize(data2, path, key) {
+      return callback(this.initialValue, () => get(data2, path), (value) => set(data2, path, value), path, key);
+    }
+  };
+  mutateObj(obj);
+  return (initialValue) => {
+    if (typeof initialValue === "object" && initialValue !== null && initialValue._x_interceptor) {
+      let initialize = obj.initialize.bind(obj);
+      obj.initialize = (data2, path, key) => {
+        let innerValue = initialValue.initialize(data2, path, key);
+        obj.initialValue = innerValue;
+        return initialize(data2, path, key);
+      };
+    } else {
+      obj.initialValue = initialValue;
+    }
+    return obj;
+  };
+}
+function get(obj, path) {
+  return path.split(".").reduce((carry, segment) => carry[segment], obj);
+}
+function set(obj, path, value) {
+  if (typeof path === "string")
+    path = path.split(".");
+  if (path.length === 1)
+    obj[path[0]] = value;
+  else if (path.length === 0)
+    throw error;
+  else {
+    if (obj[path[0]])
+      return set(obj[path[0]], path.slice(1), value);
+    else {
+      obj[path[0]] = {};
+      return set(obj[path[0]], path.slice(1), value);
+    }
+  }
+}
+
+// packages/alpinejs/src/magics.js
+var magics = {};
+function magic(name, callback) {
+  magics[name] = callback;
+}
+function injectMagics(obj, el) {
+  Object.entries(magics).forEach(([name, callback]) => {
+    Object.defineProperty(obj, `$${name}`, {
+      get() {
+        let [utilities, cleanup2] = getElementBoundUtilities(el);
+        utilities = {interceptor, ...utilities};
+        onElRemoved(el, cleanup2);
+        return callback(el, utilities);
+      },
+      enumerable: false
+    });
+  });
+  return obj;
+}
+
+// packages/alpinejs/src/utils/error.js
+function tryCatch(el, expression, callback, ...args) {
+  try {
+    return callback(...args);
+  } catch (e) {
+    handleError(e, el, expression);
+  }
+}
+function handleError(error2, el, expression = void 0) {
+  Object.assign(error2, {el, expression});
+  console.warn(`Alpine Expression Error: ${error2.message}
+
+${expression ? 'Expression: "' + expression + '"\n\n' : ""}`, el);
+  setTimeout(() => {
+    throw error2;
+  }, 0);
+}
+
+// packages/alpinejs/src/evaluator.js
+function evaluate(el, expression, extras = {}) {
+  let result;
+  evaluateLater(el, expression)((value) => result = value, extras);
+  return result;
+}
+function evaluateLater(...args) {
+  return theEvaluatorFunction(...args);
+}
+var theEvaluatorFunction = normalEvaluator;
+function setEvaluator(newEvaluator) {
+  theEvaluatorFunction = newEvaluator;
+}
+function normalEvaluator(el, expression) {
+  let overriddenMagics = {};
+  injectMagics(overriddenMagics, el);
+  let dataStack = [overriddenMagics, ...closestDataStack(el)];
+  if (typeof expression === "function") {
+    return generateEvaluatorFromFunction(dataStack, expression);
+  }
+  let evaluator = generateEvaluatorFromString(dataStack, expression, el);
+  return tryCatch.bind(null, el, expression, evaluator);
+}
+function generateEvaluatorFromFunction(dataStack, func) {
+  return (receiver = () => {
+  }, {scope: scope2 = {}, params = []} = {}) => {
+    let result = func.apply(mergeProxies([scope2, ...dataStack]), params);
+    runIfTypeOfFunction(receiver, result);
+  };
+}
+var evaluatorMemo = {};
+function generateFunctionFromString(expression, el) {
+  if (evaluatorMemo[expression]) {
+    return evaluatorMemo[expression];
+  }
+  let AsyncFunction = Object.getPrototypeOf(async function() {
+  }).constructor;
+  let rightSideSafeExpression = /^[\n\s]*if.*\(.*\)/.test(expression) || /^(let|const)\s/.test(expression) ? `(() => { ${expression} })()` : expression;
+  const safeAsyncFunction = () => {
+    try {
+      return new AsyncFunction(["__self", "scope"], `with (scope) { __self.result = ${rightSideSafeExpression} }; __self.finished = true; return __self.result;`);
+    } catch (error2) {
+      handleError(error2, el, expression);
+      return Promise.resolve();
+    }
+  };
+  let func = safeAsyncFunction();
+  evaluatorMemo[expression] = func;
+  return func;
+}
+function generateEvaluatorFromString(dataStack, expression, el) {
+  let func = generateFunctionFromString(expression, el);
+  return (receiver = () => {
+  }, {scope: scope2 = {}, params = []} = {}) => {
+    func.result = void 0;
+    func.finished = false;
+    let completeScope = mergeProxies([scope2, ...dataStack]);
+    if (typeof func === "function") {
+      let promise = func(func, completeScope).catch((error2) => handleError(error2, el, expression));
+      if (func.finished) {
+        runIfTypeOfFunction(receiver, func.result, completeScope, params, el);
+        func.result = void 0;
+      } else {
+        promise.then((result) => {
+          runIfTypeOfFunction(receiver, result, completeScope, params, el);
+        }).catch((error2) => handleError(error2, el, expression)).finally(() => func.result = void 0);
+      }
+    }
+  };
+}
+function runIfTypeOfFunction(receiver, value, scope2, params, el) {
+  if (typeof value === "function") {
+    let result = value.apply(scope2, params);
+    if (result instanceof Promise) {
+      result.then((i) => runIfTypeOfFunction(receiver, i, scope2, params)).catch((error2) => handleError(error2, el, value));
+    } else {
+      receiver(result);
+    }
+  } else {
+    receiver(value);
+  }
+}
+
+// packages/alpinejs/src/directives.js
+var prefixAsString = "x-";
+function prefix(subject = "") {
+  return prefixAsString + subject;
+}
+function setPrefix(newPrefix) {
+  prefixAsString = newPrefix;
+}
+var directiveHandlers = {};
+function directive(name, callback) {
+  directiveHandlers[name] = callback;
+}
+function directives(el, attributes, originalAttributeOverride) {
+  let transformedAttributeMap = {};
+  let directives2 = Array.from(attributes).map(toTransformedAttributes((newName, oldName) => transformedAttributeMap[newName] = oldName)).filter(outNonAlpineAttributes).map(toParsedDirectives(transformedAttributeMap, originalAttributeOverride)).sort(byPriority);
+  return directives2.map((directive2) => {
+    return getDirectiveHandler(el, directive2);
+  });
+}
+function attributesOnly(attributes) {
+  return Array.from(attributes).map(toTransformedAttributes()).filter((attr) => !outNonAlpineAttributes(attr));
+}
+var isDeferringHandlers = false;
+var directiveHandlerStacks = new Map();
+var currentHandlerStackKey = Symbol();
+function deferHandlingDirectives(callback) {
+  isDeferringHandlers = true;
+  let key = Symbol();
+  currentHandlerStackKey = key;
+  directiveHandlerStacks.set(key, []);
+  let flushHandlers = () => {
+    while (directiveHandlerStacks.get(key).length)
+      directiveHandlerStacks.get(key).shift()();
+    directiveHandlerStacks.delete(key);
+  };
+  let stopDeferring = () => {
+    isDeferringHandlers = false;
+    flushHandlers();
+  };
+  callback(flushHandlers);
+  stopDeferring();
+}
+function getElementBoundUtilities(el) {
+  let cleanups = [];
+  let cleanup2 = (callback) => cleanups.push(callback);
+  let [effect3, cleanupEffect] = elementBoundEffect(el);
+  cleanups.push(cleanupEffect);
+  let utilities = {
+    Alpine: alpine_default,
+    effect: effect3,
+    cleanup: cleanup2,
+    evaluateLater: evaluateLater.bind(evaluateLater, el),
+    evaluate: evaluate.bind(evaluate, el)
+  };
+  let doCleanup = () => cleanups.forEach((i) => i());
+  return [utilities, doCleanup];
+}
+function getDirectiveHandler(el, directive2) {
+  let noop = () => {
+  };
+  let handler3 = directiveHandlers[directive2.type] || noop;
+  let [utilities, cleanup2] = getElementBoundUtilities(el);
+  onAttributeRemoved(el, directive2.original, cleanup2);
+  let fullHandler = () => {
+    if (el._x_ignore || el._x_ignoreSelf)
+      return;
+    handler3.inline && handler3.inline(el, directive2, utilities);
+    handler3 = handler3.bind(handler3, el, directive2, utilities);
+    isDeferringHandlers ? directiveHandlerStacks.get(currentHandlerStackKey).push(handler3) : handler3();
+  };
+  fullHandler.runCleanups = cleanup2;
+  return fullHandler;
+}
+var startingWith = (subject, replacement) => ({name, value}) => {
+  if (name.startsWith(subject))
+    name = name.replace(subject, replacement);
+  return {name, value};
+};
+var into = (i) => i;
+function toTransformedAttributes(callback = () => {
+}) {
+  return ({name, value}) => {
+    let {name: newName, value: newValue} = attributeTransformers.reduce((carry, transform) => {
+      return transform(carry);
+    }, {name, value});
+    if (newName !== name)
+      callback(newName, name);
+    return {name: newName, value: newValue};
+  };
+}
+var attributeTransformers = [];
+function mapAttributes(callback) {
+  attributeTransformers.push(callback);
+}
+function outNonAlpineAttributes({name}) {
+  return alpineAttributeRegex().test(name);
+}
+var alpineAttributeRegex = () => new RegExp(`^${prefixAsString}([^:^.]+)\\b`);
+function toParsedDirectives(transformedAttributeMap, originalAttributeOverride) {
+  return ({name, value}) => {
+    let typeMatch = name.match(alpineAttributeRegex());
+    let valueMatch = name.match(/:([a-zA-Z0-9\-:]+)/);
+    let modifiers = name.match(/\.[^.\]]+(?=[^\]]*$)/g) || [];
+    let original = originalAttributeOverride || transformedAttributeMap[name] || name;
+    return {
+      type: typeMatch ? typeMatch[1] : null,
+      value: valueMatch ? valueMatch[1] : null,
+      modifiers: modifiers.map((i) => i.replace(".", "")),
+      expression: value,
+      original
+    };
+  };
+}
+var DEFAULT = "DEFAULT";
+var directiveOrder = [
+  "ignore",
+  "ref",
+  "data",
+  "id",
+  "bind",
+  "init",
+  "for",
+  "model",
+  "modelable",
+  "transition",
+  "show",
+  "if",
+  DEFAULT,
+  "teleport",
+  "element"
+];
+function byPriority(a, b) {
+  let typeA = directiveOrder.indexOf(a.type) === -1 ? DEFAULT : a.type;
+  let typeB = directiveOrder.indexOf(b.type) === -1 ? DEFAULT : b.type;
+  return directiveOrder.indexOf(typeA) - directiveOrder.indexOf(typeB);
+}
+
+// packages/alpinejs/src/utils/dispatch.js
+function dispatch(el, name, detail = {}) {
+  el.dispatchEvent(new CustomEvent(name, {
+    detail,
+    bubbles: true,
+    composed: true,
+    cancelable: true
+  }));
+}
+
+// packages/alpinejs/src/nextTick.js
+var tickStack = [];
+var isHolding = false;
+function nextTick(callback) {
+  tickStack.push(callback);
+  queueMicrotask(() => {
+    isHolding || setTimeout(() => {
+      releaseNextTicks();
+    });
+  });
+}
+function releaseNextTicks() {
+  isHolding = false;
+  while (tickStack.length)
+    tickStack.shift()();
+}
+function holdNextTicks() {
+  isHolding = true;
+}
+
+// packages/alpinejs/src/utils/walk.js
+function walk(el, callback) {
+  if (typeof ShadowRoot === "function" && el instanceof ShadowRoot) {
+    Array.from(el.children).forEach((el2) => walk(el2, callback));
+    return;
+  }
+  let skip = false;
+  callback(el, () => skip = true);
+  if (skip)
+    return;
+  let node = el.firstElementChild;
+  while (node) {
+    walk(node, callback, false);
+    node = node.nextElementSibling;
+  }
+}
+
+// packages/alpinejs/src/utils/warn.js
+function warn(message, ...args) {
+  console.warn(`Alpine Warning: ${message}`, ...args);
+}
+
+// packages/alpinejs/src/lifecycle.js
+function start() {
+  if (!document.body)
+    warn("Unable to initialize. Trying to load Alpine before `<body>` is available. Did you forget to add `defer` in Alpine's `<script>` tag?");
+  dispatch(document, "alpine:init");
+  dispatch(document, "alpine:initializing");
+  startObservingMutations();
+  onElAdded((el) => initTree(el, walk));
+  onElRemoved((el) => destroyTree(el));
+  onAttributesAdded((el, attrs) => {
+    directives(el, attrs).forEach((handle) => handle());
+  });
+  let outNestedComponents = (el) => !closestRoot(el.parentElement, true);
+  Array.from(document.querySelectorAll(allSelectors())).filter(outNestedComponents).forEach((el) => {
+    initTree(el);
+  });
+  dispatch(document, "alpine:initialized");
+}
+var rootSelectorCallbacks = [];
+var initSelectorCallbacks = [];
+function rootSelectors() {
+  return rootSelectorCallbacks.map((fn) => fn());
+}
+function allSelectors() {
+  return rootSelectorCallbacks.concat(initSelectorCallbacks).map((fn) => fn());
+}
+function addRootSelector(selectorCallback) {
+  rootSelectorCallbacks.push(selectorCallback);
+}
+function addInitSelector(selectorCallback) {
+  initSelectorCallbacks.push(selectorCallback);
+}
+function closestRoot(el, includeInitSelectors = false) {
+  return findClosest(el, (element) => {
+    const selectors = includeInitSelectors ? allSelectors() : rootSelectors();
+    if (selectors.some((selector) => element.matches(selector)))
+      return true;
+  });
+}
+function findClosest(el, callback) {
+  if (!el)
+    return;
+  if (callback(el))
+    return el;
+  if (el._x_teleportBack)
+    el = el._x_teleportBack;
+  if (!el.parentElement)
+    return;
+  return findClosest(el.parentElement, callback);
+}
+function isRoot(el) {
+  return rootSelectors().some((selector) => el.matches(selector));
+}
+function initTree(el, walker = walk) {
+  deferHandlingDirectives(() => {
+    walker(el, (el2, skip) => {
+      directives(el2, el2.attributes).forEach((handle) => handle());
+      el2._x_ignore && skip();
+    });
+  });
+}
+function destroyTree(root) {
+  walk(root, (el) => cleanupAttributes(el));
+}
+
+// packages/alpinejs/src/utils/classes.js
+function setClasses(el, value) {
+  if (Array.isArray(value)) {
+    return setClassesFromString(el, value.join(" "));
+  } else if (typeof value === "object" && value !== null) {
+    return setClassesFromObject(el, value);
+  } else if (typeof value === "function") {
+    return setClasses(el, value());
+  }
+  return setClassesFromString(el, value);
+}
+function setClassesFromString(el, classString) {
+  let split = (classString2) => classString2.split(" ").filter(Boolean);
+  let missingClasses = (classString2) => classString2.split(" ").filter((i) => !el.classList.contains(i)).filter(Boolean);
+  let addClassesAndReturnUndo = (classes) => {
+    el.classList.add(...classes);
+    return () => {
+      el.classList.remove(...classes);
+    };
+  };
+  classString = classString === true ? classString = "" : classString || "";
+  return addClassesAndReturnUndo(missingClasses(classString));
+}
+function setClassesFromObject(el, classObject) {
+  let split = (classString) => classString.split(" ").filter(Boolean);
+  let forAdd = Object.entries(classObject).flatMap(([classString, bool]) => bool ? split(classString) : false).filter(Boolean);
+  let forRemove = Object.entries(classObject).flatMap(([classString, bool]) => !bool ? split(classString) : false).filter(Boolean);
+  let added = [];
+  let removed = [];
+  forRemove.forEach((i) => {
+    if (el.classList.contains(i)) {
+      el.classList.remove(i);
+      removed.push(i);
+    }
+  });
+  forAdd.forEach((i) => {
+    if (!el.classList.contains(i)) {
+      el.classList.add(i);
+      added.push(i);
+    }
+  });
+  return () => {
+    removed.forEach((i) => el.classList.add(i));
+    added.forEach((i) => el.classList.remove(i));
+  };
+}
+
+// packages/alpinejs/src/utils/styles.js
+function setStyles(el, value) {
+  if (typeof value === "object" && value !== null) {
+    return setStylesFromObject(el, value);
+  }
+  return setStylesFromString(el, value);
+}
+function setStylesFromObject(el, value) {
+  let previousStyles = {};
+  Object.entries(value).forEach(([key, value2]) => {
+    previousStyles[key] = el.style[key];
+    if (!key.startsWith("--")) {
+      key = kebabCase(key);
+    }
+    el.style.setProperty(key, value2);
+  });
+  setTimeout(() => {
+    if (el.style.length === 0) {
+      el.removeAttribute("style");
+    }
+  });
+  return () => {
+    setStyles(el, previousStyles);
+  };
+}
+function setStylesFromString(el, value) {
+  let cache = el.getAttribute("style", value);
+  el.setAttribute("style", value);
+  return () => {
+    el.setAttribute("style", cache || "");
+  };
+}
+function kebabCase(subject) {
+  return subject.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+// packages/alpinejs/src/utils/once.js
+function once(callback, fallback = () => {
+}) {
+  let called = false;
+  return function() {
+    if (!called) {
+      called = true;
+      callback.apply(this, arguments);
+    } else {
+      fallback.apply(this, arguments);
+    }
+  };
+}
+
+// packages/alpinejs/src/directives/x-transition.js
+directive("transition", (el, {value, modifiers, expression}, {evaluate: evaluate2}) => {
+  if (typeof expression === "function")
+    expression = evaluate2(expression);
+  if (!expression) {
+    registerTransitionsFromHelper(el, modifiers, value);
+  } else {
+    registerTransitionsFromClassString(el, expression, value);
+  }
+});
+function registerTransitionsFromClassString(el, classString, stage) {
+  registerTransitionObject(el, setClasses, "");
+  let directiveStorageMap = {
+    enter: (classes) => {
+      el._x_transition.enter.during = classes;
+    },
+    "enter-start": (classes) => {
+      el._x_transition.enter.start = classes;
+    },
+    "enter-end": (classes) => {
+      el._x_transition.enter.end = classes;
+    },
+    leave: (classes) => {
+      el._x_transition.leave.during = classes;
+    },
+    "leave-start": (classes) => {
+      el._x_transition.leave.start = classes;
+    },
+    "leave-end": (classes) => {
+      el._x_transition.leave.end = classes;
+    }
+  };
+  directiveStorageMap[stage](classString);
+}
+function registerTransitionsFromHelper(el, modifiers, stage) {
+  registerTransitionObject(el, setStyles);
+  let doesntSpecify = !modifiers.includes("in") && !modifiers.includes("out") && !stage;
+  let transitioningIn = doesntSpecify || modifiers.includes("in") || ["enter"].includes(stage);
+  let transitioningOut = doesntSpecify || modifiers.includes("out") || ["leave"].includes(stage);
+  if (modifiers.includes("in") && !doesntSpecify) {
+    modifiers = modifiers.filter((i, index) => index < modifiers.indexOf("out"));
+  }
+  if (modifiers.includes("out") && !doesntSpecify) {
+    modifiers = modifiers.filter((i, index) => index > modifiers.indexOf("out"));
+  }
+  let wantsAll = !modifiers.includes("opacity") && !modifiers.includes("scale");
+  let wantsOpacity = wantsAll || modifiers.includes("opacity");
+  let wantsScale = wantsAll || modifiers.includes("scale");
+  let opacityValue = wantsOpacity ? 0 : 1;
+  let scaleValue = wantsScale ? modifierValue(modifiers, "scale", 95) / 100 : 1;
+  let delay = modifierValue(modifiers, "delay", 0);
+  let origin = modifierValue(modifiers, "origin", "center");
+  let property = "opacity, transform";
+  let durationIn = modifierValue(modifiers, "duration", 150) / 1e3;
+  let durationOut = modifierValue(modifiers, "duration", 75) / 1e3;
+  let easing = `cubic-bezier(0.4, 0.0, 0.2, 1)`;
+  if (transitioningIn) {
+    el._x_transition.enter.during = {
+      transformOrigin: origin,
+      transitionDelay: delay,
+      transitionProperty: property,
+      transitionDuration: `${durationIn}s`,
+      transitionTimingFunction: easing
+    };
+    el._x_transition.enter.start = {
+      opacity: opacityValue,
+      transform: `scale(${scaleValue})`
+    };
+    el._x_transition.enter.end = {
+      opacity: 1,
+      transform: `scale(1)`
+    };
+  }
+  if (transitioningOut) {
+    el._x_transition.leave.during = {
+      transformOrigin: origin,
+      transitionDelay: delay,
+      transitionProperty: property,
+      transitionDuration: `${durationOut}s`,
+      transitionTimingFunction: easing
+    };
+    el._x_transition.leave.start = {
+      opacity: 1,
+      transform: `scale(1)`
+    };
+    el._x_transition.leave.end = {
+      opacity: opacityValue,
+      transform: `scale(${scaleValue})`
+    };
+  }
+}
+function registerTransitionObject(el, setFunction, defaultValue = {}) {
+  if (!el._x_transition)
+    el._x_transition = {
+      enter: {during: defaultValue, start: defaultValue, end: defaultValue},
+      leave: {during: defaultValue, start: defaultValue, end: defaultValue},
+      in(before = () => {
+      }, after = () => {
+      }) {
+        transition(el, setFunction, {
+          during: this.enter.during,
+          start: this.enter.start,
+          end: this.enter.end
+        }, before, after);
+      },
+      out(before = () => {
+      }, after = () => {
+      }) {
+        transition(el, setFunction, {
+          during: this.leave.during,
+          start: this.leave.start,
+          end: this.leave.end
+        }, before, after);
+      }
+    };
+}
+window.Element.prototype._x_toggleAndCascadeWithTransitions = function(el, value, show, hide) {
+  let clickAwayCompatibleShow = () => {
+    document.visibilityState === "visible" ? requestAnimationFrame(show) : setTimeout(show);
+  };
+  if (value) {
+    if (el._x_transition && (el._x_transition.enter || el._x_transition.leave)) {
+      el._x_transition.enter && (Object.entries(el._x_transition.enter.during).length || Object.entries(el._x_transition.enter.start).length || Object.entries(el._x_transition.enter.end).length) ? el._x_transition.in(show) : clickAwayCompatibleShow();
+    } else {
+      el._x_transition ? el._x_transition.in(show) : clickAwayCompatibleShow();
+    }
+    return;
+  }
+  el._x_hidePromise = el._x_transition ? new Promise((resolve, reject) => {
+    el._x_transition.out(() => {
+    }, () => resolve(hide));
+    el._x_transitioning.beforeCancel(() => reject({isFromCancelledTransition: true}));
+  }) : Promise.resolve(hide);
+  queueMicrotask(() => {
+    let closest = closestHide(el);
+    if (closest) {
+      if (!closest._x_hideChildren)
+        closest._x_hideChildren = [];
+      closest._x_hideChildren.push(el);
+    } else {
+      queueMicrotask(() => {
+        let hideAfterChildren = (el2) => {
+          let carry = Promise.all([
+            el2._x_hidePromise,
+            ...(el2._x_hideChildren || []).map(hideAfterChildren)
+          ]).then(([i]) => i());
+          delete el2._x_hidePromise;
+          delete el2._x_hideChildren;
+          return carry;
+        };
+        hideAfterChildren(el).catch((e) => {
+          if (!e.isFromCancelledTransition)
+            throw e;
+        });
+      });
+    }
+  });
+};
+function closestHide(el) {
+  let parent = el.parentNode;
+  if (!parent)
+    return;
+  return parent._x_hidePromise ? parent : closestHide(parent);
+}
+function transition(el, setFunction, {during, start: start2, end} = {}, before = () => {
+}, after = () => {
+}) {
+  if (el._x_transitioning)
+    el._x_transitioning.cancel();
+  if (Object.keys(during).length === 0 && Object.keys(start2).length === 0 && Object.keys(end).length === 0) {
+    before();
+    after();
+    return;
+  }
+  let undoStart, undoDuring, undoEnd;
+  performTransition(el, {
+    start() {
+      undoStart = setFunction(el, start2);
+    },
+    during() {
+      undoDuring = setFunction(el, during);
+    },
+    before,
+    end() {
+      undoStart();
+      undoEnd = setFunction(el, end);
+    },
+    after,
+    cleanup() {
+      undoDuring();
+      undoEnd();
+    }
+  });
+}
+function performTransition(el, stages) {
+  let interrupted, reachedBefore, reachedEnd;
+  let finish = once(() => {
+    mutateDom(() => {
+      interrupted = true;
+      if (!reachedBefore)
+        stages.before();
+      if (!reachedEnd) {
+        stages.end();
+        releaseNextTicks();
+      }
+      stages.after();
+      if (el.isConnected)
+        stages.cleanup();
+      delete el._x_transitioning;
+    });
+  });
+  el._x_transitioning = {
+    beforeCancels: [],
+    beforeCancel(callback) {
+      this.beforeCancels.push(callback);
+    },
+    cancel: once(function() {
+      while (this.beforeCancels.length) {
+        this.beforeCancels.shift()();
+      }
+      ;
+      finish();
+    }),
+    finish
+  };
+  mutateDom(() => {
+    stages.start();
+    stages.during();
+  });
+  holdNextTicks();
+  requestAnimationFrame(() => {
+    if (interrupted)
+      return;
+    let duration = Number(getComputedStyle(el).transitionDuration.replace(/,.*/, "").replace("s", "")) * 1e3;
+    let delay = Number(getComputedStyle(el).transitionDelay.replace(/,.*/, "").replace("s", "")) * 1e3;
+    if (duration === 0)
+      duration = Number(getComputedStyle(el).animationDuration.replace("s", "")) * 1e3;
+    mutateDom(() => {
+      stages.before();
+    });
+    reachedBefore = true;
+    requestAnimationFrame(() => {
+      if (interrupted)
+        return;
+      mutateDom(() => {
+        stages.end();
+      });
+      releaseNextTicks();
+      setTimeout(el._x_transitioning.finish, duration + delay);
+      reachedEnd = true;
+    });
+  });
+}
+function modifierValue(modifiers, key, fallback) {
+  if (modifiers.indexOf(key) === -1)
+    return fallback;
+  const rawValue = modifiers[modifiers.indexOf(key) + 1];
+  if (!rawValue)
+    return fallback;
+  if (key === "scale") {
+    if (isNaN(rawValue))
+      return fallback;
+  }
+  if (key === "duration") {
+    let match = rawValue.match(/([0-9]+)ms/);
+    if (match)
+      return match[1];
+  }
+  if (key === "origin") {
+    if (["top", "right", "left", "center", "bottom"].includes(modifiers[modifiers.indexOf(key) + 2])) {
+      return [rawValue, modifiers[modifiers.indexOf(key) + 2]].join(" ");
+    }
+  }
+  return rawValue;
+}
+
+// packages/alpinejs/src/clone.js
+var isCloning = false;
+function skipDuringClone(callback, fallback = () => {
+}) {
+  return (...args) => isCloning ? fallback(...args) : callback(...args);
+}
+function clone(oldEl, newEl) {
+  if (!newEl._x_dataStack)
+    newEl._x_dataStack = oldEl._x_dataStack;
+  isCloning = true;
+  dontRegisterReactiveSideEffects(() => {
+    cloneTree(newEl);
+  });
+  isCloning = false;
+}
+function cloneTree(el) {
+  let hasRunThroughFirstEl = false;
+  let shallowWalker = (el2, callback) => {
+    walk(el2, (el3, skip) => {
+      if (hasRunThroughFirstEl && isRoot(el3))
+        return skip();
+      hasRunThroughFirstEl = true;
+      callback(el3, skip);
+    });
+  };
+  initTree(el, shallowWalker);
+}
+function dontRegisterReactiveSideEffects(callback) {
+  let cache = effect;
+  overrideEffect((callback2, el) => {
+    let storedEffect = cache(callback2);
+    release(storedEffect);
+    return () => {
+    };
+  });
+  callback();
+  overrideEffect(cache);
+}
+
+// packages/alpinejs/src/utils/bind.js
+function bind(el, name, value, modifiers = []) {
+  if (!el._x_bindings)
+    el._x_bindings = reactive({});
+  el._x_bindings[name] = value;
+  name = modifiers.includes("camel") ? camelCase(name) : name;
+  switch (name) {
+    case "value":
+      bindInputValue(el, value);
+      break;
+    case "style":
+      bindStyles(el, value);
+      break;
+    case "class":
+      bindClasses(el, value);
+      break;
+    default:
+      bindAttribute(el, name, value);
+      break;
+  }
+}
+function bindInputValue(el, value) {
+  if (el.type === "radio") {
+    if (el.attributes.value === void 0) {
+      el.value = value;
+    }
+    if (window.fromModel) {
+      el.checked = checkedAttrLooseCompare(el.value, value);
+    }
+  } else if (el.type === "checkbox") {
+    if (Number.isInteger(value)) {
+      el.value = value;
+    } else if (!Number.isInteger(value) && !Array.isArray(value) && typeof value !== "boolean" && ![null, void 0].includes(value)) {
+      el.value = String(value);
+    } else {
+      if (Array.isArray(value)) {
+        el.checked = value.some((val) => checkedAttrLooseCompare(val, el.value));
+      } else {
+        el.checked = !!value;
+      }
+    }
+  } else if (el.tagName === "SELECT") {
+    updateSelect(el, value);
+  } else {
+    if (el.value === value)
+      return;
+    el.value = value;
+  }
+}
+function bindClasses(el, value) {
+  if (el._x_undoAddedClasses)
+    el._x_undoAddedClasses();
+  el._x_undoAddedClasses = setClasses(el, value);
+}
+function bindStyles(el, value) {
+  if (el._x_undoAddedStyles)
+    el._x_undoAddedStyles();
+  el._x_undoAddedStyles = setStyles(el, value);
+}
+function bindAttribute(el, name, value) {
+  if ([null, void 0, false].includes(value) && attributeShouldntBePreservedIfFalsy(name)) {
+    el.removeAttribute(name);
+  } else {
+    if (isBooleanAttr(name))
+      value = name;
+    setIfChanged(el, name, value);
+  }
+}
+function setIfChanged(el, attrName, value) {
+  if (el.getAttribute(attrName) != value) {
+    el.setAttribute(attrName, value);
+  }
+}
+function updateSelect(el, value) {
+  const arrayWrappedValue = [].concat(value).map((value2) => {
+    return value2 + "";
+  });
+  Array.from(el.options).forEach((option) => {
+    option.selected = arrayWrappedValue.includes(option.value);
+  });
+}
+function camelCase(subject) {
+  return subject.toLowerCase().replace(/-(\w)/g, (match, char) => char.toUpperCase());
+}
+function checkedAttrLooseCompare(valueA, valueB) {
+  return valueA == valueB;
+}
+function isBooleanAttr(attrName) {
+  const booleanAttributes = [
+    "disabled",
+    "checked",
+    "required",
+    "readonly",
+    "hidden",
+    "open",
+    "selected",
+    "autofocus",
+    "itemscope",
+    "multiple",
+    "novalidate",
+    "allowfullscreen",
+    "allowpaymentrequest",
+    "formnovalidate",
+    "autoplay",
+    "controls",
+    "loop",
+    "muted",
+    "playsinline",
+    "default",
+    "ismap",
+    "reversed",
+    "async",
+    "defer",
+    "nomodule"
+  ];
+  return booleanAttributes.includes(attrName);
+}
+function attributeShouldntBePreservedIfFalsy(name) {
+  return !["aria-pressed", "aria-checked", "aria-expanded", "aria-selected"].includes(name);
+}
+function getBinding(el, name, fallback) {
+  if (el._x_bindings && el._x_bindings[name] !== void 0)
+    return el._x_bindings[name];
+  let attr = el.getAttribute(name);
+  if (attr === null)
+    return typeof fallback === "function" ? fallback() : fallback;
+  if (isBooleanAttr(name)) {
+    return !![name, "true"].includes(attr);
+  }
+  if (attr === "")
+    return true;
+  return attr;
+}
+
+// packages/alpinejs/src/utils/debounce.js
+function debounce(func, wait) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      func.apply(context, args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// packages/alpinejs/src/utils/throttle.js
+function throttle(func, limit) {
+  let inThrottle;
+  return function() {
+    let context = this, args = arguments;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
+// packages/alpinejs/src/plugin.js
+function plugin(callback) {
+  callback(alpine_default);
+}
+
+// packages/alpinejs/src/store.js
+var stores = {};
+var isReactive = false;
+function store(name, value) {
+  if (!isReactive) {
+    stores = reactive(stores);
+    isReactive = true;
+  }
+  if (value === void 0) {
+    return stores[name];
+  }
+  stores[name] = value;
+  if (typeof value === "object" && value !== null && value.hasOwnProperty("init") && typeof value.init === "function") {
+    stores[name].init();
+  }
+  initInterceptors(stores[name]);
+}
+function getStores() {
+  return stores;
+}
+
+// packages/alpinejs/src/binds.js
+var binds = {};
+function bind2(name, object) {
+  binds[name] = typeof object !== "function" ? () => object : object;
+}
+function injectBindingProviders(obj) {
+  Object.entries(binds).forEach(([name, callback]) => {
+    Object.defineProperty(obj, name, {
+      get() {
+        return (...args) => {
+          return callback(...args);
+        };
+      }
+    });
+  });
+  return obj;
+}
+
+// packages/alpinejs/src/datas.js
+var datas = {};
+function data(name, callback) {
+  datas[name] = callback;
+}
+function injectDataProviders(obj, context) {
+  Object.entries(datas).forEach(([name, callback]) => {
+    Object.defineProperty(obj, name, {
+      get() {
+        return (...args) => {
+          return callback.bind(context)(...args);
+        };
+      },
+      enumerable: false
+    });
+  });
+  return obj;
+}
+
+// packages/alpinejs/src/alpine.js
+var Alpine = {
+  get reactive() {
+    return reactive;
+  },
+  get release() {
+    return release;
+  },
+  get effect() {
+    return effect;
+  },
+  get raw() {
+    return raw;
+  },
+  version: "3.9.6",
+  flushAndStopDeferringMutations,
+  disableEffectScheduling,
+  setReactivityEngine,
+  closestDataStack,
+  skipDuringClone,
+  addRootSelector,
+  addInitSelector,
+  addScopeToNode,
+  deferMutations,
+  mapAttributes,
+  evaluateLater,
+  setEvaluator,
+  mergeProxies,
+  findClosest,
+  closestRoot,
+  interceptor,
+  transition,
+  setStyles,
+  mutateDom,
+  directive,
+  throttle,
+  debounce,
+  evaluate,
+  initTree,
+  nextTick,
+  prefixed: prefix,
+  prefix: setPrefix,
+  plugin,
+  magic,
+  store,
+  start,
+  clone,
+  bound: getBinding,
+  $data: scope,
+  data,
+  bind: bind2
+};
+var alpine_default = Alpine;
+
+// node_modules/@vue/shared/dist/shared.esm-bundler.js
+function makeMap(str, expectsLowerCase) {
+  const map = Object.create(null);
+  const list = str.split(",");
+  for (let i = 0; i < list.length; i++) {
+    map[list[i]] = true;
+  }
+  return expectsLowerCase ? (val) => !!map[val.toLowerCase()] : (val) => !!map[val];
+}
+var PatchFlagNames = {
+  [1]: `TEXT`,
+  [2]: `CLASS`,
+  [4]: `STYLE`,
+  [8]: `PROPS`,
+  [16]: `FULL_PROPS`,
+  [32]: `HYDRATE_EVENTS`,
+  [64]: `STABLE_FRAGMENT`,
+  [128]: `KEYED_FRAGMENT`,
+  [256]: `UNKEYED_FRAGMENT`,
+  [512]: `NEED_PATCH`,
+  [1024]: `DYNAMIC_SLOTS`,
+  [2048]: `DEV_ROOT_FRAGMENT`,
+  [-1]: `HOISTED`,
+  [-2]: `BAIL`
+};
+var slotFlagsText = {
+  [1]: "STABLE",
+  [2]: "DYNAMIC",
+  [3]: "FORWARDED"
+};
+var specialBooleanAttrs = `itemscope,allowfullscreen,formnovalidate,ismap,nomodule,novalidate,readonly`;
+var isBooleanAttr2 = /* @__PURE__ */ makeMap(specialBooleanAttrs + `,async,autofocus,autoplay,controls,default,defer,disabled,hidden,loop,open,required,reversed,scoped,seamless,checked,muted,multiple,selected`);
+var EMPTY_OBJ =  true ? Object.freeze({}) : 0;
+var EMPTY_ARR =  true ? Object.freeze([]) : 0;
+var extend = Object.assign;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var hasOwn = (val, key) => hasOwnProperty.call(val, key);
+var isArray = Array.isArray;
+var isMap = (val) => toTypeString(val) === "[object Map]";
+var isString = (val) => typeof val === "string";
+var isSymbol = (val) => typeof val === "symbol";
+var isObject = (val) => val !== null && typeof val === "object";
+var objectToString = Object.prototype.toString;
+var toTypeString = (value) => objectToString.call(value);
+var toRawType = (value) => {
+  return toTypeString(value).slice(8, -1);
+};
+var isIntegerKey = (key) => isString(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
+var cacheStringFunction = (fn) => {
+  const cache = Object.create(null);
+  return (str) => {
+    const hit = cache[str];
+    return hit || (cache[str] = fn(str));
+  };
+};
+var camelizeRE = /-(\w)/g;
+var camelize = cacheStringFunction((str) => {
+  return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : "");
+});
+var hyphenateRE = /\B([A-Z])/g;
+var hyphenate = cacheStringFunction((str) => str.replace(hyphenateRE, "-$1").toLowerCase());
+var capitalize = cacheStringFunction((str) => str.charAt(0).toUpperCase() + str.slice(1));
+var toHandlerKey = cacheStringFunction((str) => str ? `on${capitalize(str)}` : ``);
+var hasChanged = (value, oldValue) => value !== oldValue && (value === value || oldValue === oldValue);
+
+// node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js
+var targetMap = new WeakMap();
+var effectStack = [];
+var activeEffect;
+var ITERATE_KEY = Symbol( true ? "iterate" : 0);
+var MAP_KEY_ITERATE_KEY = Symbol( true ? "Map key iterate" : 0);
+function isEffect(fn) {
+  return fn && fn._isEffect === true;
+}
+function effect2(fn, options = EMPTY_OBJ) {
+  if (isEffect(fn)) {
+    fn = fn.raw;
+  }
+  const effect3 = createReactiveEffect(fn, options);
+  if (!options.lazy) {
+    effect3();
+  }
+  return effect3;
+}
+function stop(effect3) {
+  if (effect3.active) {
+    cleanup(effect3);
+    if (effect3.options.onStop) {
+      effect3.options.onStop();
+    }
+    effect3.active = false;
+  }
+}
+var uid = 0;
+function createReactiveEffect(fn, options) {
+  const effect3 = function reactiveEffect() {
+    if (!effect3.active) {
+      return fn();
+    }
+    if (!effectStack.includes(effect3)) {
+      cleanup(effect3);
+      try {
+        enableTracking();
+        effectStack.push(effect3);
+        activeEffect = effect3;
+        return fn();
+      } finally {
+        effectStack.pop();
+        resetTracking();
+        activeEffect = effectStack[effectStack.length - 1];
+      }
+    }
+  };
+  effect3.id = uid++;
+  effect3.allowRecurse = !!options.allowRecurse;
+  effect3._isEffect = true;
+  effect3.active = true;
+  effect3.raw = fn;
+  effect3.deps = [];
+  effect3.options = options;
+  return effect3;
+}
+function cleanup(effect3) {
+  const {deps} = effect3;
+  if (deps.length) {
+    for (let i = 0; i < deps.length; i++) {
+      deps[i].delete(effect3);
+    }
+    deps.length = 0;
+  }
+}
+var shouldTrack = true;
+var trackStack = [];
+function pauseTracking() {
+  trackStack.push(shouldTrack);
+  shouldTrack = false;
+}
+function enableTracking() {
+  trackStack.push(shouldTrack);
+  shouldTrack = true;
+}
+function resetTracking() {
+  const last = trackStack.pop();
+  shouldTrack = last === void 0 ? true : last;
+}
+function track(target, type, key) {
+  if (!shouldTrack || activeEffect === void 0) {
+    return;
+  }
+  let depsMap = targetMap.get(target);
+  if (!depsMap) {
+    targetMap.set(target, depsMap = new Map());
+  }
+  let dep = depsMap.get(key);
+  if (!dep) {
+    depsMap.set(key, dep = new Set());
+  }
+  if (!dep.has(activeEffect)) {
+    dep.add(activeEffect);
+    activeEffect.deps.push(dep);
+    if (activeEffect.options.onTrack) {
+      activeEffect.options.onTrack({
+        effect: activeEffect,
+        target,
+        type,
+        key
+      });
+    }
+  }
+}
+function trigger(target, type, key, newValue, oldValue, oldTarget) {
+  const depsMap = targetMap.get(target);
+  if (!depsMap) {
+    return;
+  }
+  const effects = new Set();
+  const add2 = (effectsToAdd) => {
+    if (effectsToAdd) {
+      effectsToAdd.forEach((effect3) => {
+        if (effect3 !== activeEffect || effect3.allowRecurse) {
+          effects.add(effect3);
+        }
+      });
+    }
+  };
+  if (type === "clear") {
+    depsMap.forEach(add2);
+  } else if (key === "length" && isArray(target)) {
+    depsMap.forEach((dep, key2) => {
+      if (key2 === "length" || key2 >= newValue) {
+        add2(dep);
+      }
+    });
+  } else {
+    if (key !== void 0) {
+      add2(depsMap.get(key));
+    }
+    switch (type) {
+      case "add":
+        if (!isArray(target)) {
+          add2(depsMap.get(ITERATE_KEY));
+          if (isMap(target)) {
+            add2(depsMap.get(MAP_KEY_ITERATE_KEY));
+          }
+        } else if (isIntegerKey(key)) {
+          add2(depsMap.get("length"));
+        }
+        break;
+      case "delete":
+        if (!isArray(target)) {
+          add2(depsMap.get(ITERATE_KEY));
+          if (isMap(target)) {
+            add2(depsMap.get(MAP_KEY_ITERATE_KEY));
+          }
+        }
+        break;
+      case "set":
+        if (isMap(target)) {
+          add2(depsMap.get(ITERATE_KEY));
+        }
+        break;
+    }
+  }
+  const run = (effect3) => {
+    if (effect3.options.onTrigger) {
+      effect3.options.onTrigger({
+        effect: effect3,
+        target,
+        key,
+        type,
+        newValue,
+        oldValue,
+        oldTarget
+      });
+    }
+    if (effect3.options.scheduler) {
+      effect3.options.scheduler(effect3);
+    } else {
+      effect3();
+    }
+  };
+  effects.forEach(run);
+}
+var isNonTrackableKeys = /* @__PURE__ */ makeMap(`__proto__,__v_isRef,__isVue`);
+var builtInSymbols = new Set(Object.getOwnPropertyNames(Symbol).map((key) => Symbol[key]).filter(isSymbol));
+var get2 = /* @__PURE__ */ createGetter();
+var shallowGet = /* @__PURE__ */ createGetter(false, true);
+var readonlyGet = /* @__PURE__ */ createGetter(true);
+var shallowReadonlyGet = /* @__PURE__ */ createGetter(true, true);
+var arrayInstrumentations = {};
+["includes", "indexOf", "lastIndexOf"].forEach((key) => {
+  const method = Array.prototype[key];
+  arrayInstrumentations[key] = function(...args) {
+    const arr = toRaw(this);
+    for (let i = 0, l = this.length; i < l; i++) {
+      track(arr, "get", i + "");
+    }
+    const res = method.apply(arr, args);
+    if (res === -1 || res === false) {
+      return method.apply(arr, args.map(toRaw));
+    } else {
+      return res;
+    }
+  };
+});
+["push", "pop", "shift", "unshift", "splice"].forEach((key) => {
+  const method = Array.prototype[key];
+  arrayInstrumentations[key] = function(...args) {
+    pauseTracking();
+    const res = method.apply(this, args);
+    resetTracking();
+    return res;
+  };
+});
+function createGetter(isReadonly = false, shallow = false) {
+  return function get3(target, key, receiver) {
+    if (key === "__v_isReactive") {
+      return !isReadonly;
+    } else if (key === "__v_isReadonly") {
+      return isReadonly;
+    } else if (key === "__v_raw" && receiver === (isReadonly ? shallow ? shallowReadonlyMap : readonlyMap : shallow ? shallowReactiveMap : reactiveMap).get(target)) {
+      return target;
+    }
+    const targetIsArray = isArray(target);
+    if (!isReadonly && targetIsArray && hasOwn(arrayInstrumentations, key)) {
+      return Reflect.get(arrayInstrumentations, key, receiver);
+    }
+    const res = Reflect.get(target, key, receiver);
+    if (isSymbol(key) ? builtInSymbols.has(key) : isNonTrackableKeys(key)) {
+      return res;
+    }
+    if (!isReadonly) {
+      track(target, "get", key);
+    }
+    if (shallow) {
+      return res;
+    }
+    if (isRef(res)) {
+      const shouldUnwrap = !targetIsArray || !isIntegerKey(key);
+      return shouldUnwrap ? res.value : res;
+    }
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive2(res);
+    }
+    return res;
+  };
+}
+var set2 = /* @__PURE__ */ createSetter();
+var shallowSet = /* @__PURE__ */ createSetter(true);
+function createSetter(shallow = false) {
+  return function set3(target, key, value, receiver) {
+    let oldValue = target[key];
+    if (!shallow) {
+      value = toRaw(value);
+      oldValue = toRaw(oldValue);
+      if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
+        oldValue.value = value;
+        return true;
+      }
+    }
+    const hadKey = isArray(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key);
+    const result = Reflect.set(target, key, value, receiver);
+    if (target === toRaw(receiver)) {
+      if (!hadKey) {
+        trigger(target, "add", key, value);
+      } else if (hasChanged(value, oldValue)) {
+        trigger(target, "set", key, value, oldValue);
+      }
+    }
+    return result;
+  };
+}
+function deleteProperty(target, key) {
+  const hadKey = hasOwn(target, key);
+  const oldValue = target[key];
+  const result = Reflect.deleteProperty(target, key);
+  if (result && hadKey) {
+    trigger(target, "delete", key, void 0, oldValue);
+  }
+  return result;
+}
+function has(target, key) {
+  const result = Reflect.has(target, key);
+  if (!isSymbol(key) || !builtInSymbols.has(key)) {
+    track(target, "has", key);
+  }
+  return result;
+}
+function ownKeys(target) {
+  track(target, "iterate", isArray(target) ? "length" : ITERATE_KEY);
+  return Reflect.ownKeys(target);
+}
+var mutableHandlers = {
+  get: get2,
+  set: set2,
+  deleteProperty,
+  has,
+  ownKeys
+};
+var readonlyHandlers = {
+  get: readonlyGet,
+  set(target, key) {
+    if (true) {
+      console.warn(`Set operation on key "${String(key)}" failed: target is readonly.`, target);
+    }
+    return true;
+  },
+  deleteProperty(target, key) {
+    if (true) {
+      console.warn(`Delete operation on key "${String(key)}" failed: target is readonly.`, target);
+    }
+    return true;
+  }
+};
+var shallowReactiveHandlers = extend({}, mutableHandlers, {
+  get: shallowGet,
+  set: shallowSet
+});
+var shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+  get: shallowReadonlyGet
+});
+var toReactive = (value) => isObject(value) ? reactive2(value) : value;
+var toReadonly = (value) => isObject(value) ? readonly(value) : value;
+var toShallow = (value) => value;
+var getProto = (v) => Reflect.getPrototypeOf(v);
+function get$1(target, key, isReadonly = false, isShallow = false) {
+  target = target["__v_raw"];
+  const rawTarget = toRaw(target);
+  const rawKey = toRaw(key);
+  if (key !== rawKey) {
+    !isReadonly && track(rawTarget, "get", key);
+  }
+  !isReadonly && track(rawTarget, "get", rawKey);
+  const {has: has2} = getProto(rawTarget);
+  const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+  if (has2.call(rawTarget, key)) {
+    return wrap(target.get(key));
+  } else if (has2.call(rawTarget, rawKey)) {
+    return wrap(target.get(rawKey));
+  } else if (target !== rawTarget) {
+    target.get(key);
+  }
+}
+function has$1(key, isReadonly = false) {
+  const target = this["__v_raw"];
+  const rawTarget = toRaw(target);
+  const rawKey = toRaw(key);
+  if (key !== rawKey) {
+    !isReadonly && track(rawTarget, "has", key);
+  }
+  !isReadonly && track(rawTarget, "has", rawKey);
+  return key === rawKey ? target.has(key) : target.has(key) || target.has(rawKey);
+}
+function size(target, isReadonly = false) {
+  target = target["__v_raw"];
+  !isReadonly && track(toRaw(target), "iterate", ITERATE_KEY);
+  return Reflect.get(target, "size", target);
+}
+function add(value) {
+  value = toRaw(value);
+  const target = toRaw(this);
+  const proto = getProto(target);
+  const hadKey = proto.has.call(target, value);
+  if (!hadKey) {
+    target.add(value);
+    trigger(target, "add", value, value);
+  }
+  return this;
+}
+function set$1(key, value) {
+  value = toRaw(value);
+  const target = toRaw(this);
+  const {has: has2, get: get3} = getProto(target);
+  let hadKey = has2.call(target, key);
+  if (!hadKey) {
+    key = toRaw(key);
+    hadKey = has2.call(target, key);
+  } else if (true) {
+    checkIdentityKeys(target, has2, key);
+  }
+  const oldValue = get3.call(target, key);
+  target.set(key, value);
+  if (!hadKey) {
+    trigger(target, "add", key, value);
+  } else if (hasChanged(value, oldValue)) {
+    trigger(target, "set", key, value, oldValue);
+  }
+  return this;
+}
+function deleteEntry(key) {
+  const target = toRaw(this);
+  const {has: has2, get: get3} = getProto(target);
+  let hadKey = has2.call(target, key);
+  if (!hadKey) {
+    key = toRaw(key);
+    hadKey = has2.call(target, key);
+  } else if (true) {
+    checkIdentityKeys(target, has2, key);
+  }
+  const oldValue = get3 ? get3.call(target, key) : void 0;
+  const result = target.delete(key);
+  if (hadKey) {
+    trigger(target, "delete", key, void 0, oldValue);
+  }
+  return result;
+}
+function clear() {
+  const target = toRaw(this);
+  const hadItems = target.size !== 0;
+  const oldTarget =  true ? isMap(target) ? new Map(target) : new Set(target) : 0;
+  const result = target.clear();
+  if (hadItems) {
+    trigger(target, "clear", void 0, void 0, oldTarget);
+  }
+  return result;
+}
+function createForEach(isReadonly, isShallow) {
+  return function forEach(callback, thisArg) {
+    const observed = this;
+    const target = observed["__v_raw"];
+    const rawTarget = toRaw(target);
+    const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+    !isReadonly && track(rawTarget, "iterate", ITERATE_KEY);
+    return target.forEach((value, key) => {
+      return callback.call(thisArg, wrap(value), wrap(key), observed);
+    });
+  };
+}
+function createIterableMethod(method, isReadonly, isShallow) {
+  return function(...args) {
+    const target = this["__v_raw"];
+    const rawTarget = toRaw(target);
+    const targetIsMap = isMap(rawTarget);
+    const isPair = method === "entries" || method === Symbol.iterator && targetIsMap;
+    const isKeyOnly = method === "keys" && targetIsMap;
+    const innerIterator = target[method](...args);
+    const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+    !isReadonly && track(rawTarget, "iterate", isKeyOnly ? MAP_KEY_ITERATE_KEY : ITERATE_KEY);
+    return {
+      next() {
+        const {value, done} = innerIterator.next();
+        return done ? {value, done} : {
+          value: isPair ? [wrap(value[0]), wrap(value[1])] : wrap(value),
+          done
+        };
+      },
+      [Symbol.iterator]() {
+        return this;
+      }
+    };
+  };
+}
+function createReadonlyMethod(type) {
+  return function(...args) {
+    if (true) {
+      const key = args[0] ? `on key "${args[0]}" ` : ``;
+      console.warn(`${capitalize(type)} operation ${key}failed: target is readonly.`, toRaw(this));
+    }
+    return type === "delete" ? false : this;
+  };
+}
+var mutableInstrumentations = {
+  get(key) {
+    return get$1(this, key);
+  },
+  get size() {
+    return size(this);
+  },
+  has: has$1,
+  add,
+  set: set$1,
+  delete: deleteEntry,
+  clear,
+  forEach: createForEach(false, false)
+};
+var shallowInstrumentations = {
+  get(key) {
+    return get$1(this, key, false, true);
+  },
+  get size() {
+    return size(this);
+  },
+  has: has$1,
+  add,
+  set: set$1,
+  delete: deleteEntry,
+  clear,
+  forEach: createForEach(false, true)
+};
+var readonlyInstrumentations = {
+  get(key) {
+    return get$1(this, key, true);
+  },
+  get size() {
+    return size(this, true);
+  },
+  has(key) {
+    return has$1.call(this, key, true);
+  },
+  add: createReadonlyMethod("add"),
+  set: createReadonlyMethod("set"),
+  delete: createReadonlyMethod("delete"),
+  clear: createReadonlyMethod("clear"),
+  forEach: createForEach(true, false)
+};
+var shallowReadonlyInstrumentations = {
+  get(key) {
+    return get$1(this, key, true, true);
+  },
+  get size() {
+    return size(this, true);
+  },
+  has(key) {
+    return has$1.call(this, key, true);
+  },
+  add: createReadonlyMethod("add"),
+  set: createReadonlyMethod("set"),
+  delete: createReadonlyMethod("delete"),
+  clear: createReadonlyMethod("clear"),
+  forEach: createForEach(true, true)
+};
+var iteratorMethods = ["keys", "values", "entries", Symbol.iterator];
+iteratorMethods.forEach((method) => {
+  mutableInstrumentations[method] = createIterableMethod(method, false, false);
+  readonlyInstrumentations[method] = createIterableMethod(method, true, false);
+  shallowInstrumentations[method] = createIterableMethod(method, false, true);
+  shallowReadonlyInstrumentations[method] = createIterableMethod(method, true, true);
+});
+function createInstrumentationGetter(isReadonly, shallow) {
+  const instrumentations = shallow ? isReadonly ? shallowReadonlyInstrumentations : shallowInstrumentations : isReadonly ? readonlyInstrumentations : mutableInstrumentations;
+  return (target, key, receiver) => {
+    if (key === "__v_isReactive") {
+      return !isReadonly;
+    } else if (key === "__v_isReadonly") {
+      return isReadonly;
+    } else if (key === "__v_raw") {
+      return target;
+    }
+    return Reflect.get(hasOwn(instrumentations, key) && key in target ? instrumentations : target, key, receiver);
+  };
+}
+var mutableCollectionHandlers = {
+  get: createInstrumentationGetter(false, false)
+};
+var shallowCollectionHandlers = {
+  get: createInstrumentationGetter(false, true)
+};
+var readonlyCollectionHandlers = {
+  get: createInstrumentationGetter(true, false)
+};
+var shallowReadonlyCollectionHandlers = {
+  get: createInstrumentationGetter(true, true)
+};
+function checkIdentityKeys(target, has2, key) {
+  const rawKey = toRaw(key);
+  if (rawKey !== key && has2.call(target, rawKey)) {
+    const type = toRawType(target);
+    console.warn(`Reactive ${type} contains both the raw and reactive versions of the same object${type === `Map` ? ` as keys` : ``}, which can lead to inconsistencies. Avoid differentiating between the raw and reactive versions of an object and only use the reactive version if possible.`);
+  }
+}
+var reactiveMap = new WeakMap();
+var shallowReactiveMap = new WeakMap();
+var readonlyMap = new WeakMap();
+var shallowReadonlyMap = new WeakMap();
+function targetTypeMap(rawType) {
+  switch (rawType) {
+    case "Object":
+    case "Array":
+      return 1;
+    case "Map":
+    case "Set":
+    case "WeakMap":
+    case "WeakSet":
+      return 2;
+    default:
+      return 0;
+  }
+}
+function getTargetType(value) {
+  return value["__v_skip"] || !Object.isExtensible(value) ? 0 : targetTypeMap(toRawType(value));
+}
+function reactive2(target) {
+  if (target && target["__v_isReadonly"]) {
+    return target;
+  }
+  return createReactiveObject(target, false, mutableHandlers, mutableCollectionHandlers, reactiveMap);
+}
+function readonly(target) {
+  return createReactiveObject(target, true, readonlyHandlers, readonlyCollectionHandlers, readonlyMap);
+}
+function createReactiveObject(target, isReadonly, baseHandlers, collectionHandlers, proxyMap) {
+  if (!isObject(target)) {
+    if (true) {
+      console.warn(`value cannot be made reactive: ${String(target)}`);
+    }
+    return target;
+  }
+  if (target["__v_raw"] && !(isReadonly && target["__v_isReactive"])) {
+    return target;
+  }
+  const existingProxy = proxyMap.get(target);
+  if (existingProxy) {
+    return existingProxy;
+  }
+  const targetType = getTargetType(target);
+  if (targetType === 0) {
+    return target;
+  }
+  const proxy = new Proxy(target, targetType === 2 ? collectionHandlers : baseHandlers);
+  proxyMap.set(target, proxy);
+  return proxy;
+}
+function toRaw(observed) {
+  return observed && toRaw(observed["__v_raw"]) || observed;
+}
+function isRef(r) {
+  return Boolean(r && r.__v_isRef === true);
+}
+
+// packages/alpinejs/src/magics/$nextTick.js
+magic("nextTick", () => nextTick);
+
+// packages/alpinejs/src/magics/$dispatch.js
+magic("dispatch", (el) => dispatch.bind(dispatch, el));
+
+// packages/alpinejs/src/magics/$watch.js
+magic("watch", (el, {evaluateLater: evaluateLater2, effect: effect3}) => (key, callback) => {
+  let evaluate2 = evaluateLater2(key);
+  let firstTime = true;
+  let oldValue;
+  let effectReference = effect3(() => evaluate2((value) => {
+    JSON.stringify(value);
+    if (!firstTime) {
+      queueMicrotask(() => {
+        callback(value, oldValue);
+        oldValue = value;
+      });
+    } else {
+      oldValue = value;
+    }
+    firstTime = false;
+  }));
+  el._x_effects.delete(effectReference);
+});
+
+// packages/alpinejs/src/magics/$store.js
+magic("store", getStores);
+
+// packages/alpinejs/src/magics/$data.js
+magic("data", (el) => scope(el));
+
+// packages/alpinejs/src/magics/$root.js
+magic("root", (el) => closestRoot(el));
+
+// packages/alpinejs/src/magics/$refs.js
+magic("refs", (el) => {
+  if (el._x_refs_proxy)
+    return el._x_refs_proxy;
+  el._x_refs_proxy = mergeProxies(getArrayOfRefObject(el));
+  return el._x_refs_proxy;
+});
+function getArrayOfRefObject(el) {
+  let refObjects = [];
+  let currentEl = el;
+  while (currentEl) {
+    if (currentEl._x_refs)
+      refObjects.push(currentEl._x_refs);
+    currentEl = currentEl.parentNode;
+  }
+  return refObjects;
+}
+
+// packages/alpinejs/src/ids.js
+var globalIdMemo = {};
+function findAndIncrementId(name) {
+  if (!globalIdMemo[name])
+    globalIdMemo[name] = 0;
+  return ++globalIdMemo[name];
+}
+function closestIdRoot(el, name) {
+  return findClosest(el, (element) => {
+    if (element._x_ids && element._x_ids[name])
+      return true;
+  });
+}
+function setIdRoot(el, name) {
+  if (!el._x_ids)
+    el._x_ids = {};
+  if (!el._x_ids[name])
+    el._x_ids[name] = findAndIncrementId(name);
+}
+
+// packages/alpinejs/src/magics/$id.js
+magic("id", (el) => (name, key = null) => {
+  let root = closestIdRoot(el, name);
+  let id = root ? root._x_ids[name] : findAndIncrementId(name);
+  return key ? `${name}-${id}-${key}` : `${name}-${id}`;
+});
+
+// packages/alpinejs/src/magics/$el.js
+magic("el", (el) => el);
+
+// packages/alpinejs/src/magics/index.js
+warnMissingPluginMagic("Focus", "focus", "focus");
+warnMissingPluginMagic("Persist", "persist", "persist");
+function warnMissingPluginMagic(name, magicName, slug) {
+  magic(magicName, (el) => warn(`You can't use [$${directiveName}] without first installing the "${name}" plugin here: https://alpine.dev/plugins/${slug}`, el));
+}
+
+// packages/alpinejs/src/directives/x-modelable.js
+directive("modelable", (el, {expression}, {effect: effect3, evaluateLater: evaluateLater2}) => {
+  let func = evaluateLater2(expression);
+  let innerGet = () => {
+    let result;
+    func((i) => result = i);
+    return result;
+  };
+  let evaluateInnerSet = evaluateLater2(`${expression} = __placeholder`);
+  let innerSet = (val) => evaluateInnerSet(() => {
+  }, {scope: {__placeholder: val}});
+  let initialValue = innerGet();
+  innerSet(initialValue);
+  queueMicrotask(() => {
+    if (!el._x_model)
+      return;
+    el._x_removeModelListeners["default"]();
+    let outerGet = el._x_model.get;
+    let outerSet = el._x_model.set;
+    effect3(() => innerSet(outerGet()));
+    effect3(() => outerSet(innerGet()));
+  });
+});
+
+// packages/alpinejs/src/directives/x-teleport.js
+directive("teleport", (el, {expression}, {cleanup: cleanup2}) => {
+  if (el.tagName.toLowerCase() !== "template")
+    warn("x-teleport can only be used on a <template> tag", el);
+  let target = document.querySelector(expression);
+  if (!target)
+    warn(`Cannot find x-teleport element for selector: "${expression}"`);
+  let clone2 = el.content.cloneNode(true).firstElementChild;
+  el._x_teleport = clone2;
+  clone2._x_teleportBack = el;
+  if (el._x_forwardEvents) {
+    el._x_forwardEvents.forEach((eventName) => {
+      clone2.addEventListener(eventName, (e) => {
+        e.stopPropagation();
+        el.dispatchEvent(new e.constructor(e.type, e));
+      });
+    });
+  }
+  addScopeToNode(clone2, {}, el);
+  mutateDom(() => {
+    target.appendChild(clone2);
+    initTree(clone2);
+    clone2._x_ignore = true;
+  });
+  cleanup2(() => clone2.remove());
+});
+
+// packages/alpinejs/src/directives/x-ignore.js
+var handler = () => {
+};
+handler.inline = (el, {modifiers}, {cleanup: cleanup2}) => {
+  modifiers.includes("self") ? el._x_ignoreSelf = true : el._x_ignore = true;
+  cleanup2(() => {
+    modifiers.includes("self") ? delete el._x_ignoreSelf : delete el._x_ignore;
+  });
+};
+directive("ignore", handler);
+
+// packages/alpinejs/src/directives/x-effect.js
+directive("effect", (el, {expression}, {effect: effect3}) => effect3(evaluateLater(el, expression)));
+
+// packages/alpinejs/src/utils/on.js
+function on(el, event, modifiers, callback) {
+  let listenerTarget = el;
+  let handler3 = (e) => callback(e);
+  let options = {};
+  let wrapHandler = (callback2, wrapper) => (e) => wrapper(callback2, e);
+  if (modifiers.includes("dot"))
+    event = dotSyntax(event);
+  if (modifiers.includes("camel"))
+    event = camelCase2(event);
+  if (modifiers.includes("passive"))
+    options.passive = true;
+  if (modifiers.includes("capture"))
+    options.capture = true;
+  if (modifiers.includes("window"))
+    listenerTarget = window;
+  if (modifiers.includes("document"))
+    listenerTarget = document;
+  if (modifiers.includes("prevent"))
+    handler3 = wrapHandler(handler3, (next, e) => {
+      e.preventDefault();
+      next(e);
+    });
+  if (modifiers.includes("stop"))
+    handler3 = wrapHandler(handler3, (next, e) => {
+      e.stopPropagation();
+      next(e);
+    });
+  if (modifiers.includes("self"))
+    handler3 = wrapHandler(handler3, (next, e) => {
+      e.target === el && next(e);
+    });
+  if (modifiers.includes("away") || modifiers.includes("outside")) {
+    listenerTarget = document;
+    handler3 = wrapHandler(handler3, (next, e) => {
+      if (el.contains(e.target))
+        return;
+      if (e.target.isConnected === false)
+        return;
+      if (el.offsetWidth < 1 && el.offsetHeight < 1)
+        return;
+      if (el._x_isShown === false)
+        return;
+      next(e);
+    });
+  }
+  if (modifiers.includes("once")) {
+    handler3 = wrapHandler(handler3, (next, e) => {
+      next(e);
+      listenerTarget.removeEventListener(event, handler3, options);
+    });
+  }
+  handler3 = wrapHandler(handler3, (next, e) => {
+    if (isKeyEvent(event)) {
+      if (isListeningForASpecificKeyThatHasntBeenPressed(e, modifiers)) {
+        return;
+      }
+    }
+    next(e);
+  });
+  if (modifiers.includes("debounce")) {
+    let nextModifier = modifiers[modifiers.indexOf("debounce") + 1] || "invalid-wait";
+    let wait = isNumeric(nextModifier.split("ms")[0]) ? Number(nextModifier.split("ms")[0]) : 250;
+    handler3 = debounce(handler3, wait);
+  }
+  if (modifiers.includes("throttle")) {
+    let nextModifier = modifiers[modifiers.indexOf("throttle") + 1] || "invalid-wait";
+    let wait = isNumeric(nextModifier.split("ms")[0]) ? Number(nextModifier.split("ms")[0]) : 250;
+    handler3 = throttle(handler3, wait);
+  }
+  listenerTarget.addEventListener(event, handler3, options);
+  return () => {
+    listenerTarget.removeEventListener(event, handler3, options);
+  };
+}
+function dotSyntax(subject) {
+  return subject.replace(/-/g, ".");
+}
+function camelCase2(subject) {
+  return subject.toLowerCase().replace(/-(\w)/g, (match, char) => char.toUpperCase());
+}
+function isNumeric(subject) {
+  return !Array.isArray(subject) && !isNaN(subject);
+}
+function kebabCase2(subject) {
+  return subject.replace(/([a-z])([A-Z])/g, "$1-$2").replace(/[_\s]/, "-").toLowerCase();
+}
+function isKeyEvent(event) {
+  return ["keydown", "keyup"].includes(event);
+}
+function isListeningForASpecificKeyThatHasntBeenPressed(e, modifiers) {
+  let keyModifiers = modifiers.filter((i) => {
+    return !["window", "document", "prevent", "stop", "once"].includes(i);
+  });
+  if (keyModifiers.includes("debounce")) {
+    let debounceIndex = keyModifiers.indexOf("debounce");
+    keyModifiers.splice(debounceIndex, isNumeric((keyModifiers[debounceIndex + 1] || "invalid-wait").split("ms")[0]) ? 2 : 1);
+  }
+  if (keyModifiers.length === 0)
+    return false;
+  if (keyModifiers.length === 1 && keyToModifiers(e.key).includes(keyModifiers[0]))
+    return false;
+  const systemKeyModifiers = ["ctrl", "shift", "alt", "meta", "cmd", "super"];
+  const selectedSystemKeyModifiers = systemKeyModifiers.filter((modifier) => keyModifiers.includes(modifier));
+  keyModifiers = keyModifiers.filter((i) => !selectedSystemKeyModifiers.includes(i));
+  if (selectedSystemKeyModifiers.length > 0) {
+    const activelyPressedKeyModifiers = selectedSystemKeyModifiers.filter((modifier) => {
+      if (modifier === "cmd" || modifier === "super")
+        modifier = "meta";
+      return e[`${modifier}Key`];
+    });
+    if (activelyPressedKeyModifiers.length === selectedSystemKeyModifiers.length) {
+      if (keyToModifiers(e.key).includes(keyModifiers[0]))
+        return false;
+    }
+  }
+  return true;
+}
+function keyToModifiers(key) {
+  if (!key)
+    return [];
+  key = kebabCase2(key);
+  let modifierToKeyMap = {
+    ctrl: "control",
+    slash: "/",
+    space: "-",
+    spacebar: "-",
+    cmd: "meta",
+    esc: "escape",
+    up: "arrow-up",
+    down: "arrow-down",
+    left: "arrow-left",
+    right: "arrow-right",
+    period: ".",
+    equal: "="
+  };
+  modifierToKeyMap[key] = key;
+  return Object.keys(modifierToKeyMap).map((modifier) => {
+    if (modifierToKeyMap[modifier] === key)
+      return modifier;
+  }).filter((modifier) => modifier);
+}
+
+// packages/alpinejs/src/directives/x-model.js
+directive("model", (el, {modifiers, expression}, {effect: effect3, cleanup: cleanup2}) => {
+  let evaluate2 = evaluateLater(el, expression);
+  let assignmentExpression = `${expression} = rightSideOfExpression($event, ${expression})`;
+  let evaluateAssignment = evaluateLater(el, assignmentExpression);
+  var event = el.tagName.toLowerCase() === "select" || ["checkbox", "radio"].includes(el.type) || modifiers.includes("lazy") ? "change" : "input";
+  let assigmentFunction = generateAssignmentFunction(el, modifiers, expression);
+  let removeListener = on(el, event, modifiers, (e) => {
+    evaluateAssignment(() => {
+    }, {scope: {
+      $event: e,
+      rightSideOfExpression: assigmentFunction
+    }});
+  });
+  if (!el._x_removeModelListeners)
+    el._x_removeModelListeners = {};
+  el._x_removeModelListeners["default"] = removeListener;
+  cleanup2(() => el._x_removeModelListeners["default"]());
+  let evaluateSetModel = evaluateLater(el, `${expression} = __placeholder`);
+  el._x_model = {
+    get() {
+      let result;
+      evaluate2((value) => result = value);
+      return result;
+    },
+    set(value) {
+      evaluateSetModel(() => {
+      }, {scope: {__placeholder: value}});
+    }
+  };
+  el._x_forceModelUpdate = () => {
+    evaluate2((value) => {
+      if (value === void 0 && expression.match(/\./))
+        value = "";
+      window.fromModel = true;
+      mutateDom(() => bind(el, "value", value));
+      delete window.fromModel;
+    });
+  };
+  effect3(() => {
+    if (modifiers.includes("unintrusive") && document.activeElement.isSameNode(el))
+      return;
+    el._x_forceModelUpdate();
+  });
+});
+function generateAssignmentFunction(el, modifiers, expression) {
+  if (el.type === "radio") {
+    mutateDom(() => {
+      if (!el.hasAttribute("name"))
+        el.setAttribute("name", expression);
+    });
+  }
+  return (event, currentValue) => {
+    return mutateDom(() => {
+      if (event instanceof CustomEvent && event.detail !== void 0) {
+        return event.detail || event.target.value;
+      } else if (el.type === "checkbox") {
+        if (Array.isArray(currentValue)) {
+          let newValue = modifiers.includes("number") ? safeParseNumber(event.target.value) : event.target.value;
+          return event.target.checked ? currentValue.concat([newValue]) : currentValue.filter((el2) => !checkedAttrLooseCompare2(el2, newValue));
+        } else {
+          return event.target.checked;
+        }
+      } else if (el.tagName.toLowerCase() === "select" && el.multiple) {
+        return modifiers.includes("number") ? Array.from(event.target.selectedOptions).map((option) => {
+          let rawValue = option.value || option.text;
+          return safeParseNumber(rawValue);
+        }) : Array.from(event.target.selectedOptions).map((option) => {
+          return option.value || option.text;
+        });
+      } else {
+        let rawValue = event.target.value;
+        return modifiers.includes("number") ? safeParseNumber(rawValue) : modifiers.includes("trim") ? rawValue.trim() : rawValue;
+      }
+    });
+  };
+}
+function safeParseNumber(rawValue) {
+  let number = rawValue ? parseFloat(rawValue) : null;
+  return isNumeric2(number) ? number : rawValue;
+}
+function checkedAttrLooseCompare2(valueA, valueB) {
+  return valueA == valueB;
+}
+function isNumeric2(subject) {
+  return !Array.isArray(subject) && !isNaN(subject);
+}
+
+// packages/alpinejs/src/directives/x-cloak.js
+directive("cloak", (el) => queueMicrotask(() => mutateDom(() => el.removeAttribute(prefix("cloak")))));
+
+// packages/alpinejs/src/directives/x-init.js
+addInitSelector(() => `[${prefix("init")}]`);
+directive("init", skipDuringClone((el, {expression}, {evaluate: evaluate2}) => {
+  if (typeof expression === "string") {
+    return !!expression.trim() && evaluate2(expression, {}, false);
+  }
+  return evaluate2(expression, {}, false);
+}));
+
+// packages/alpinejs/src/directives/x-text.js
+directive("text", (el, {expression}, {effect: effect3, evaluateLater: evaluateLater2}) => {
+  let evaluate2 = evaluateLater2(expression);
+  effect3(() => {
+    evaluate2((value) => {
+      mutateDom(() => {
+        el.textContent = value;
+      });
+    });
+  });
+});
+
+// packages/alpinejs/src/directives/x-html.js
+directive("html", (el, {expression}, {effect: effect3, evaluateLater: evaluateLater2}) => {
+  let evaluate2 = evaluateLater2(expression);
+  effect3(() => {
+    evaluate2((value) => {
+      mutateDom(() => {
+        el.innerHTML = value;
+        el._x_ignoreSelf = true;
+        initTree(el);
+        delete el._x_ignoreSelf;
+      });
+    });
+  });
+});
+
+// packages/alpinejs/src/directives/x-bind.js
+mapAttributes(startingWith(":", into(prefix("bind:"))));
+directive("bind", (el, {value, modifiers, expression, original}, {effect: effect3}) => {
+  if (!value) {
+    return applyBindingsObject(el, expression, original, effect3);
+  }
+  if (value === "key")
+    return storeKeyForXFor(el, expression);
+  let evaluate2 = evaluateLater(el, expression);
+  effect3(() => evaluate2((result) => {
+    if (result === void 0 && expression.match(/\./))
+      result = "";
+    mutateDom(() => bind(el, value, result, modifiers));
+  }));
+});
+function applyBindingsObject(el, expression, original, effect3) {
+  let bindingProviders = {};
+  injectBindingProviders(bindingProviders);
+  let getBindings = evaluateLater(el, expression);
+  let cleanupRunners = [];
+  while (cleanupRunners.length)
+    cleanupRunners.pop()();
+  getBindings((bindings) => {
+    let attributes = Object.entries(bindings).map(([name, value]) => ({name, value}));
+    let staticAttributes = attributesOnly(attributes);
+    attributes = attributes.map((attribute) => {
+      if (staticAttributes.find((attr) => attr.name === attribute.name)) {
+        return {
+          name: `x-bind:${attribute.name}`,
+          value: `"${attribute.value}"`
+        };
+      }
+      return attribute;
+    });
+    directives(el, attributes, original).map((handle) => {
+      cleanupRunners.push(handle.runCleanups);
+      handle();
+    });
+  }, {scope: bindingProviders});
+}
+function storeKeyForXFor(el, expression) {
+  el._x_keyExpression = expression;
+}
+
+// packages/alpinejs/src/directives/x-data.js
+addRootSelector(() => `[${prefix("data")}]`);
+directive("data", skipDuringClone((el, {expression}, {cleanup: cleanup2}) => {
+  expression = expression === "" ? "{}" : expression;
+  let magicContext = {};
+  injectMagics(magicContext, el);
+  let dataProviderContext = {};
+  injectDataProviders(dataProviderContext, magicContext);
+  let data2 = evaluate(el, expression, {scope: dataProviderContext});
+  if (data2 === void 0)
+    data2 = {};
+  injectMagics(data2, el);
+  let reactiveData = reactive(data2);
+  initInterceptors(reactiveData);
+  let undo = addScopeToNode(el, reactiveData);
+  reactiveData["init"] && evaluate(el, reactiveData["init"]);
+  cleanup2(() => {
+    reactiveData["destroy"] && evaluate(el, reactiveData["destroy"]);
+    undo();
+  });
+}));
+
+// packages/alpinejs/src/directives/x-show.js
+directive("show", (el, {modifiers, expression}, {effect: effect3}) => {
+  let evaluate2 = evaluateLater(el, expression);
+  if (!el._x_doHide)
+    el._x_doHide = () => {
+      mutateDom(() => el.style.display = "none");
+    };
+  if (!el._x_doShow)
+    el._x_doShow = () => {
+      mutateDom(() => {
+        if (el.style.length === 1 && el.style.display === "none") {
+          el.removeAttribute("style");
+        } else {
+          el.style.removeProperty("display");
+        }
+      });
+    };
+  let hide = () => {
+    el._x_doHide();
+    el._x_isShown = false;
+  };
+  let show = () => {
+    el._x_doShow();
+    el._x_isShown = true;
+  };
+  let clickAwayCompatibleShow = () => setTimeout(show);
+  let toggle = once((value) => value ? show() : hide(), (value) => {
+    if (typeof el._x_toggleAndCascadeWithTransitions === "function") {
+      el._x_toggleAndCascadeWithTransitions(el, value, show, hide);
+    } else {
+      value ? clickAwayCompatibleShow() : hide();
+    }
+  });
+  let oldValue;
+  let firstTime = true;
+  effect3(() => evaluate2((value) => {
+    if (!firstTime && value === oldValue)
+      return;
+    if (modifiers.includes("immediate"))
+      value ? clickAwayCompatibleShow() : hide();
+    toggle(value);
+    oldValue = value;
+    firstTime = false;
+  }));
+});
+
+// packages/alpinejs/src/directives/x-for.js
+directive("for", (el, {expression}, {effect: effect3, cleanup: cleanup2}) => {
+  let iteratorNames = parseForExpression(expression);
+  let evaluateItems = evaluateLater(el, iteratorNames.items);
+  let evaluateKey = evaluateLater(el, el._x_keyExpression || "index");
+  el._x_prevKeys = [];
+  el._x_lookup = {};
+  effect3(() => loop(el, iteratorNames, evaluateItems, evaluateKey));
+  cleanup2(() => {
+    Object.values(el._x_lookup).forEach((el2) => el2.remove());
+    delete el._x_prevKeys;
+    delete el._x_lookup;
+  });
+});
+function loop(el, iteratorNames, evaluateItems, evaluateKey) {
+  let isObject2 = (i) => typeof i === "object" && !Array.isArray(i);
+  let templateEl = el;
+  evaluateItems((items) => {
+    if (isNumeric3(items) && items >= 0) {
+      items = Array.from(Array(items).keys(), (i) => i + 1);
+    }
+    if (items === void 0)
+      items = [];
+    let lookup = el._x_lookup;
+    let prevKeys = el._x_prevKeys;
+    let scopes = [];
+    let keys = [];
+    if (isObject2(items)) {
+      items = Object.entries(items).map(([key, value]) => {
+        let scope2 = getIterationScopeVariables(iteratorNames, value, key, items);
+        evaluateKey((value2) => keys.push(value2), {scope: {index: key, ...scope2}});
+        scopes.push(scope2);
+      });
+    } else {
+      for (let i = 0; i < items.length; i++) {
+        let scope2 = getIterationScopeVariables(iteratorNames, items[i], i, items);
+        evaluateKey((value) => keys.push(value), {scope: {index: i, ...scope2}});
+        scopes.push(scope2);
+      }
+    }
+    let adds = [];
+    let moves = [];
+    let removes = [];
+    let sames = [];
+    for (let i = 0; i < prevKeys.length; i++) {
+      let key = prevKeys[i];
+      if (keys.indexOf(key) === -1)
+        removes.push(key);
+    }
+    prevKeys = prevKeys.filter((key) => !removes.includes(key));
+    let lastKey = "template";
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i];
+      let prevIndex = prevKeys.indexOf(key);
+      if (prevIndex === -1) {
+        prevKeys.splice(i, 0, key);
+        adds.push([lastKey, i]);
+      } else if (prevIndex !== i) {
+        let keyInSpot = prevKeys.splice(i, 1)[0];
+        let keyForSpot = prevKeys.splice(prevIndex - 1, 1)[0];
+        prevKeys.splice(i, 0, keyForSpot);
+        prevKeys.splice(prevIndex, 0, keyInSpot);
+        moves.push([keyInSpot, keyForSpot]);
+      } else {
+        sames.push(key);
+      }
+      lastKey = key;
+    }
+    for (let i = 0; i < removes.length; i++) {
+      let key = removes[i];
+      if (!!lookup[key]._x_effects) {
+        lookup[key]._x_effects.forEach(dequeueJob);
+      }
+      lookup[key].remove();
+      lookup[key] = null;
+      delete lookup[key];
+    }
+    for (let i = 0; i < moves.length; i++) {
+      let [keyInSpot, keyForSpot] = moves[i];
+      let elInSpot = lookup[keyInSpot];
+      let elForSpot = lookup[keyForSpot];
+      let marker = document.createElement("div");
+      mutateDom(() => {
+        elForSpot.after(marker);
+        elInSpot.after(elForSpot);
+        elForSpot._x_currentIfEl && elForSpot.after(elForSpot._x_currentIfEl);
+        marker.before(elInSpot);
+        elInSpot._x_currentIfEl && elInSpot.after(elInSpot._x_currentIfEl);
+        marker.remove();
+      });
+      refreshScope(elForSpot, scopes[keys.indexOf(keyForSpot)]);
+    }
+    for (let i = 0; i < adds.length; i++) {
+      let [lastKey2, index] = adds[i];
+      let lastEl = lastKey2 === "template" ? templateEl : lookup[lastKey2];
+      if (lastEl._x_currentIfEl)
+        lastEl = lastEl._x_currentIfEl;
+      let scope2 = scopes[index];
+      let key = keys[index];
+      let clone2 = document.importNode(templateEl.content, true).firstElementChild;
+      addScopeToNode(clone2, reactive(scope2), templateEl);
+      mutateDom(() => {
+        lastEl.after(clone2);
+        initTree(clone2);
+      });
+      if (typeof key === "object") {
+        warn("x-for key cannot be an object, it must be a string or an integer", templateEl);
+      }
+      lookup[key] = clone2;
+    }
+    for (let i = 0; i < sames.length; i++) {
+      refreshScope(lookup[sames[i]], scopes[keys.indexOf(sames[i])]);
+    }
+    templateEl._x_prevKeys = keys;
+  });
+}
+function parseForExpression(expression) {
+  let forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+  let stripParensRE = /^\s*\(|\)\s*$/g;
+  let forAliasRE = /([\s\S]*?)\s+(?:in|of)\s+([\s\S]*)/;
+  let inMatch = expression.match(forAliasRE);
+  if (!inMatch)
+    return;
+  let res = {};
+  res.items = inMatch[2].trim();
+  let item = inMatch[1].replace(stripParensRE, "").trim();
+  let iteratorMatch = item.match(forIteratorRE);
+  if (iteratorMatch) {
+    res.item = item.replace(forIteratorRE, "").trim();
+    res.index = iteratorMatch[1].trim();
+    if (iteratorMatch[2]) {
+      res.collection = iteratorMatch[2].trim();
+    }
+  } else {
+    res.item = item;
+  }
+  return res;
+}
+function getIterationScopeVariables(iteratorNames, item, index, items) {
+  let scopeVariables = {};
+  if (/^\[.*\]$/.test(iteratorNames.item) && Array.isArray(item)) {
+    let names = iteratorNames.item.replace("[", "").replace("]", "").split(",").map((i) => i.trim());
+    names.forEach((name, i) => {
+      scopeVariables[name] = item[i];
+    });
+  } else if (/^\{.*\}$/.test(iteratorNames.item) && !Array.isArray(item) && typeof item === "object") {
+    let names = iteratorNames.item.replace("{", "").replace("}", "").split(",").map((i) => i.trim());
+    names.forEach((name) => {
+      scopeVariables[name] = item[name];
+    });
+  } else {
+    scopeVariables[iteratorNames.item] = item;
+  }
+  if (iteratorNames.index)
+    scopeVariables[iteratorNames.index] = index;
+  if (iteratorNames.collection)
+    scopeVariables[iteratorNames.collection] = items;
+  return scopeVariables;
+}
+function isNumeric3(subject) {
+  return !Array.isArray(subject) && !isNaN(subject);
+}
+
+// packages/alpinejs/src/directives/x-ref.js
+function handler2() {
+}
+handler2.inline = (el, {expression}, {cleanup: cleanup2}) => {
+  let root = closestRoot(el);
+  if (!root._x_refs)
+    root._x_refs = {};
+  root._x_refs[expression] = el;
+  cleanup2(() => delete root._x_refs[expression]);
+};
+directive("ref", handler2);
+
+// packages/alpinejs/src/directives/x-if.js
+directive("if", (el, {expression}, {effect: effect3, cleanup: cleanup2}) => {
+  let evaluate2 = evaluateLater(el, expression);
+  let show = () => {
+    if (el._x_currentIfEl)
+      return el._x_currentIfEl;
+    let clone2 = el.content.cloneNode(true).firstElementChild;
+    addScopeToNode(clone2, {}, el);
+    mutateDom(() => {
+      el.after(clone2);
+      initTree(clone2);
+    });
+    el._x_currentIfEl = clone2;
+    el._x_undoIf = () => {
+      walk(clone2, (node) => {
+        if (!!node._x_effects) {
+          node._x_effects.forEach(dequeueJob);
+        }
+      });
+      clone2.remove();
+      delete el._x_currentIfEl;
+    };
+    return clone2;
+  };
+  let hide = () => {
+    if (!el._x_undoIf)
+      return;
+    el._x_undoIf();
+    delete el._x_undoIf;
+  };
+  effect3(() => evaluate2((value) => {
+    value ? show() : hide();
+  }));
+  cleanup2(() => el._x_undoIf && el._x_undoIf());
+});
+
+// packages/alpinejs/src/directives/x-id.js
+directive("id", (el, {expression}, {evaluate: evaluate2}) => {
+  let names = evaluate2(expression);
+  names.forEach((name) => setIdRoot(el, name));
+});
+
+// packages/alpinejs/src/directives/x-on.js
+mapAttributes(startingWith("@", into(prefix("on:"))));
+directive("on", skipDuringClone((el, {value, modifiers, expression}, {cleanup: cleanup2}) => {
+  let evaluate2 = expression ? evaluateLater(el, expression) : () => {
+  };
+  if (el.tagName.toLowerCase() === "template") {
+    if (!el._x_forwardEvents)
+      el._x_forwardEvents = [];
+    if (!el._x_forwardEvents.includes(value))
+      el._x_forwardEvents.push(value);
+  }
+  let removeListener = on(el, value, modifiers, (e) => {
+    evaluate2(() => {
+    }, {scope: {$event: e}, params: [e]});
+  });
+  cleanup2(() => removeListener());
+}));
+
+// packages/alpinejs/src/directives/index.js
+warnMissingPluginDirective("Collapse", "collapse", "collapse");
+warnMissingPluginDirective("Intersect", "intersect", "intersect");
+warnMissingPluginDirective("Focus", "trap", "focus");
+function warnMissingPluginDirective(name, directiveName2, slug) {
+  directive(directiveName2, (el) => warn(`You can't use [x-${directiveName2}] without first installing the "${name}" plugin here: https://alpine.dev/plugins/${slug}`, el));
+}
+
+// packages/alpinejs/src/index.js
+alpine_default.setEvaluator(normalEvaluator);
+alpine_default.setReactivityEngine({reactive: reactive2, effect: effect2, release: stop, raw: toRaw});
+var src_default = alpine_default;
+
+// packages/alpinejs/builds/module.js
+var module_default = src_default;
+
+
+
+/***/ }),
+
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
   !*** ./node_modules/axios/index.js ***!
@@ -19260,6 +22449,21 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=script&lang=js":
+/*!*****************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=script&lang=js ***!
+  \*****************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=script&lang=js":
 /*!*********************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=script&lang=js ***!
@@ -19295,18 +22499,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SearchIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/CollectionIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/AdjustmentsIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/PrinterIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SearchIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/CollectionIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/AdjustmentsIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/PrinterIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/ArrowNarrowRightIcon.js");
+/* harmony import */ var _AddCategory_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddCategory.vue */ "./resources/js/components/AddCategory.vue");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  components: {
-    SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_0__["default"],
-    CollectionIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__["default"],
-    AdjustmentsIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__["default"],
-    PrinterIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__["default"]
-  }
+  components: _defineProperty({
+    AddCategory: _AddCategory_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__["default"],
+    CollectionIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__["default"],
+    AdjustmentsIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__["default"],
+    PrinterIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__["default"],
+    ArrowNarrowRightIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__["default"]
+  }, "PrinterIcon", _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__["default"])
 });
 
 /***/ }),
@@ -19344,6 +22555,136 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/About.vue?vue&type=script&lang=js":
+/*!******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/About.vue?vue&type=script&lang=js ***!
+  \******************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Analytics.vue?vue&type=script&lang=js":
+/*!**********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Analytics.vue?vue&type=script&lang=js ***!
+  \**********************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Dashboard.vue?vue&type=script&lang=js":
+/*!**********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Dashboard.vue?vue&type=script&lang=js ***!
+  \**********************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Inventory.vue?vue&type=script&lang=js":
+/*!**********************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Inventory.vue?vue&type=script&lang=js ***!
+  \**********************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Stock.vue?vue&type=script&lang=js":
+/*!******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Stock.vue?vue&type=script&lang=js ***!
+  \******************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Users.vue?vue&type=script&lang=js":
+/*!******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Users.vue?vue&type=script&lang=js ***!
+  \******************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+var _withScopeId = function _withScopeId(n) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-7fc2ec24"), n = n(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)(), n;
+};
+
+var _hoisted_1 = {
+  "class": "Main__Wrapper"
+};
+
+var _hoisted_2 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "text",
+    placeholder: "Category Name"
+  }), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    type: "submit"
+  }, "Save")], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_3 = [_hoisted_2];
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_3);
+}
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=template&id=332fccf4&scoped=true":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=template&id=332fccf4&scoped=true ***!
@@ -19373,7 +22714,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_Body = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Body");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SideBar), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Body)])]);
+  var _component_router_view = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-view");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SideBar), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Body)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_view)]);
 }
 
 /***/ }),
@@ -19449,8 +22792,73 @@ var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 var _hoisted_12 = {
   "class": "Right__Side"
 };
+var _hoisted_13 = {
+  "class": "Add__Category"
+};
 
-var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"Table__Container\" data-v-091c0f8d><table class=\"Table\" data-v-091c0f8d><thead class=\"Table__Head\" data-v-091c0f8d><tr class=\"Tr\" data-v-091c0f8d><td data-v-091c0f8d>Product name</td><td data-v-091c0f8d>Total Stock</td><td data-v-091c0f8d>Allocated</td><td data-v-091c0f8d>Available</td><td data-v-091c0f8d>Incoming</td><td data-v-091c0f8d>Cost</td><td data-v-091c0f8d>Price</td></tr></thead><tbody class=\"Table__Body\" data-v-091c0f8d><tr class=\"Tr\" data-v-091c0f8d><td data-v-091c0f8d>School Shoe</td><td data-v-091c0f8d>25</td><td data-v-091c0f8d>0</td><td data-v-091c0f8d>20</td><td data-v-091c0f8d>0</td><td data-v-091c0f8d>25,000</td><td data-v-091c0f8d>30,000</td></tr></tbody></table></div>", 1);
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add Category ");
+
+var _hoisted_15 = {
+  "class": "Table__Container"
+};
+var _hoisted_16 = {
+  "class": "Table"
+};
+
+var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
+    "class": "Table__Head"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
+    "class": "Tr"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Product Category"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Available products"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "View")])], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_18 = {
+  "class": "Table__Body"
+};
+var _hoisted_19 = {
+  "class": "Tr"
+};
+
+var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "School Shoe", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "25", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_22 = {
+  "class": "Contents__Container"
+};
+var _hoisted_23 = {
+  "class": "Heading"
+};
+var _hoisted_24 = {
+  "class": "Left__Side"
+};
+
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Filters ");
+
+var _hoisted_26 = {
+  "class": "Right__Side"
+};
+
+var _hoisted_27 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "Add__Category"
+  }, "Add Product", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"Table__Container\" data-v-091c0f8d><table class=\"Table\" data-v-091c0f8d><thead class=\"Table__Head\" data-v-091c0f8d><tr class=\"Tr\" data-v-091c0f8d><td data-v-091c0f8d>Product name</td><td data-v-091c0f8d>Total Stock</td><td data-v-091c0f8d>Allocated</td><td data-v-091c0f8d>Available</td><td data-v-091c0f8d>Incoming</td><td data-v-091c0f8d>Cost</td><td data-v-091c0f8d>Price</td></tr></thead><tbody class=\"Table__Body\" data-v-091c0f8d><tr class=\"Tr\" data-v-091c0f8d><td data-v-091c0f8d>School Shoe</td><td data-v-091c0f8d>25</td><td data-v-091c0f8d>0</td><td data-v-091c0f8d>20</td><td data-v-091c0f8d>0</td><td data-v-091c0f8d>25,000</td><td data-v-091c0f8d>30,000</td></tr></tbody></table></div>", 1);
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_CollectionIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("CollectionIcon");
@@ -19459,7 +22867,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_AdjustmentsIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AdjustmentsIcon");
 
+  var _component_AddCategory = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AddCategory");
+
   var _component_PrinterIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("PrinterIcon");
+
+  var _component_ArrowNarrowRightIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ArrowNarrowRightIcon");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CollectionIcon, {
     "class": "Icon"
@@ -19467,9 +22879,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "Search__Icon"
   })]), _hoisted_7]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AdjustmentsIcon, {
     "class": "Icon"
-  }), _hoisted_11]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_PrinterIcon, {
+  }), _hoisted_11]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddCategory)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_PrinterIcon, {
     "class": "Icon"
-  })])]), _hoisted_13])]);
+  })])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", _hoisted_19, [_hoisted_20, _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ArrowNarrowRightIcon, {
+    "class": "Icon"
+  })])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AdjustmentsIcon, {
+    "class": "Icon"
+  }), _hoisted_25]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [_hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_PrinterIcon, {
+    "class": "Icon"
+  })])]), _hoisted_28])]);
 }
 
 /***/ }),
@@ -19616,6 +23034,120 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/About.vue?vue&type=template&id=520b5d54":
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/About.vue?vue&type=template&id=520b5d54 ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, "About");
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Analytics.vue?vue&type=template&id=cf647d66":
+/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Analytics.vue?vue&type=template&id=cf647d66 ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, "Analytics");
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Dashboard.vue?vue&type=template&id=82704d4a":
+/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Dashboard.vue?vue&type=template&id=82704d4a ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, "Dashboard");
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Inventory.vue?vue&type=template&id=e4ef37ba":
+/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Inventory.vue?vue&type=template&id=e4ef37ba ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, "Inventory");
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Stock.vue?vue&type=template&id=250b7746":
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Stock.vue?vue&type=template&id=250b7746 ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, "stock");
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Users.vue?vue&type=template&id=91a5db62":
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Users.vue?vue&type=template&id=91a5db62 ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, "users");
+}
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -19624,25 +23156,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
-/* harmony import */ var _components_App_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/App.vue */ "./resources/js/components/App.vue");
-__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); // import Alpine from "alpinejs";
+/* harmony import */ var alpinejs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! alpinejs */ "./node_modules/alpinejs/dist/module.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./router */ "./resources/js/router/index.js");
+/* harmony import */ var _components_App_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/App.vue */ "./resources/js/components/App.vue");
+__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
- // import routes from "./routes";
 
- // import { createRouter, createWebHashHistory } from "vue-router";
-// const router = createRouter({
-//     history: createWebHashHistory(),
-//     linkActiveClass: "",
-//     routes,
-// });
 
-var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)({});
-app.component("App", _components_App_vue__WEBPACK_IMPORTED_MODULE_1__["default"]); // app.use(router);
 
-app.mount("#app"); // window.Alpine = Alpine;
-// Alpine.start();
+var app = (0,vue__WEBPACK_IMPORTED_MODULE_1__.createApp)({});
+app.component("App", _components_App_vue__WEBPACK_IMPORTED_MODULE_3__["default"]);
+app.use(_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
+app.mount("#app");
+window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"];
+alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].start();
 
 /***/ }),
 
@@ -19677,6 +23206,107 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/router/index.js":
+/*!**************************************!*\
+  !*** ./resources/js/router/index.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm-bundler.js");
+/* harmony import */ var _pages_Dashboard_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../pages/Dashboard.vue */ "./resources/js/pages/Dashboard.vue");
+/* harmony import */ var _pages_Stock_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../pages/Stock.vue */ "./resources/js/pages/Stock.vue");
+/* harmony import */ var _pages_Inventory_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../pages/Inventory.vue */ "./resources/js/pages/Inventory.vue");
+/* harmony import */ var _pages_Analytics_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../pages/Analytics.vue */ "./resources/js/pages/Analytics.vue");
+/* harmony import */ var _pages_About_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../pages/About.vue */ "./resources/js/pages/About.vue");
+/* harmony import */ var _pages_Users_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../pages/Users.vue */ "./resources/js/pages/Users.vue");
+/* provided dependency */ var process = __webpack_require__(/*! process/browser.js */ "./node_modules/process/browser.js");
+
+
+
+
+
+
+
+var routes = [{
+  path: "/",
+  name: "dashboard",
+  component: _pages_Dashboard_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+  meta: {
+    title: "Dashboard"
+  }
+}, {
+  path: "/inventory",
+  name: "inventory",
+  component: _pages_Inventory_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+  meta: {
+    title: "Inventory"
+  }
+}, {
+  path: "/stock",
+  name: "stock",
+  component: _pages_Stock_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+  meta: {
+    title: "Stock"
+  }
+}, {
+  path: "/analytics",
+  name: "analytics",
+  component: _pages_Analytics_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
+  meta: {
+    title: "Analytics"
+  }
+}, {
+  path: "/users",
+  name: "users",
+  component: _pages_Users_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+  meta: {
+    title: "Users"
+  }
+}, {
+  path: "/about",
+  name: "about",
+  component: _pages_About_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
+  meta: {
+    title: "About"
+  }
+}];
+var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_6__.createRouter)({
+  history: (0,vue_router__WEBPACK_IMPORTED_MODULE_6__.createWebHistory)(process.env.BASE_URL),
+  routes: routes
+});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-7fc2ec24] {\n  position: absolute;\n  top: 20px;\n  right: 50px;\n  background-color: #fff;\n  border-radius: 3px;\n  padding: 10px 0px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper form input[data-v-7fc2ec24] {\n  width: 100%;\n  border: none;\n  border-bottom: 1px solid rgb(212, 212, 212);\n  font-size: 15px;\n  outline: 0;\n}\n.Main__Wrapper form button[data-v-7fc2ec24] {\n  padding: 2px 10px;\n  margin: 5px;\n  border-radius: 5px;\n  color: rgb(163, 163, 163);\n  border: 1px solid rgb(212, 212, 212);\n}\n.Main__Wrapper form button[data-v-7fc2ec24]:hover {\n  color: #fff;\n  background-color: rgb(30, 41, 59);\n}", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=style&index=0&id=332fccf4&lang=scss&scoped=true":
 /*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=style&index=0&id=332fccf4&lang=scss&scoped=true ***!
@@ -19694,7 +23324,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-332fccf4] {\n  widows: 100%;\n  display: flex;\n}\n.Main__Wrapper .Page__Content[data-v-332fccf4] {\n  flex: 0.8;\n  background: gray;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-332fccf4] {\n  widows: 100%;\n  display: flex;\n}\n.Main__Wrapper .Page__Content[data-v-332fccf4] {\n  flex: 0.8;\n  background: rgb(245, 245, 245);\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -19718,7 +23348,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-091c0f8d] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-091c0f8d] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-091c0f8d] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-091c0f8d] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-091c0f8d] {\n  display: flex;\n  align-items: center;\n  background-color: gray;\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-091c0f8d] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-091c0f8d]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-091c0f8d] {\n  padding: 5px 20px;\n  height: 30px;\n  color: blue;\n}\n.Main__Wrapper .Contents__Container[data-v-091c0f8d] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-091c0f8d] {\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-091c0f8d] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-091c0f8d] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-091c0f8d] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid gray;\n  border-radius: 3px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-091c0f8d] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-091c0f8d] {\n  font-weight: 500;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-091c0f8d] {\n  border-top: 1px solid gray;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-091c0f8d] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-091c0f8d] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-091c0f8d] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-091c0f8d] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-091c0f8d] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-091c0f8d] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-091c0f8d]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-091c0f8d] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-091c0f8d] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-091c0f8d] {\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-091c0f8d] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-091c0f8d] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-091c0f8d] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-091c0f8d] {\n  position: relative;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-091c0f8d]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-091c0f8d] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-091c0f8d] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-091c0f8d] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-091c0f8d] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-091c0f8d] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-091c0f8d] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-091c0f8d] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -19742,7 +23372,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-223abea1] {\n  position: relative;\n  height: 100vh;\n  background-color: rgb(30, 41, 59);\n  flex: 0.2;\n  min-width: 250px;\n  padding: 10px 0;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .Dzuka__Logo[data-v-223abea1] {\n  padding: 25px;\n  color: #fff;\n}\n.Main__Wrapper .Nav__Options[data-v-223abea1] {\n  display: flex;\n  flex-direction: column;\n  margin-top: 20px;\n}\n.Main__Wrapper .Nav__Options .Nav__Option[data-v-223abea1] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  padding: 15px 25px;\n  color: rgb(100, 116, 139);\n  cursor: pointer;\n}\n.Main__Wrapper .Nav__Options .Nav__Option[data-v-223abea1]:hover {\n  background: rgb(15, 23, 42);\n  color: rgb(29, 78, 216);\n}\n.Main__Wrapper .Nav__Options .Nav__Option .Icon[data-v-223abea1] {\n  height: 25px;\n}\n.Main__Wrapper .Nav__Options .Nav__Option .Title[data-v-223abea1] {\n  color: rgb(203, 213, 225);\n}\n.Main__Wrapper .Nav__Options .Nav__Option .Title[data-v-223abea1]:hover {\n  color: #fff;\n}\n.Main__Wrapper .Sign__Out[data-v-223abea1] {\n  position: absolute;\n  display: grid;\n  place-items: center;\n  background: rgb(15, 23, 42);\n  padding: 30px;\n  bottom: 0;\n  width: 100%;\n}\n.Main__Wrapper .Sign__Out .Icon[data-v-223abea1] {\n  -o-object-fit: contain;\n     object-fit: contain;\n  height: 25px;\n  color: rgb(29, 78, 216);\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-223abea1] {\n  position: relative;\n  height: 100vh;\n  background-color: rgb(30, 41, 59);\n  flex: 0.2;\n  min-width: 250px;\n  padding: 10px 0;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .Dzuka__Logo[data-v-223abea1] {\n  padding: 25px;\n  color: #fff;\n  font-weight: 800;\n  font-size: 20px;\n  cursor: pointer;\n}\n.Main__Wrapper .Nav__Options[data-v-223abea1] {\n  display: flex;\n  flex-direction: column;\n  margin-top: 10px;\n}\n.Main__Wrapper .Nav__Options .Nav__Option[data-v-223abea1] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  padding: 15px 25px;\n  color: rgb(100, 116, 139);\n  cursor: pointer;\n}\n.Main__Wrapper .Nav__Options .Nav__Option[data-v-223abea1]:hover {\n  background: rgb(15, 23, 42);\n  color: rgb(29, 78, 216);\n}\n.Main__Wrapper .Nav__Options .Nav__Option .Icon[data-v-223abea1] {\n  height: 25px;\n}\n.Main__Wrapper .Nav__Options .Nav__Option .Title[data-v-223abea1] {\n  color: rgb(203, 213, 225);\n}\n.Main__Wrapper .Nav__Options .Nav__Option .Title[data-v-223abea1]:hover {\n  color: #fff;\n}\n.Main__Wrapper .Sign__Out[data-v-223abea1] {\n  position: absolute;\n  display: grid;\n  place-items: center;\n  background: rgb(15, 23, 42);\n  padding: 30px;\n  bottom: 0;\n  width: 100%;\n}\n.Main__Wrapper .Sign__Out .Icon[data-v-223abea1] {\n  -o-object-fit: contain;\n     object-fit: contain;\n  height: 25px;\n  color: rgb(29, 78, 216);\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -37244,6 +40874,36 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_12_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_12_use_2_node_modules_sass_loader_dist_cjs_js_clonedRuleSet_12_use_3_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_style_index_0_id_7fc2ec24_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!../../../node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_12_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_12_use_2_node_modules_sass_loader_dist_cjs_js_clonedRuleSet_12_use_3_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_style_index_0_id_7fc2ec24_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_12_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_12_use_2_node_modules_sass_loader_dist_cjs_js_clonedRuleSet_12_use_3_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_style_index_0_id_7fc2ec24_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=style&index=0&id=332fccf4&lang=scss&scoped=true":
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/App.vue?vue&type=style&index=0&id=332fccf4&lang=scss&scoped=true ***!
@@ -37635,6 +41295,37 @@ exports["default"] = (sfc, props) => {
 
 /***/ }),
 
+/***/ "./resources/js/components/AddCategory.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/components/AddCategory.vue ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _AddCategory_vue_vue_type_template_id_7fc2ec24_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true */ "./resources/js/components/AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true");
+/* harmony import */ var _AddCategory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddCategory.vue?vue&type=script&lang=js */ "./resources/js/components/AddCategory.vue?vue&type=script&lang=js");
+/* harmony import */ var _AddCategory_vue_vue_type_style_index_0_id_7fc2ec24_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true */ "./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+
+
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_AddCategory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_AddCategory_vue_vue_type_template_id_7fc2ec24_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-7fc2ec24"],['__file',"resources/js/components/AddCategory.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
 /***/ "./resources/js/components/App.vue":
 /*!*****************************************!*\
   !*** ./resources/js/components/App.vue ***!
@@ -37728,6 +41419,190 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./resources/js/pages/About.vue":
+/*!**************************************!*\
+  !*** ./resources/js/pages/About.vue ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _About_vue_vue_type_template_id_520b5d54__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./About.vue?vue&type=template&id=520b5d54 */ "./resources/js/pages/About.vue?vue&type=template&id=520b5d54");
+/* harmony import */ var _About_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./About.vue?vue&type=script&lang=js */ "./resources/js/pages/About.vue?vue&type=script&lang=js");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_About_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_About_vue_vue_type_template_id_520b5d54__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/pages/About.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/pages/Analytics.vue":
+/*!******************************************!*\
+  !*** ./resources/js/pages/Analytics.vue ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Analytics_vue_vue_type_template_id_cf647d66__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Analytics.vue?vue&type=template&id=cf647d66 */ "./resources/js/pages/Analytics.vue?vue&type=template&id=cf647d66");
+/* harmony import */ var _Analytics_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Analytics.vue?vue&type=script&lang=js */ "./resources/js/pages/Analytics.vue?vue&type=script&lang=js");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Analytics_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Analytics_vue_vue_type_template_id_cf647d66__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/pages/Analytics.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/pages/Dashboard.vue":
+/*!******************************************!*\
+  !*** ./resources/js/pages/Dashboard.vue ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Dashboard_vue_vue_type_template_id_82704d4a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=template&id=82704d4a */ "./resources/js/pages/Dashboard.vue?vue&type=template&id=82704d4a");
+/* harmony import */ var _Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=script&lang=js */ "./resources/js/pages/Dashboard.vue?vue&type=script&lang=js");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Dashboard_vue_vue_type_template_id_82704d4a__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/pages/Dashboard.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/pages/Inventory.vue":
+/*!******************************************!*\
+  !*** ./resources/js/pages/Inventory.vue ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Inventory_vue_vue_type_template_id_e4ef37ba__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Inventory.vue?vue&type=template&id=e4ef37ba */ "./resources/js/pages/Inventory.vue?vue&type=template&id=e4ef37ba");
+/* harmony import */ var _Inventory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Inventory.vue?vue&type=script&lang=js */ "./resources/js/pages/Inventory.vue?vue&type=script&lang=js");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Inventory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Inventory_vue_vue_type_template_id_e4ef37ba__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/pages/Inventory.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/pages/Stock.vue":
+/*!**************************************!*\
+  !*** ./resources/js/pages/Stock.vue ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Stock_vue_vue_type_template_id_250b7746__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Stock.vue?vue&type=template&id=250b7746 */ "./resources/js/pages/Stock.vue?vue&type=template&id=250b7746");
+/* harmony import */ var _Stock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Stock.vue?vue&type=script&lang=js */ "./resources/js/pages/Stock.vue?vue&type=script&lang=js");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Stock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Stock_vue_vue_type_template_id_250b7746__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/pages/Stock.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/pages/Users.vue":
+/*!**************************************!*\
+  !*** ./resources/js/pages/Users.vue ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Users_vue_vue_type_template_id_91a5db62__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Users.vue?vue&type=template&id=91a5db62 */ "./resources/js/pages/Users.vue?vue&type=template&id=91a5db62");
+/* harmony import */ var _Users_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Users.vue?vue&type=script&lang=js */ "./resources/js/pages/Users.vue?vue&type=script&lang=js");
+/* harmony import */ var C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_xampp_htdocs_PROJECTS_2222_dzuka_shopping_system_1_4_2022_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Users_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Users_vue_vue_type_template_id_91a5db62__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/pages/Users.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
+/***/ "./resources/js/components/AddCategory.vue?vue&type=script&lang=js":
+/*!*************************************************************************!*\
+  !*** ./resources/js/components/AddCategory.vue?vue&type=script&lang=js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./AddCategory.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/components/App.vue?vue&type=script&lang=js":
 /*!*****************************************************************!*\
   !*** ./resources/js/components/App.vue?vue&type=script&lang=js ***!
@@ -37773,6 +41648,118 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SideBar_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SideBar.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/SideBar.vue?vue&type=script&lang=js");
  
+
+/***/ }),
+
+/***/ "./resources/js/pages/About.vue?vue&type=script&lang=js":
+/*!**************************************************************!*\
+  !*** ./resources/js/pages/About.vue?vue&type=script&lang=js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_About_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_About_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./About.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/About.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/pages/Analytics.vue?vue&type=script&lang=js":
+/*!******************************************************************!*\
+  !*** ./resources/js/pages/Analytics.vue?vue&type=script&lang=js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Analytics_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Analytics_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Analytics.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Analytics.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/pages/Dashboard.vue?vue&type=script&lang=js":
+/*!******************************************************************!*\
+  !*** ./resources/js/pages/Dashboard.vue?vue&type=script&lang=js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Dashboard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Dashboard.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Dashboard.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/pages/Inventory.vue?vue&type=script&lang=js":
+/*!******************************************************************!*\
+  !*** ./resources/js/pages/Inventory.vue?vue&type=script&lang=js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Inventory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Inventory_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Inventory.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Inventory.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/pages/Stock.vue?vue&type=script&lang=js":
+/*!**************************************************************!*\
+  !*** ./resources/js/pages/Stock.vue?vue&type=script&lang=js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Stock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Stock_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Stock.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Stock.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/pages/Users.vue?vue&type=script&lang=js":
+/*!**************************************************************!*\
+  !*** ./resources/js/pages/Users.vue?vue&type=script&lang=js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Users_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Users_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Users.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Users.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/components/AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_template_id_7fc2ec24_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_template_id_7fc2ec24_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=template&id=7fc2ec24&scoped=true");
+
 
 /***/ }),
 
@@ -37824,6 +41811,115 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/pages/About.vue?vue&type=template&id=520b5d54":
+/*!********************************************************************!*\
+  !*** ./resources/js/pages/About.vue?vue&type=template&id=520b5d54 ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_About_vue_vue_type_template_id_520b5d54__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_About_vue_vue_type_template_id_520b5d54__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./About.vue?vue&type=template&id=520b5d54 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/About.vue?vue&type=template&id=520b5d54");
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/Analytics.vue?vue&type=template&id=cf647d66":
+/*!************************************************************************!*\
+  !*** ./resources/js/pages/Analytics.vue?vue&type=template&id=cf647d66 ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Analytics_vue_vue_type_template_id_cf647d66__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Analytics_vue_vue_type_template_id_cf647d66__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Analytics.vue?vue&type=template&id=cf647d66 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Analytics.vue?vue&type=template&id=cf647d66");
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/Dashboard.vue?vue&type=template&id=82704d4a":
+/*!************************************************************************!*\
+  !*** ./resources/js/pages/Dashboard.vue?vue&type=template&id=82704d4a ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Dashboard_vue_vue_type_template_id_82704d4a__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Dashboard_vue_vue_type_template_id_82704d4a__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Dashboard.vue?vue&type=template&id=82704d4a */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Dashboard.vue?vue&type=template&id=82704d4a");
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/Inventory.vue?vue&type=template&id=e4ef37ba":
+/*!************************************************************************!*\
+  !*** ./resources/js/pages/Inventory.vue?vue&type=template&id=e4ef37ba ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Inventory_vue_vue_type_template_id_e4ef37ba__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Inventory_vue_vue_type_template_id_e4ef37ba__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Inventory.vue?vue&type=template&id=e4ef37ba */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Inventory.vue?vue&type=template&id=e4ef37ba");
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/Stock.vue?vue&type=template&id=250b7746":
+/*!********************************************************************!*\
+  !*** ./resources/js/pages/Stock.vue?vue&type=template&id=250b7746 ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Stock_vue_vue_type_template_id_250b7746__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Stock_vue_vue_type_template_id_250b7746__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Stock.vue?vue&type=template&id=250b7746 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Stock.vue?vue&type=template&id=250b7746");
+
+
+/***/ }),
+
+/***/ "./resources/js/pages/Users.vue?vue&type=template&id=91a5db62":
+/*!********************************************************************!*\
+  !*** ./resources/js/pages/Users.vue?vue&type=template&id=91a5db62 ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Users_vue_vue_type_template_id_91a5db62__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Users_vue_vue_type_template_id_91a5db62__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Users.vue?vue&type=template&id=91a5db62 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Users.vue?vue&type=template&id=91a5db62");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true":
+/*!**********************************************************************************************************!*\
+  !*** ./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_12_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_12_use_2_node_modules_sass_loader_dist_cjs_js_clonedRuleSet_12_use_3_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AddCategory_vue_vue_type_style_index_0_id_7fc2ec24_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!../../../node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/AddCategory.vue?vue&type=style&index=0&id=7fc2ec24&lang=scss&scoped=true");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/App.vue?vue&type=style&index=0&id=332fccf4&lang=scss&scoped=true":
 /*!**************************************************************************************************!*\
   !*** ./resources/js/components/App.vue?vue&type=style&index=0&id=332fccf4&lang=scss&scoped=true ***!
@@ -37859,6 +41955,3494 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_12_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_12_use_2_node_modules_sass_loader_dist_cjs_js_clonedRuleSet_12_use_3_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SideBar_vue_vue_type_style_index_0_id_223abea1_lang_scss_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!../../../node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SideBar.vue?vue&type=style&index=0&id=223abea1&lang=scss&scoped=true */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-12.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/components/SideBar.vue?vue&type=style&index=0&id=223abea1&lang=scss&scoped=true");
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-router/dist/vue-router.esm-bundler.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/vue-router/dist/vue-router.esm-bundler.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NavigationFailureType": () => (/* binding */ NavigationFailureType),
+/* harmony export */   "RouterLink": () => (/* binding */ RouterLink),
+/* harmony export */   "RouterView": () => (/* binding */ RouterView),
+/* harmony export */   "START_LOCATION": () => (/* binding */ START_LOCATION_NORMALIZED),
+/* harmony export */   "createMemoryHistory": () => (/* binding */ createMemoryHistory),
+/* harmony export */   "createRouter": () => (/* binding */ createRouter),
+/* harmony export */   "createRouterMatcher": () => (/* binding */ createRouterMatcher),
+/* harmony export */   "createWebHashHistory": () => (/* binding */ createWebHashHistory),
+/* harmony export */   "createWebHistory": () => (/* binding */ createWebHistory),
+/* harmony export */   "isNavigationFailure": () => (/* binding */ isNavigationFailure),
+/* harmony export */   "matchedRouteKey": () => (/* binding */ matchedRouteKey),
+/* harmony export */   "onBeforeRouteLeave": () => (/* binding */ onBeforeRouteLeave),
+/* harmony export */   "onBeforeRouteUpdate": () => (/* binding */ onBeforeRouteUpdate),
+/* harmony export */   "parseQuery": () => (/* binding */ parseQuery),
+/* harmony export */   "routeLocationKey": () => (/* binding */ routeLocationKey),
+/* harmony export */   "routerKey": () => (/* binding */ routerKey),
+/* harmony export */   "routerViewLocationKey": () => (/* binding */ routerViewLocationKey),
+/* harmony export */   "stringifyQuery": () => (/* binding */ stringifyQuery),
+/* harmony export */   "useLink": () => (/* binding */ useLink),
+/* harmony export */   "useRoute": () => (/* binding */ useRoute),
+/* harmony export */   "useRouter": () => (/* binding */ useRouter),
+/* harmony export */   "viewDepthKey": () => (/* binding */ viewDepthKey)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+/* harmony import */ var _vue_devtools_api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @vue/devtools-api */ "./node_modules/@vue/devtools-api/lib/esm/index.js");
+/*!
+  * vue-router v4.0.14
+  * (c) 2022 Eduardo San Martin Morote
+  * @license MIT
+  */
+
+
+
+const hasSymbol = typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol';
+const PolySymbol = (name) => 
+// vr = vue router
+hasSymbol
+    ? Symbol(( true) ? '[vue-router]: ' + name : 0)
+    : (( true) ? '[vue-router]: ' : 0) + name;
+// rvlm = Router View Location Matched
+/**
+ * RouteRecord being rendered by the closest ancestor Router View. Used for
+ * `onBeforeRouteUpdate` and `onBeforeRouteLeave`. rvlm stands for Router View
+ * Location Matched
+ *
+ * @internal
+ */
+const matchedRouteKey = /*#__PURE__*/ PolySymbol(( true) ? 'router view location matched' : 0);
+/**
+ * Allows overriding the router view depth to control which component in
+ * `matched` is rendered. rvd stands for Router View Depth
+ *
+ * @internal
+ */
+const viewDepthKey = /*#__PURE__*/ PolySymbol(( true) ? 'router view depth' : 0);
+/**
+ * Allows overriding the router instance returned by `useRouter` in tests. r
+ * stands for router
+ *
+ * @internal
+ */
+const routerKey = /*#__PURE__*/ PolySymbol(( true) ? 'router' : 0);
+/**
+ * Allows overriding the current route returned by `useRoute` in tests. rl
+ * stands for route location
+ *
+ * @internal
+ */
+const routeLocationKey = /*#__PURE__*/ PolySymbol(( true) ? 'route location' : 0);
+/**
+ * Allows overriding the current route used by router-view. Internally this is
+ * used when the `route` prop is passed.
+ *
+ * @internal
+ */
+const routerViewLocationKey = /*#__PURE__*/ PolySymbol(( true) ? 'router view location' : 0);
+
+const isBrowser = typeof window !== 'undefined';
+
+function isESModule(obj) {
+    return obj.__esModule || (hasSymbol && obj[Symbol.toStringTag] === 'Module');
+}
+const assign = Object.assign;
+function applyToParams(fn, params) {
+    const newParams = {};
+    for (const key in params) {
+        const value = params[key];
+        newParams[key] = Array.isArray(value) ? value.map(fn) : fn(value);
+    }
+    return newParams;
+}
+const noop = () => { };
+
+function warn(msg) {
+    // avoid using ...args as it breaks in older Edge builds
+    const args = Array.from(arguments).slice(1);
+    console.warn.apply(console, ['[Vue Router warn]: ' + msg].concat(args));
+}
+
+const TRAILING_SLASH_RE = /\/$/;
+const removeTrailingSlash = (path) => path.replace(TRAILING_SLASH_RE, '');
+/**
+ * Transforms an URI into a normalized history location
+ *
+ * @param parseQuery
+ * @param location - URI to normalize
+ * @param currentLocation - current absolute location. Allows resolving relative
+ * paths. Must start with `/`. Defaults to `/`
+ * @returns a normalized history location
+ */
+function parseURL(parseQuery, location, currentLocation = '/') {
+    let path, query = {}, searchString = '', hash = '';
+    // Could use URL and URLSearchParams but IE 11 doesn't support it
+    const searchPos = location.indexOf('?');
+    const hashPos = location.indexOf('#', searchPos > -1 ? searchPos : 0);
+    if (searchPos > -1) {
+        path = location.slice(0, searchPos);
+        searchString = location.slice(searchPos + 1, hashPos > -1 ? hashPos : location.length);
+        query = parseQuery(searchString);
+    }
+    if (hashPos > -1) {
+        path = path || location.slice(0, hashPos);
+        // keep the # character
+        hash = location.slice(hashPos, location.length);
+    }
+    // no search and no query
+    path = resolveRelativePath(path != null ? path : location, currentLocation);
+    // empty path means a relative query or hash `?foo=f`, `#thing`
+    return {
+        fullPath: path + (searchString && '?') + searchString + hash,
+        path,
+        query,
+        hash,
+    };
+}
+/**
+ * Stringifies a URL object
+ *
+ * @param stringifyQuery
+ * @param location
+ */
+function stringifyURL(stringifyQuery, location) {
+    const query = location.query ? stringifyQuery(location.query) : '';
+    return location.path + (query && '?') + query + (location.hash || '');
+}
+/**
+ * Strips off the base from the beginning of a location.pathname in a non
+ * case-sensitive way.
+ *
+ * @param pathname - location.pathname
+ * @param base - base to strip off
+ */
+function stripBase(pathname, base) {
+    // no base or base is not found at the beginning
+    if (!base || !pathname.toLowerCase().startsWith(base.toLowerCase()))
+        return pathname;
+    return pathname.slice(base.length) || '/';
+}
+/**
+ * Checks if two RouteLocation are equal. This means that both locations are
+ * pointing towards the same {@link RouteRecord} and that all `params`, `query`
+ * parameters and `hash` are the same
+ *
+ * @param a - first {@link RouteLocation}
+ * @param b - second {@link RouteLocation}
+ */
+function isSameRouteLocation(stringifyQuery, a, b) {
+    const aLastIndex = a.matched.length - 1;
+    const bLastIndex = b.matched.length - 1;
+    return (aLastIndex > -1 &&
+        aLastIndex === bLastIndex &&
+        isSameRouteRecord(a.matched[aLastIndex], b.matched[bLastIndex]) &&
+        isSameRouteLocationParams(a.params, b.params) &&
+        stringifyQuery(a.query) === stringifyQuery(b.query) &&
+        a.hash === b.hash);
+}
+/**
+ * Check if two `RouteRecords` are equal. Takes into account aliases: they are
+ * considered equal to the `RouteRecord` they are aliasing.
+ *
+ * @param a - first {@link RouteRecord}
+ * @param b - second {@link RouteRecord}
+ */
+function isSameRouteRecord(a, b) {
+    // since the original record has an undefined value for aliasOf
+    // but all aliases point to the original record, this will always compare
+    // the original record
+    return (a.aliasOf || a) === (b.aliasOf || b);
+}
+function isSameRouteLocationParams(a, b) {
+    if (Object.keys(a).length !== Object.keys(b).length)
+        return false;
+    for (const key in a) {
+        if (!isSameRouteLocationParamsValue(a[key], b[key]))
+            return false;
+    }
+    return true;
+}
+function isSameRouteLocationParamsValue(a, b) {
+    return Array.isArray(a)
+        ? isEquivalentArray(a, b)
+        : Array.isArray(b)
+            ? isEquivalentArray(b, a)
+            : a === b;
+}
+/**
+ * Check if two arrays are the same or if an array with one single entry is the
+ * same as another primitive value. Used to check query and parameters
+ *
+ * @param a - array of values
+ * @param b - array of values or a single value
+ */
+function isEquivalentArray(a, b) {
+    return Array.isArray(b)
+        ? a.length === b.length && a.every((value, i) => value === b[i])
+        : a.length === 1 && a[0] === b;
+}
+/**
+ * Resolves a relative path that starts with `.`.
+ *
+ * @param to - path location we are resolving
+ * @param from - currentLocation.path, should start with `/`
+ */
+function resolveRelativePath(to, from) {
+    if (to.startsWith('/'))
+        return to;
+    if (( true) && !from.startsWith('/')) {
+        warn(`Cannot resolve a relative location without an absolute path. Trying to resolve "${to}" from "${from}". It should look like "/${from}".`);
+        return to;
+    }
+    if (!to)
+        return from;
+    const fromSegments = from.split('/');
+    const toSegments = to.split('/');
+    let position = fromSegments.length - 1;
+    let toPosition;
+    let segment;
+    for (toPosition = 0; toPosition < toSegments.length; toPosition++) {
+        segment = toSegments[toPosition];
+        // can't go below zero
+        if (position === 1 || segment === '.')
+            continue;
+        if (segment === '..')
+            position--;
+        // found something that is not relative path
+        else
+            break;
+    }
+    return (fromSegments.slice(0, position).join('/') +
+        '/' +
+        toSegments
+            .slice(toPosition - (toPosition === toSegments.length ? 1 : 0))
+            .join('/'));
+}
+
+var NavigationType;
+(function (NavigationType) {
+    NavigationType["pop"] = "pop";
+    NavigationType["push"] = "push";
+})(NavigationType || (NavigationType = {}));
+var NavigationDirection;
+(function (NavigationDirection) {
+    NavigationDirection["back"] = "back";
+    NavigationDirection["forward"] = "forward";
+    NavigationDirection["unknown"] = "";
+})(NavigationDirection || (NavigationDirection = {}));
+/**
+ * Starting location for Histories
+ */
+const START = '';
+// Generic utils
+/**
+ * Normalizes a base by removing any trailing slash and reading the base tag if
+ * present.
+ *
+ * @param base - base to normalize
+ */
+function normalizeBase(base) {
+    if (!base) {
+        if (isBrowser) {
+            // respect <base> tag
+            const baseEl = document.querySelector('base');
+            base = (baseEl && baseEl.getAttribute('href')) || '/';
+            // strip full URL origin
+            base = base.replace(/^\w+:\/\/[^\/]+/, '');
+        }
+        else {
+            base = '/';
+        }
+    }
+    // ensure leading slash when it was removed by the regex above avoid leading
+    // slash with hash because the file could be read from the disk like file://
+    // and the leading slash would cause problems
+    if (base[0] !== '/' && base[0] !== '#')
+        base = '/' + base;
+    // remove the trailing slash so all other method can just do `base + fullPath`
+    // to build an href
+    return removeTrailingSlash(base);
+}
+// remove any character before the hash
+const BEFORE_HASH_RE = /^[^#]+#/;
+function createHref(base, location) {
+    return base.replace(BEFORE_HASH_RE, '#') + location;
+}
+
+function getElementPosition(el, offset) {
+    const docRect = document.documentElement.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    return {
+        behavior: offset.behavior,
+        left: elRect.left - docRect.left - (offset.left || 0),
+        top: elRect.top - docRect.top - (offset.top || 0),
+    };
+}
+const computeScrollPosition = () => ({
+    left: window.pageXOffset,
+    top: window.pageYOffset,
+});
+function scrollToPosition(position) {
+    let scrollToOptions;
+    if ('el' in position) {
+        const positionEl = position.el;
+        const isIdSelector = typeof positionEl === 'string' && positionEl.startsWith('#');
+        /**
+         * `id`s can accept pretty much any characters, including CSS combinators
+         * like `>` or `~`. It's still possible to retrieve elements using
+         * `document.getElementById('~')` but it needs to be escaped when using
+         * `document.querySelector('#\\~')` for it to be valid. The only
+         * requirements for `id`s are them to be unique on the page and to not be
+         * empty (`id=""`). Because of that, when passing an id selector, it should
+         * be properly escaped for it to work with `querySelector`. We could check
+         * for the id selector to be simple (no CSS combinators `+ >~`) but that
+         * would make things inconsistent since they are valid characters for an
+         * `id` but would need to be escaped when using `querySelector`, breaking
+         * their usage and ending up in no selector returned. Selectors need to be
+         * escaped:
+         *
+         * - `#1-thing` becomes `#\31 -thing`
+         * - `#with~symbols` becomes `#with\\~symbols`
+         *
+         * - More information about  the topic can be found at
+         *   https://mathiasbynens.be/notes/html5-id-class.
+         * - Practical example: https://mathiasbynens.be/demo/html5-id
+         */
+        if (( true) && typeof position.el === 'string') {
+            if (!isIdSelector || !document.getElementById(position.el.slice(1))) {
+                try {
+                    const foundEl = document.querySelector(position.el);
+                    if (isIdSelector && foundEl) {
+                        warn(`The selector "${position.el}" should be passed as "el: document.querySelector('${position.el}')" because it starts with "#".`);
+                        // return to avoid other warnings
+                        return;
+                    }
+                }
+                catch (err) {
+                    warn(`The selector "${position.el}" is invalid. If you are using an id selector, make sure to escape it. You can find more information about escaping characters in selectors at https://mathiasbynens.be/notes/css-escapes or use CSS.escape (https://developer.mozilla.org/en-US/docs/Web/API/CSS/escape).`);
+                    // return to avoid other warnings
+                    return;
+                }
+            }
+        }
+        const el = typeof positionEl === 'string'
+            ? isIdSelector
+                ? document.getElementById(positionEl.slice(1))
+                : document.querySelector(positionEl)
+            : positionEl;
+        if (!el) {
+            ( true) &&
+                warn(`Couldn't find element using selector "${position.el}" returned by scrollBehavior.`);
+            return;
+        }
+        scrollToOptions = getElementPosition(el, position);
+    }
+    else {
+        scrollToOptions = position;
+    }
+    if ('scrollBehavior' in document.documentElement.style)
+        window.scrollTo(scrollToOptions);
+    else {
+        window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.pageXOffset, scrollToOptions.top != null ? scrollToOptions.top : window.pageYOffset);
+    }
+}
+function getScrollKey(path, delta) {
+    const position = history.state ? history.state.position - delta : -1;
+    return position + path;
+}
+const scrollPositions = new Map();
+function saveScrollPosition(key, scrollPosition) {
+    scrollPositions.set(key, scrollPosition);
+}
+function getSavedScrollPosition(key) {
+    const scroll = scrollPositions.get(key);
+    // consume it so it's not used again
+    scrollPositions.delete(key);
+    return scroll;
+}
+// TODO: RFC about how to save scroll position
+/**
+ * ScrollBehavior instance used by the router to compute and restore the scroll
+ * position when navigating.
+ */
+// export interface ScrollHandler<ScrollPositionEntry extends HistoryStateValue, ScrollPosition extends ScrollPositionEntry> {
+//   // returns a scroll position that can be saved in history
+//   compute(): ScrollPositionEntry
+//   // can take an extended ScrollPositionEntry
+//   scroll(position: ScrollPosition): void
+// }
+// export const scrollHandler: ScrollHandler<ScrollPosition> = {
+//   compute: computeScroll,
+//   scroll: scrollToPosition,
+// }
+
+let createBaseLocation = () => location.protocol + '//' + location.host;
+/**
+ * Creates a normalized history location from a window.location object
+ * @param location -
+ */
+function createCurrentLocation(base, location) {
+    const { pathname, search, hash } = location;
+    // allows hash bases like #, /#, #/, #!, #!/, /#!/, or even /folder#end
+    const hashPos = base.indexOf('#');
+    if (hashPos > -1) {
+        let slicePos = hash.includes(base.slice(hashPos))
+            ? base.slice(hashPos).length
+            : 1;
+        let pathFromHash = hash.slice(slicePos);
+        // prepend the starting slash to hash so the url starts with /#
+        if (pathFromHash[0] !== '/')
+            pathFromHash = '/' + pathFromHash;
+        return stripBase(pathFromHash, '');
+    }
+    const path = stripBase(pathname, base);
+    return path + search + hash;
+}
+function useHistoryListeners(base, historyState, currentLocation, replace) {
+    let listeners = [];
+    let teardowns = [];
+    // TODO: should it be a stack? a Dict. Check if the popstate listener
+    // can trigger twice
+    let pauseState = null;
+    const popStateHandler = ({ state, }) => {
+        const to = createCurrentLocation(base, location);
+        const from = currentLocation.value;
+        const fromState = historyState.value;
+        let delta = 0;
+        if (state) {
+            currentLocation.value = to;
+            historyState.value = state;
+            // ignore the popstate and reset the pauseState
+            if (pauseState && pauseState === from) {
+                pauseState = null;
+                return;
+            }
+            delta = fromState ? state.position - fromState.position : 0;
+        }
+        else {
+            replace(to);
+        }
+        // console.log({ deltaFromCurrent })
+        // Here we could also revert the navigation by calling history.go(-delta)
+        // this listener will have to be adapted to not trigger again and to wait for the url
+        // to be updated before triggering the listeners. Some kind of validation function would also
+        // need to be passed to the listeners so the navigation can be accepted
+        // call all listeners
+        listeners.forEach(listener => {
+            listener(currentLocation.value, from, {
+                delta,
+                type: NavigationType.pop,
+                direction: delta
+                    ? delta > 0
+                        ? NavigationDirection.forward
+                        : NavigationDirection.back
+                    : NavigationDirection.unknown,
+            });
+        });
+    };
+    function pauseListeners() {
+        pauseState = currentLocation.value;
+    }
+    function listen(callback) {
+        // setup the listener and prepare teardown callbacks
+        listeners.push(callback);
+        const teardown = () => {
+            const index = listeners.indexOf(callback);
+            if (index > -1)
+                listeners.splice(index, 1);
+        };
+        teardowns.push(teardown);
+        return teardown;
+    }
+    function beforeUnloadListener() {
+        const { history } = window;
+        if (!history.state)
+            return;
+        history.replaceState(assign({}, history.state, { scroll: computeScrollPosition() }), '');
+    }
+    function destroy() {
+        for (const teardown of teardowns)
+            teardown();
+        teardowns = [];
+        window.removeEventListener('popstate', popStateHandler);
+        window.removeEventListener('beforeunload', beforeUnloadListener);
+    }
+    // setup the listeners and prepare teardown callbacks
+    window.addEventListener('popstate', popStateHandler);
+    window.addEventListener('beforeunload', beforeUnloadListener);
+    return {
+        pauseListeners,
+        listen,
+        destroy,
+    };
+}
+/**
+ * Creates a state object
+ */
+function buildState(back, current, forward, replaced = false, computeScroll = false) {
+    return {
+        back,
+        current,
+        forward,
+        replaced,
+        position: window.history.length,
+        scroll: computeScroll ? computeScrollPosition() : null,
+    };
+}
+function useHistoryStateNavigation(base) {
+    const { history, location } = window;
+    // private variables
+    const currentLocation = {
+        value: createCurrentLocation(base, location),
+    };
+    const historyState = { value: history.state };
+    // build current history entry as this is a fresh navigation
+    if (!historyState.value) {
+        changeLocation(currentLocation.value, {
+            back: null,
+            current: currentLocation.value,
+            forward: null,
+            // the length is off by one, we need to decrease it
+            position: history.length - 1,
+            replaced: true,
+            // don't add a scroll as the user may have an anchor and we want
+            // scrollBehavior to be triggered without a saved position
+            scroll: null,
+        }, true);
+    }
+    function changeLocation(to, state, replace) {
+        /**
+         * if a base tag is provided and we are on a normal domain, we have to
+         * respect the provided `base` attribute because pushState() will use it and
+         * potentially erase anything before the `#` like at
+         * https://github.com/vuejs/router/issues/685 where a base of
+         * `/folder/#` but a base of `/` would erase the `/folder/` section. If
+         * there is no host, the `<base>` tag makes no sense and if there isn't a
+         * base tag we can just use everything after the `#`.
+         */
+        const hashIndex = base.indexOf('#');
+        const url = hashIndex > -1
+            ? (location.host && document.querySelector('base')
+                ? base
+                : base.slice(hashIndex)) + to
+            : createBaseLocation() + base + to;
+        try {
+            // BROWSER QUIRK
+            // NOTE: Safari throws a SecurityError when calling this function 100 times in 30 seconds
+            history[replace ? 'replaceState' : 'pushState'](state, '', url);
+            historyState.value = state;
+        }
+        catch (err) {
+            if ((true)) {
+                warn('Error with push/replace State', err);
+            }
+            else {}
+            // Force the navigation, this also resets the call count
+            location[replace ? 'replace' : 'assign'](url);
+        }
+    }
+    function replace(to, data) {
+        const state = assign({}, history.state, buildState(historyState.value.back, 
+        // keep back and forward entries but override current position
+        to, historyState.value.forward, true), data, { position: historyState.value.position });
+        changeLocation(to, state, true);
+        currentLocation.value = to;
+    }
+    function push(to, data) {
+        // Add to current entry the information of where we are going
+        // as well as saving the current position
+        const currentState = assign({}, 
+        // use current history state to gracefully handle a wrong call to
+        // history.replaceState
+        // https://github.com/vuejs/router/issues/366
+        historyState.value, history.state, {
+            forward: to,
+            scroll: computeScrollPosition(),
+        });
+        if (( true) && !history.state) {
+            warn(`history.state seems to have been manually replaced without preserving the necessary values. Make sure to preserve existing history state if you are manually calling history.replaceState:\n\n` +
+                `history.replaceState(history.state, '', url)\n\n` +
+                `You can find more information at https://next.router.vuejs.org/guide/migration/#usage-of-history-state.`);
+        }
+        changeLocation(currentState.current, currentState, true);
+        const state = assign({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
+        changeLocation(to, state, false);
+        currentLocation.value = to;
+    }
+    return {
+        location: currentLocation,
+        state: historyState,
+        push,
+        replace,
+    };
+}
+/**
+ * Creates an HTML5 history. Most common history for single page applications.
+ *
+ * @param base -
+ */
+function createWebHistory(base) {
+    base = normalizeBase(base);
+    const historyNavigation = useHistoryStateNavigation(base);
+    const historyListeners = useHistoryListeners(base, historyNavigation.state, historyNavigation.location, historyNavigation.replace);
+    function go(delta, triggerListeners = true) {
+        if (!triggerListeners)
+            historyListeners.pauseListeners();
+        history.go(delta);
+    }
+    const routerHistory = assign({
+        // it's overridden right after
+        location: '',
+        base,
+        go,
+        createHref: createHref.bind(null, base),
+    }, historyNavigation, historyListeners);
+    Object.defineProperty(routerHistory, 'location', {
+        enumerable: true,
+        get: () => historyNavigation.location.value,
+    });
+    Object.defineProperty(routerHistory, 'state', {
+        enumerable: true,
+        get: () => historyNavigation.state.value,
+    });
+    return routerHistory;
+}
+
+/**
+ * Creates a in-memory based history. The main purpose of this history is to handle SSR. It starts in a special location that is nowhere.
+ * It's up to the user to replace that location with the starter location by either calling `router.push` or `router.replace`.
+ *
+ * @param base - Base applied to all urls, defaults to '/'
+ * @returns a history object that can be passed to the router constructor
+ */
+function createMemoryHistory(base = '') {
+    let listeners = [];
+    let queue = [START];
+    let position = 0;
+    base = normalizeBase(base);
+    function setLocation(location) {
+        position++;
+        if (position === queue.length) {
+            // we are at the end, we can simply append a new entry
+            queue.push(location);
+        }
+        else {
+            // we are in the middle, we remove everything from here in the queue
+            queue.splice(position);
+            queue.push(location);
+        }
+    }
+    function triggerListeners(to, from, { direction, delta }) {
+        const info = {
+            direction,
+            delta,
+            type: NavigationType.pop,
+        };
+        for (const callback of listeners) {
+            callback(to, from, info);
+        }
+    }
+    const routerHistory = {
+        // rewritten by Object.defineProperty
+        location: START,
+        // TODO: should be kept in queue
+        state: {},
+        base,
+        createHref: createHref.bind(null, base),
+        replace(to) {
+            // remove current entry and decrement position
+            queue.splice(position--, 1);
+            setLocation(to);
+        },
+        push(to, data) {
+            setLocation(to);
+        },
+        listen(callback) {
+            listeners.push(callback);
+            return () => {
+                const index = listeners.indexOf(callback);
+                if (index > -1)
+                    listeners.splice(index, 1);
+            };
+        },
+        destroy() {
+            listeners = [];
+            queue = [START];
+            position = 0;
+        },
+        go(delta, shouldTrigger = true) {
+            const from = this.location;
+            const direction = 
+            // we are considering delta === 0 going forward, but in abstract mode
+            // using 0 for the delta doesn't make sense like it does in html5 where
+            // it reloads the page
+            delta < 0 ? NavigationDirection.back : NavigationDirection.forward;
+            position = Math.max(0, Math.min(position + delta, queue.length - 1));
+            if (shouldTrigger) {
+                triggerListeners(this.location, from, {
+                    direction,
+                    delta,
+                });
+            }
+        },
+    };
+    Object.defineProperty(routerHistory, 'location', {
+        enumerable: true,
+        get: () => queue[position],
+    });
+    return routerHistory;
+}
+
+/**
+ * Creates a hash history. Useful for web applications with no host (e.g.
+ * `file://`) or when configuring a server to handle any URL is not possible.
+ *
+ * @param base - optional base to provide. Defaults to `location.pathname +
+ * location.search` If there is a `<base>` tag in the `head`, its value will be
+ * ignored in favor of this parameter **but note it affects all the
+ * history.pushState() calls**, meaning that if you use a `<base>` tag, it's
+ * `href` value **has to match this parameter** (ignoring anything after the
+ * `#`).
+ *
+ * @example
+ * ```js
+ * // at https://example.com/folder
+ * createWebHashHistory() // gives a url of `https://example.com/folder#`
+ * createWebHashHistory('/folder/') // gives a url of `https://example.com/folder/#`
+ * // if the `#` is provided in the base, it won't be added by `createWebHashHistory`
+ * createWebHashHistory('/folder/#/app/') // gives a url of `https://example.com/folder/#/app/`
+ * // you should avoid doing this because it changes the original url and breaks copying urls
+ * createWebHashHistory('/other-folder/') // gives a url of `https://example.com/other-folder/#`
+ *
+ * // at file:///usr/etc/folder/index.html
+ * // for locations with no `host`, the base is ignored
+ * createWebHashHistory('/iAmIgnored') // gives a url of `file:///usr/etc/folder/index.html#`
+ * ```
+ */
+function createWebHashHistory(base) {
+    // Make sure this implementation is fine in terms of encoding, specially for IE11
+    // for `file://`, directly use the pathname and ignore the base
+    // location.pathname contains an initial `/` even at the root: `https://example.com`
+    base = location.host ? base || location.pathname + location.search : '';
+    // allow the user to provide a `#` in the middle: `/base/#/app`
+    if (!base.includes('#'))
+        base += '#';
+    if (( true) && !base.endsWith('#/') && !base.endsWith('#')) {
+        warn(`A hash base must end with a "#":\n"${base}" should be "${base.replace(/#.*$/, '#')}".`);
+    }
+    return createWebHistory(base);
+}
+
+function isRouteLocation(route) {
+    return typeof route === 'string' || (route && typeof route === 'object');
+}
+function isRouteName(name) {
+    return typeof name === 'string' || typeof name === 'symbol';
+}
+
+/**
+ * Initial route location where the router is. Can be used in navigation guards
+ * to differentiate the initial navigation.
+ *
+ * @example
+ * ```js
+ * import { START_LOCATION } from 'vue-router'
+ *
+ * router.beforeEach((to, from) => {
+ *   if (from === START_LOCATION) {
+ *     // initial navigation
+ *   }
+ * })
+ * ```
+ */
+const START_LOCATION_NORMALIZED = {
+    path: '/',
+    name: undefined,
+    params: {},
+    query: {},
+    hash: '',
+    fullPath: '/',
+    matched: [],
+    meta: {},
+    redirectedFrom: undefined,
+};
+
+const NavigationFailureSymbol = /*#__PURE__*/ PolySymbol(( true) ? 'navigation failure' : 0);
+/**
+ * Enumeration with all possible types for navigation failures. Can be passed to
+ * {@link isNavigationFailure} to check for specific failures.
+ */
+var NavigationFailureType;
+(function (NavigationFailureType) {
+    /**
+     * An aborted navigation is a navigation that failed because a navigation
+     * guard returned `false` or called `next(false)`
+     */
+    NavigationFailureType[NavigationFailureType["aborted"] = 4] = "aborted";
+    /**
+     * A cancelled navigation is a navigation that failed because a more recent
+     * navigation finished started (not necessarily finished).
+     */
+    NavigationFailureType[NavigationFailureType["cancelled"] = 8] = "cancelled";
+    /**
+     * A duplicated navigation is a navigation that failed because it was
+     * initiated while already being at the exact same location.
+     */
+    NavigationFailureType[NavigationFailureType["duplicated"] = 16] = "duplicated";
+})(NavigationFailureType || (NavigationFailureType = {}));
+// DEV only debug messages
+const ErrorTypeMessages = {
+    [1 /* MATCHER_NOT_FOUND */]({ location, currentLocation }) {
+        return `No match for\n ${JSON.stringify(location)}${currentLocation
+            ? '\nwhile being at\n' + JSON.stringify(currentLocation)
+            : ''}`;
+    },
+    [2 /* NAVIGATION_GUARD_REDIRECT */]({ from, to, }) {
+        return `Redirected from "${from.fullPath}" to "${stringifyRoute(to)}" via a navigation guard.`;
+    },
+    [4 /* NAVIGATION_ABORTED */]({ from, to }) {
+        return `Navigation aborted from "${from.fullPath}" to "${to.fullPath}" via a navigation guard.`;
+    },
+    [8 /* NAVIGATION_CANCELLED */]({ from, to }) {
+        return `Navigation cancelled from "${from.fullPath}" to "${to.fullPath}" with a new navigation.`;
+    },
+    [16 /* NAVIGATION_DUPLICATED */]({ from, to }) {
+        return `Avoided redundant navigation to current location: "${from.fullPath}".`;
+    },
+};
+function createRouterError(type, params) {
+    // keep full error messages in cjs versions
+    if (true) {
+        return assign(new Error(ErrorTypeMessages[type](params)), {
+            type,
+            [NavigationFailureSymbol]: true,
+        }, params);
+    }
+    else {}
+}
+function isNavigationFailure(error, type) {
+    return (error instanceof Error &&
+        NavigationFailureSymbol in error &&
+        (type == null || !!(error.type & type)));
+}
+const propertiesToLog = ['params', 'query', 'hash'];
+function stringifyRoute(to) {
+    if (typeof to === 'string')
+        return to;
+    if ('path' in to)
+        return to.path;
+    const location = {};
+    for (const key of propertiesToLog) {
+        if (key in to)
+            location[key] = to[key];
+    }
+    return JSON.stringify(location, null, 2);
+}
+
+// default pattern for a param: non greedy everything but /
+const BASE_PARAM_PATTERN = '[^/]+?';
+const BASE_PATH_PARSER_OPTIONS = {
+    sensitive: false,
+    strict: false,
+    start: true,
+    end: true,
+};
+// Special Regex characters that must be escaped in static tokens
+const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g;
+/**
+ * Creates a path parser from an array of Segments (a segment is an array of Tokens)
+ *
+ * @param segments - array of segments returned by tokenizePath
+ * @param extraOptions - optional options for the regexp
+ * @returns a PathParser
+ */
+function tokensToParser(segments, extraOptions) {
+    const options = assign({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
+    // the amount of scores is the same as the length of segments except for the root segment "/"
+    const score = [];
+    // the regexp as a string
+    let pattern = options.start ? '^' : '';
+    // extracted keys
+    const keys = [];
+    for (const segment of segments) {
+        // the root segment needs special treatment
+        const segmentScores = segment.length ? [] : [90 /* Root */];
+        // allow trailing slash
+        if (options.strict && !segment.length)
+            pattern += '/';
+        for (let tokenIndex = 0; tokenIndex < segment.length; tokenIndex++) {
+            const token = segment[tokenIndex];
+            // resets the score if we are inside a sub segment /:a-other-:b
+            let subSegmentScore = 40 /* Segment */ +
+                (options.sensitive ? 0.25 /* BonusCaseSensitive */ : 0);
+            if (token.type === 0 /* Static */) {
+                // prepend the slash if we are starting a new segment
+                if (!tokenIndex)
+                    pattern += '/';
+                pattern += token.value.replace(REGEX_CHARS_RE, '\\$&');
+                subSegmentScore += 40 /* Static */;
+            }
+            else if (token.type === 1 /* Param */) {
+                const { value, repeatable, optional, regexp } = token;
+                keys.push({
+                    name: value,
+                    repeatable,
+                    optional,
+                });
+                const re = regexp ? regexp : BASE_PARAM_PATTERN;
+                // the user provided a custom regexp /:id(\\d+)
+                if (re !== BASE_PARAM_PATTERN) {
+                    subSegmentScore += 10 /* BonusCustomRegExp */;
+                    // make sure the regexp is valid before using it
+                    try {
+                        new RegExp(`(${re})`);
+                    }
+                    catch (err) {
+                        throw new Error(`Invalid custom RegExp for param "${value}" (${re}): ` +
+                            err.message);
+                    }
+                }
+                // when we repeat we must take care of the repeating leading slash
+                let subPattern = repeatable ? `((?:${re})(?:/(?:${re}))*)` : `(${re})`;
+                // prepend the slash if we are starting a new segment
+                if (!tokenIndex)
+                    subPattern =
+                        // avoid an optional / if there are more segments e.g. /:p?-static
+                        // or /:p?-:p2
+                        optional && segment.length < 2
+                            ? `(?:/${subPattern})`
+                            : '/' + subPattern;
+                if (optional)
+                    subPattern += '?';
+                pattern += subPattern;
+                subSegmentScore += 20 /* Dynamic */;
+                if (optional)
+                    subSegmentScore += -8 /* BonusOptional */;
+                if (repeatable)
+                    subSegmentScore += -20 /* BonusRepeatable */;
+                if (re === '.*')
+                    subSegmentScore += -50 /* BonusWildcard */;
+            }
+            segmentScores.push(subSegmentScore);
+        }
+        // an empty array like /home/ -> [[{home}], []]
+        // if (!segment.length) pattern += '/'
+        score.push(segmentScores);
+    }
+    // only apply the strict bonus to the last score
+    if (options.strict && options.end) {
+        const i = score.length - 1;
+        score[i][score[i].length - 1] += 0.7000000000000001 /* BonusStrict */;
+    }
+    // TODO: dev only warn double trailing slash
+    if (!options.strict)
+        pattern += '/?';
+    if (options.end)
+        pattern += '$';
+    // allow paths like /dynamic to only match dynamic or dynamic/... but not dynamic_something_else
+    else if (options.strict)
+        pattern += '(?:/|$)';
+    const re = new RegExp(pattern, options.sensitive ? '' : 'i');
+    function parse(path) {
+        const match = path.match(re);
+        const params = {};
+        if (!match)
+            return null;
+        for (let i = 1; i < match.length; i++) {
+            const value = match[i] || '';
+            const key = keys[i - 1];
+            params[key.name] = value && key.repeatable ? value.split('/') : value;
+        }
+        return params;
+    }
+    function stringify(params) {
+        let path = '';
+        // for optional parameters to allow to be empty
+        let avoidDuplicatedSlash = false;
+        for (const segment of segments) {
+            if (!avoidDuplicatedSlash || !path.endsWith('/'))
+                path += '/';
+            avoidDuplicatedSlash = false;
+            for (const token of segment) {
+                if (token.type === 0 /* Static */) {
+                    path += token.value;
+                }
+                else if (token.type === 1 /* Param */) {
+                    const { value, repeatable, optional } = token;
+                    const param = value in params ? params[value] : '';
+                    if (Array.isArray(param) && !repeatable)
+                        throw new Error(`Provided param "${value}" is an array but it is not repeatable (* or + modifiers)`);
+                    const text = Array.isArray(param) ? param.join('/') : param;
+                    if (!text) {
+                        if (optional) {
+                            // if we have more than one optional param like /:a?-static we
+                            // don't need to care about the optional param
+                            if (segment.length < 2) {
+                                // remove the last slash as we could be at the end
+                                if (path.endsWith('/'))
+                                    path = path.slice(0, -1);
+                                // do not append a slash on the next iteration
+                                else
+                                    avoidDuplicatedSlash = true;
+                            }
+                        }
+                        else
+                            throw new Error(`Missing required param "${value}"`);
+                    }
+                    path += text;
+                }
+            }
+        }
+        return path;
+    }
+    return {
+        re,
+        score,
+        keys,
+        parse,
+        stringify,
+    };
+}
+/**
+ * Compares an array of numbers as used in PathParser.score and returns a
+ * number. This function can be used to `sort` an array
+ *
+ * @param a - first array of numbers
+ * @param b - second array of numbers
+ * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
+ * should be sorted first
+ */
+function compareScoreArray(a, b) {
+    let i = 0;
+    while (i < a.length && i < b.length) {
+        const diff = b[i] - a[i];
+        // only keep going if diff === 0
+        if (diff)
+            return diff;
+        i++;
+    }
+    // if the last subsegment was Static, the shorter segments should be sorted first
+    // otherwise sort the longest segment first
+    if (a.length < b.length) {
+        return a.length === 1 && a[0] === 40 /* Static */ + 40 /* Segment */
+            ? -1
+            : 1;
+    }
+    else if (a.length > b.length) {
+        return b.length === 1 && b[0] === 40 /* Static */ + 40 /* Segment */
+            ? 1
+            : -1;
+    }
+    return 0;
+}
+/**
+ * Compare function that can be used with `sort` to sort an array of PathParser
+ *
+ * @param a - first PathParser
+ * @param b - second PathParser
+ * @returns 0 if both are equal, < 0 if a should be sorted first, > 0 if b
+ */
+function comparePathParserScore(a, b) {
+    let i = 0;
+    const aScore = a.score;
+    const bScore = b.score;
+    while (i < aScore.length && i < bScore.length) {
+        const comp = compareScoreArray(aScore[i], bScore[i]);
+        // do not return if both are equal
+        if (comp)
+            return comp;
+        i++;
+    }
+    // if a and b share the same score entries but b has more, sort b first
+    return bScore.length - aScore.length;
+    // this is the ternary version
+    // return aScore.length < bScore.length
+    //   ? 1
+    //   : aScore.length > bScore.length
+    //   ? -1
+    //   : 0
+}
+
+const ROOT_TOKEN = {
+    type: 0 /* Static */,
+    value: '',
+};
+const VALID_PARAM_RE = /[a-zA-Z0-9_]/;
+// After some profiling, the cache seems to be unnecessary because tokenizePath
+// (the slowest part of adding a route) is very fast
+// const tokenCache = new Map<string, Token[][]>()
+function tokenizePath(path) {
+    if (!path)
+        return [[]];
+    if (path === '/')
+        return [[ROOT_TOKEN]];
+    if (!path.startsWith('/')) {
+        throw new Error(( true)
+            ? `Route paths should start with a "/": "${path}" should be "/${path}".`
+            : 0);
+    }
+    // if (tokenCache.has(path)) return tokenCache.get(path)!
+    function crash(message) {
+        throw new Error(`ERR (${state})/"${buffer}": ${message}`);
+    }
+    let state = 0 /* Static */;
+    let previousState = state;
+    const tokens = [];
+    // the segment will always be valid because we get into the initial state
+    // with the leading /
+    let segment;
+    function finalizeSegment() {
+        if (segment)
+            tokens.push(segment);
+        segment = [];
+    }
+    // index on the path
+    let i = 0;
+    // char at index
+    let char;
+    // buffer of the value read
+    let buffer = '';
+    // custom regexp for a param
+    let customRe = '';
+    function consumeBuffer() {
+        if (!buffer)
+            return;
+        if (state === 0 /* Static */) {
+            segment.push({
+                type: 0 /* Static */,
+                value: buffer,
+            });
+        }
+        else if (state === 1 /* Param */ ||
+            state === 2 /* ParamRegExp */ ||
+            state === 3 /* ParamRegExpEnd */) {
+            if (segment.length > 1 && (char === '*' || char === '+'))
+                crash(`A repeatable param (${buffer}) must be alone in its segment. eg: '/:ids+.`);
+            segment.push({
+                type: 1 /* Param */,
+                value: buffer,
+                regexp: customRe,
+                repeatable: char === '*' || char === '+',
+                optional: char === '*' || char === '?',
+            });
+        }
+        else {
+            crash('Invalid state to consume buffer');
+        }
+        buffer = '';
+    }
+    function addCharToBuffer() {
+        buffer += char;
+    }
+    while (i < path.length) {
+        char = path[i++];
+        if (char === '\\' && state !== 2 /* ParamRegExp */) {
+            previousState = state;
+            state = 4 /* EscapeNext */;
+            continue;
+        }
+        switch (state) {
+            case 0 /* Static */:
+                if (char === '/') {
+                    if (buffer) {
+                        consumeBuffer();
+                    }
+                    finalizeSegment();
+                }
+                else if (char === ':') {
+                    consumeBuffer();
+                    state = 1 /* Param */;
+                }
+                else {
+                    addCharToBuffer();
+                }
+                break;
+            case 4 /* EscapeNext */:
+                addCharToBuffer();
+                state = previousState;
+                break;
+            case 1 /* Param */:
+                if (char === '(') {
+                    state = 2 /* ParamRegExp */;
+                }
+                else if (VALID_PARAM_RE.test(char)) {
+                    addCharToBuffer();
+                }
+                else {
+                    consumeBuffer();
+                    state = 0 /* Static */;
+                    // go back one character if we were not modifying
+                    if (char !== '*' && char !== '?' && char !== '+')
+                        i--;
+                }
+                break;
+            case 2 /* ParamRegExp */:
+                // TODO: is it worth handling nested regexp? like :p(?:prefix_([^/]+)_suffix)
+                // it already works by escaping the closing )
+                // https://paths.esm.dev/?p=AAMeJbiAwQEcDKbAoAAkP60PG2R6QAvgNaA6AFACM2ABuQBB#
+                // is this really something people need since you can also write
+                // /prefix_:p()_suffix
+                if (char === ')') {
+                    // handle the escaped )
+                    if (customRe[customRe.length - 1] == '\\')
+                        customRe = customRe.slice(0, -1) + char;
+                    else
+                        state = 3 /* ParamRegExpEnd */;
+                }
+                else {
+                    customRe += char;
+                }
+                break;
+            case 3 /* ParamRegExpEnd */:
+                // same as finalizing a param
+                consumeBuffer();
+                state = 0 /* Static */;
+                // go back one character if we were not modifying
+                if (char !== '*' && char !== '?' && char !== '+')
+                    i--;
+                customRe = '';
+                break;
+            default:
+                crash('Unknown state');
+                break;
+        }
+    }
+    if (state === 2 /* ParamRegExp */)
+        crash(`Unfinished custom RegExp for param "${buffer}"`);
+    consumeBuffer();
+    finalizeSegment();
+    // tokenCache.set(path, tokens)
+    return tokens;
+}
+
+function createRouteRecordMatcher(record, parent, options) {
+    const parser = tokensToParser(tokenizePath(record.path), options);
+    // warn against params with the same name
+    if ((true)) {
+        const existingKeys = new Set();
+        for (const key of parser.keys) {
+            if (existingKeys.has(key.name))
+                warn(`Found duplicated params with name "${key.name}" for path "${record.path}". Only the last one will be available on "$route.params".`);
+            existingKeys.add(key.name);
+        }
+    }
+    const matcher = assign(parser, {
+        record,
+        parent,
+        // these needs to be populated by the parent
+        children: [],
+        alias: [],
+    });
+    if (parent) {
+        // both are aliases or both are not aliases
+        // we don't want to mix them because the order is used when
+        // passing originalRecord in Matcher.addRoute
+        if (!matcher.record.aliasOf === !parent.record.aliasOf)
+            parent.children.push(matcher);
+    }
+    return matcher;
+}
+
+/**
+ * Creates a Router Matcher.
+ *
+ * @internal
+ * @param routes - array of initial routes
+ * @param globalOptions - global route options
+ */
+function createRouterMatcher(routes, globalOptions) {
+    // normalized ordered array of matchers
+    const matchers = [];
+    const matcherMap = new Map();
+    globalOptions = mergeOptions({ strict: false, end: true, sensitive: false }, globalOptions);
+    function getRecordMatcher(name) {
+        return matcherMap.get(name);
+    }
+    function addRoute(record, parent, originalRecord) {
+        // used later on to remove by name
+        const isRootAdd = !originalRecord;
+        const mainNormalizedRecord = normalizeRouteRecord(record);
+        // we might be the child of an alias
+        mainNormalizedRecord.aliasOf = originalRecord && originalRecord.record;
+        const options = mergeOptions(globalOptions, record);
+        // generate an array of records to correctly handle aliases
+        const normalizedRecords = [
+            mainNormalizedRecord,
+        ];
+        if ('alias' in record) {
+            const aliases = typeof record.alias === 'string' ? [record.alias] : record.alias;
+            for (const alias of aliases) {
+                normalizedRecords.push(assign({}, mainNormalizedRecord, {
+                    // this allows us to hold a copy of the `components` option
+                    // so that async components cache is hold on the original record
+                    components: originalRecord
+                        ? originalRecord.record.components
+                        : mainNormalizedRecord.components,
+                    path: alias,
+                    // we might be the child of an alias
+                    aliasOf: originalRecord
+                        ? originalRecord.record
+                        : mainNormalizedRecord,
+                    // the aliases are always of the same kind as the original since they
+                    // are defined on the same record
+                }));
+            }
+        }
+        let matcher;
+        let originalMatcher;
+        for (const normalizedRecord of normalizedRecords) {
+            const { path } = normalizedRecord;
+            // Build up the path for nested routes if the child isn't an absolute
+            // route. Only add the / delimiter if the child path isn't empty and if the
+            // parent path doesn't have a trailing slash
+            if (parent && path[0] !== '/') {
+                const parentPath = parent.record.path;
+                const connectingSlash = parentPath[parentPath.length - 1] === '/' ? '' : '/';
+                normalizedRecord.path =
+                    parent.record.path + (path && connectingSlash + path);
+            }
+            if (( true) && normalizedRecord.path === '*') {
+                throw new Error('Catch all routes ("*") must now be defined using a param with a custom regexp.\n' +
+                    'See more at https://next.router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes.');
+            }
+            // create the object before hand so it can be passed to children
+            matcher = createRouteRecordMatcher(normalizedRecord, parent, options);
+            if (( true) && parent && path[0] === '/')
+                checkMissingParamsInAbsolutePath(matcher, parent);
+            // if we are an alias we must tell the original record that we exist
+            // so we can be removed
+            if (originalRecord) {
+                originalRecord.alias.push(matcher);
+                if ((true)) {
+                    checkSameParams(originalRecord, matcher);
+                }
+            }
+            else {
+                // otherwise, the first record is the original and others are aliases
+                originalMatcher = originalMatcher || matcher;
+                if (originalMatcher !== matcher)
+                    originalMatcher.alias.push(matcher);
+                // remove the route if named and only for the top record (avoid in nested calls)
+                // this works because the original record is the first one
+                if (isRootAdd && record.name && !isAliasRecord(matcher))
+                    removeRoute(record.name);
+            }
+            if ('children' in mainNormalizedRecord) {
+                const children = mainNormalizedRecord.children;
+                for (let i = 0; i < children.length; i++) {
+                    addRoute(children[i], matcher, originalRecord && originalRecord.children[i]);
+                }
+            }
+            // if there was no original record, then the first one was not an alias and all
+            // other alias (if any) need to reference this record when adding children
+            originalRecord = originalRecord || matcher;
+            // TODO: add normalized records for more flexibility
+            // if (parent && isAliasRecord(originalRecord)) {
+            //   parent.children.push(originalRecord)
+            // }
+            insertMatcher(matcher);
+        }
+        return originalMatcher
+            ? () => {
+                // since other matchers are aliases, they should be removed by the original matcher
+                removeRoute(originalMatcher);
+            }
+            : noop;
+    }
+    function removeRoute(matcherRef) {
+        if (isRouteName(matcherRef)) {
+            const matcher = matcherMap.get(matcherRef);
+            if (matcher) {
+                matcherMap.delete(matcherRef);
+                matchers.splice(matchers.indexOf(matcher), 1);
+                matcher.children.forEach(removeRoute);
+                matcher.alias.forEach(removeRoute);
+            }
+        }
+        else {
+            const index = matchers.indexOf(matcherRef);
+            if (index > -1) {
+                matchers.splice(index, 1);
+                if (matcherRef.record.name)
+                    matcherMap.delete(matcherRef.record.name);
+                matcherRef.children.forEach(removeRoute);
+                matcherRef.alias.forEach(removeRoute);
+            }
+        }
+    }
+    function getRoutes() {
+        return matchers;
+    }
+    function insertMatcher(matcher) {
+        let i = 0;
+        while (i < matchers.length &&
+            comparePathParserScore(matcher, matchers[i]) >= 0 &&
+            // Adding children with empty path should still appear before the parent
+            // https://github.com/vuejs/router/issues/1124
+            (matcher.record.path !== matchers[i].record.path ||
+                !isRecordChildOf(matcher, matchers[i])))
+            i++;
+        matchers.splice(i, 0, matcher);
+        // only add the original record to the name map
+        if (matcher.record.name && !isAliasRecord(matcher))
+            matcherMap.set(matcher.record.name, matcher);
+    }
+    function resolve(location, currentLocation) {
+        let matcher;
+        let params = {};
+        let path;
+        let name;
+        if ('name' in location && location.name) {
+            matcher = matcherMap.get(location.name);
+            if (!matcher)
+                throw createRouterError(1 /* MATCHER_NOT_FOUND */, {
+                    location,
+                });
+            name = matcher.record.name;
+            params = assign(
+            // paramsFromLocation is a new object
+            paramsFromLocation(currentLocation.params, 
+            // only keep params that exist in the resolved location
+            // TODO: only keep optional params coming from a parent record
+            matcher.keys.filter(k => !k.optional).map(k => k.name)), location.params);
+            // throws if cannot be stringified
+            path = matcher.stringify(params);
+        }
+        else if ('path' in location) {
+            // no need to resolve the path with the matcher as it was provided
+            // this also allows the user to control the encoding
+            path = location.path;
+            if (( true) && !path.startsWith('/')) {
+                warn(`The Matcher cannot resolve relative paths but received "${path}". Unless you directly called \`matcher.resolve("${path}")\`, this is probably a bug in vue-router. Please open an issue at https://new-issue.vuejs.org/?repo=vuejs/router.`);
+            }
+            matcher = matchers.find(m => m.re.test(path));
+            // matcher should have a value after the loop
+            if (matcher) {
+                // TODO: dev warning of unused params if provided
+                // we know the matcher works because we tested the regexp
+                params = matcher.parse(path);
+                name = matcher.record.name;
+            }
+            // location is a relative path
+        }
+        else {
+            // match by name or path of current route
+            matcher = currentLocation.name
+                ? matcherMap.get(currentLocation.name)
+                : matchers.find(m => m.re.test(currentLocation.path));
+            if (!matcher)
+                throw createRouterError(1 /* MATCHER_NOT_FOUND */, {
+                    location,
+                    currentLocation,
+                });
+            name = matcher.record.name;
+            // since we are navigating to the same location, we don't need to pick the
+            // params like when `name` is provided
+            params = assign({}, currentLocation.params, location.params);
+            path = matcher.stringify(params);
+        }
+        const matched = [];
+        let parentMatcher = matcher;
+        while (parentMatcher) {
+            // reversed order so parents are at the beginning
+            matched.unshift(parentMatcher.record);
+            parentMatcher = parentMatcher.parent;
+        }
+        return {
+            name,
+            path,
+            params,
+            matched,
+            meta: mergeMetaFields(matched),
+        };
+    }
+    // add initial routes
+    routes.forEach(route => addRoute(route));
+    return { addRoute, resolve, removeRoute, getRoutes, getRecordMatcher };
+}
+function paramsFromLocation(params, keys) {
+    const newParams = {};
+    for (const key of keys) {
+        if (key in params)
+            newParams[key] = params[key];
+    }
+    return newParams;
+}
+/**
+ * Normalizes a RouteRecordRaw. Creates a copy
+ *
+ * @param record
+ * @returns the normalized version
+ */
+function normalizeRouteRecord(record) {
+    return {
+        path: record.path,
+        redirect: record.redirect,
+        name: record.name,
+        meta: record.meta || {},
+        aliasOf: undefined,
+        beforeEnter: record.beforeEnter,
+        props: normalizeRecordProps(record),
+        children: record.children || [],
+        instances: {},
+        leaveGuards: new Set(),
+        updateGuards: new Set(),
+        enterCallbacks: {},
+        components: 'components' in record
+            ? record.components || {}
+            : { default: record.component },
+    };
+}
+/**
+ * Normalize the optional `props` in a record to always be an object similar to
+ * components. Also accept a boolean for components.
+ * @param record
+ */
+function normalizeRecordProps(record) {
+    const propsObject = {};
+    // props does not exist on redirect records but we can set false directly
+    const props = record.props || false;
+    if ('component' in record) {
+        propsObject.default = props;
+    }
+    else {
+        // NOTE: we could also allow a function to be applied to every component.
+        // Would need user feedback for use cases
+        for (const name in record.components)
+            propsObject[name] = typeof props === 'boolean' ? props : props[name];
+    }
+    return propsObject;
+}
+/**
+ * Checks if a record or any of its parent is an alias
+ * @param record
+ */
+function isAliasRecord(record) {
+    while (record) {
+        if (record.record.aliasOf)
+            return true;
+        record = record.parent;
+    }
+    return false;
+}
+/**
+ * Merge meta fields of an array of records
+ *
+ * @param matched - array of matched records
+ */
+function mergeMetaFields(matched) {
+    return matched.reduce((meta, record) => assign(meta, record.meta), {});
+}
+function mergeOptions(defaults, partialOptions) {
+    const options = {};
+    for (const key in defaults) {
+        options[key] = key in partialOptions ? partialOptions[key] : defaults[key];
+    }
+    return options;
+}
+function isSameParam(a, b) {
+    return (a.name === b.name &&
+        a.optional === b.optional &&
+        a.repeatable === b.repeatable);
+}
+/**
+ * Check if a path and its alias have the same required params
+ *
+ * @param a - original record
+ * @param b - alias record
+ */
+function checkSameParams(a, b) {
+    for (const key of a.keys) {
+        if (!key.optional && !b.keys.find(isSameParam.bind(null, key)))
+            return warn(`Alias "${b.record.path}" and the original record: "${a.record.path}" should have the exact same param named "${key.name}"`);
+    }
+    for (const key of b.keys) {
+        if (!key.optional && !a.keys.find(isSameParam.bind(null, key)))
+            return warn(`Alias "${b.record.path}" and the original record: "${a.record.path}" should have the exact same param named "${key.name}"`);
+    }
+}
+function checkMissingParamsInAbsolutePath(record, parent) {
+    for (const key of parent.keys) {
+        if (!record.keys.find(isSameParam.bind(null, key)))
+            return warn(`Absolute path "${record.record.path}" should have the exact same param named "${key.name}" as its parent "${parent.record.path}".`);
+    }
+}
+function isRecordChildOf(record, parent) {
+    return parent.children.some(child => child === record || isRecordChildOf(record, child));
+}
+
+/**
+ * Encoding Rules ␣ = Space Path: ␣ " < > # ? { } Query: ␣ " < > # & = Hash: ␣ "
+ * < > `
+ *
+ * On top of that, the RFC3986 (https://tools.ietf.org/html/rfc3986#section-2.2)
+ * defines some extra characters to be encoded. Most browsers do not encode them
+ * in encodeURI https://github.com/whatwg/url/issues/369, so it may be safer to
+ * also encode `!'()*`. Leaving unencoded only ASCII alphanumeric(`a-zA-Z0-9`)
+ * plus `-._~`. This extra safety should be applied to query by patching the
+ * string returned by encodeURIComponent encodeURI also encodes `[\]^`. `\`
+ * should be encoded to avoid ambiguity. Browsers (IE, FF, C) transform a `\`
+ * into a `/` if directly typed in. The _backtick_ (`````) should also be
+ * encoded everywhere because some browsers like FF encode it when directly
+ * written while others don't. Safari and IE don't encode ``"<>{}``` in hash.
+ */
+// const EXTRA_RESERVED_RE = /[!'()*]/g
+// const encodeReservedReplacer = (c: string) => '%' + c.charCodeAt(0).toString(16)
+const HASH_RE = /#/g; // %23
+const AMPERSAND_RE = /&/g; // %26
+const SLASH_RE = /\//g; // %2F
+const EQUAL_RE = /=/g; // %3D
+const IM_RE = /\?/g; // %3F
+const PLUS_RE = /\+/g; // %2B
+/**
+ * NOTE: It's not clear to me if we should encode the + symbol in queries, it
+ * seems to be less flexible than not doing so and I can't find out the legacy
+ * systems requiring this for regular requests like text/html. In the standard,
+ * the encoding of the plus character is only mentioned for
+ * application/x-www-form-urlencoded
+ * (https://url.spec.whatwg.org/#urlencoded-parsing) and most browsers seems lo
+ * leave the plus character as is in queries. To be more flexible, we allow the
+ * plus character on the query but it can also be manually encoded by the user.
+ *
+ * Resources:
+ * - https://url.spec.whatwg.org/#urlencoded-parsing
+ * - https://stackoverflow.com/questions/1634271/url-encoding-the-space-character-or-20
+ */
+const ENC_BRACKET_OPEN_RE = /%5B/g; // [
+const ENC_BRACKET_CLOSE_RE = /%5D/g; // ]
+const ENC_CARET_RE = /%5E/g; // ^
+const ENC_BACKTICK_RE = /%60/g; // `
+const ENC_CURLY_OPEN_RE = /%7B/g; // {
+const ENC_PIPE_RE = /%7C/g; // |
+const ENC_CURLY_CLOSE_RE = /%7D/g; // }
+const ENC_SPACE_RE = /%20/g; // }
+/**
+ * Encode characters that need to be encoded on the path, search and hash
+ * sections of the URL.
+ *
+ * @internal
+ * @param text - string to encode
+ * @returns encoded string
+ */
+function commonEncode(text) {
+    return encodeURI('' + text)
+        .replace(ENC_PIPE_RE, '|')
+        .replace(ENC_BRACKET_OPEN_RE, '[')
+        .replace(ENC_BRACKET_CLOSE_RE, ']');
+}
+/**
+ * Encode characters that need to be encoded on the hash section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */
+function encodeHash(text) {
+    return commonEncode(text)
+        .replace(ENC_CURLY_OPEN_RE, '{')
+        .replace(ENC_CURLY_CLOSE_RE, '}')
+        .replace(ENC_CARET_RE, '^');
+}
+/**
+ * Encode characters that need to be encoded query values on the query
+ * section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */
+function encodeQueryValue(text) {
+    return (commonEncode(text)
+        // Encode the space as +, encode the + to differentiate it from the space
+        .replace(PLUS_RE, '%2B')
+        .replace(ENC_SPACE_RE, '+')
+        .replace(HASH_RE, '%23')
+        .replace(AMPERSAND_RE, '%26')
+        .replace(ENC_BACKTICK_RE, '`')
+        .replace(ENC_CURLY_OPEN_RE, '{')
+        .replace(ENC_CURLY_CLOSE_RE, '}')
+        .replace(ENC_CARET_RE, '^'));
+}
+/**
+ * Like `encodeQueryValue` but also encodes the `=` character.
+ *
+ * @param text - string to encode
+ */
+function encodeQueryKey(text) {
+    return encodeQueryValue(text).replace(EQUAL_RE, '%3D');
+}
+/**
+ * Encode characters that need to be encoded on the path section of the URL.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */
+function encodePath(text) {
+    return commonEncode(text).replace(HASH_RE, '%23').replace(IM_RE, '%3F');
+}
+/**
+ * Encode characters that need to be encoded on the path section of the URL as a
+ * param. This function encodes everything {@link encodePath} does plus the
+ * slash (`/`) character. If `text` is `null` or `undefined`, returns an empty
+ * string instead.
+ *
+ * @param text - string to encode
+ * @returns encoded string
+ */
+function encodeParam(text) {
+    return text == null ? '' : encodePath(text).replace(SLASH_RE, '%2F');
+}
+/**
+ * Decode text using `decodeURIComponent`. Returns the original text if it
+ * fails.
+ *
+ * @param text - string to decode
+ * @returns decoded string
+ */
+function decode(text) {
+    try {
+        return decodeURIComponent('' + text);
+    }
+    catch (err) {
+        ( true) && warn(`Error decoding "${text}". Using original value`);
+    }
+    return '' + text;
+}
+
+/**
+ * Transforms a queryString into a {@link LocationQuery} object. Accept both, a
+ * version with the leading `?` and without Should work as URLSearchParams
+
+ * @internal
+ *
+ * @param search - search string to parse
+ * @returns a query object
+ */
+function parseQuery(search) {
+    const query = {};
+    // avoid creating an object with an empty key and empty value
+    // because of split('&')
+    if (search === '' || search === '?')
+        return query;
+    const hasLeadingIM = search[0] === '?';
+    const searchParams = (hasLeadingIM ? search.slice(1) : search).split('&');
+    for (let i = 0; i < searchParams.length; ++i) {
+        // pre decode the + into space
+        const searchParam = searchParams[i].replace(PLUS_RE, ' ');
+        // allow the = character
+        const eqPos = searchParam.indexOf('=');
+        const key = decode(eqPos < 0 ? searchParam : searchParam.slice(0, eqPos));
+        const value = eqPos < 0 ? null : decode(searchParam.slice(eqPos + 1));
+        if (key in query) {
+            // an extra variable for ts types
+            let currentValue = query[key];
+            if (!Array.isArray(currentValue)) {
+                currentValue = query[key] = [currentValue];
+            }
+            currentValue.push(value);
+        }
+        else {
+            query[key] = value;
+        }
+    }
+    return query;
+}
+/**
+ * Stringifies a {@link LocationQueryRaw} object. Like `URLSearchParams`, it
+ * doesn't prepend a `?`
+ *
+ * @internal
+ *
+ * @param query - query object to stringify
+ * @returns string version of the query without the leading `?`
+ */
+function stringifyQuery(query) {
+    let search = '';
+    for (let key in query) {
+        const value = query[key];
+        key = encodeQueryKey(key);
+        if (value == null) {
+            // only null adds the value
+            if (value !== undefined) {
+                search += (search.length ? '&' : '') + key;
+            }
+            continue;
+        }
+        // keep null values
+        const values = Array.isArray(value)
+            ? value.map(v => v && encodeQueryValue(v))
+            : [value && encodeQueryValue(value)];
+        values.forEach(value => {
+            // skip undefined values in arrays as if they were not present
+            // smaller code than using filter
+            if (value !== undefined) {
+                // only append & with non-empty search
+                search += (search.length ? '&' : '') + key;
+                if (value != null)
+                    search += '=' + value;
+            }
+        });
+    }
+    return search;
+}
+/**
+ * Transforms a {@link LocationQueryRaw} into a {@link LocationQuery} by casting
+ * numbers into strings, removing keys with an undefined value and replacing
+ * undefined with null in arrays
+ *
+ * @param query - query object to normalize
+ * @returns a normalized query object
+ */
+function normalizeQuery(query) {
+    const normalizedQuery = {};
+    for (const key in query) {
+        const value = query[key];
+        if (value !== undefined) {
+            normalizedQuery[key] = Array.isArray(value)
+                ? value.map(v => (v == null ? null : '' + v))
+                : value == null
+                    ? value
+                    : '' + value;
+        }
+    }
+    return normalizedQuery;
+}
+
+/**
+ * Create a list of callbacks that can be reset. Used to create before and after navigation guards list
+ */
+function useCallbacks() {
+    let handlers = [];
+    function add(handler) {
+        handlers.push(handler);
+        return () => {
+            const i = handlers.indexOf(handler);
+            if (i > -1)
+                handlers.splice(i, 1);
+        };
+    }
+    function reset() {
+        handlers = [];
+    }
+    return {
+        add,
+        list: () => handlers,
+        reset,
+    };
+}
+
+function registerGuard(record, name, guard) {
+    const removeFromList = () => {
+        record[name].delete(guard);
+    };
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.onUnmounted)(removeFromList);
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.onDeactivated)(removeFromList);
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.onActivated)(() => {
+        record[name].add(guard);
+    });
+    record[name].add(guard);
+}
+/**
+ * Add a navigation guard that triggers whenever the component for the current
+ * location is about to be left. Similar to {@link beforeRouteLeave} but can be
+ * used in any component. The guard is removed when the component is unmounted.
+ *
+ * @param leaveGuard - {@link NavigationGuard}
+ */
+function onBeforeRouteLeave(leaveGuard) {
+    if (( true) && !(0,vue__WEBPACK_IMPORTED_MODULE_0__.getCurrentInstance)()) {
+        warn('getCurrentInstance() returned null. onBeforeRouteLeave() must be called at the top of a setup function');
+        return;
+    }
+    const activeRecord = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(matchedRouteKey, 
+    // to avoid warning
+    {}).value;
+    if (!activeRecord) {
+        ( true) &&
+            warn('No active route record was found when calling `onBeforeRouteLeave()`. Make sure you call this function inside of a component child of <router-view>. Maybe you called it inside of App.vue?');
+        return;
+    }
+    registerGuard(activeRecord, 'leaveGuards', leaveGuard);
+}
+/**
+ * Add a navigation guard that triggers whenever the current location is about
+ * to be updated. Similar to {@link beforeRouteUpdate} but can be used in any
+ * component. The guard is removed when the component is unmounted.
+ *
+ * @param updateGuard - {@link NavigationGuard}
+ */
+function onBeforeRouteUpdate(updateGuard) {
+    if (( true) && !(0,vue__WEBPACK_IMPORTED_MODULE_0__.getCurrentInstance)()) {
+        warn('getCurrentInstance() returned null. onBeforeRouteUpdate() must be called at the top of a setup function');
+        return;
+    }
+    const activeRecord = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(matchedRouteKey, 
+    // to avoid warning
+    {}).value;
+    if (!activeRecord) {
+        ( true) &&
+            warn('No active route record was found when calling `onBeforeRouteUpdate()`. Make sure you call this function inside of a component child of <router-view>. Maybe you called it inside of App.vue?');
+        return;
+    }
+    registerGuard(activeRecord, 'updateGuards', updateGuard);
+}
+function guardToPromiseFn(guard, to, from, record, name) {
+    // keep a reference to the enterCallbackArray to prevent pushing callbacks if a new navigation took place
+    const enterCallbackArray = record &&
+        // name is defined if record is because of the function overload
+        (record.enterCallbacks[name] = record.enterCallbacks[name] || []);
+    return () => new Promise((resolve, reject) => {
+        const next = (valid) => {
+            if (valid === false)
+                reject(createRouterError(4 /* NAVIGATION_ABORTED */, {
+                    from,
+                    to,
+                }));
+            else if (valid instanceof Error) {
+                reject(valid);
+            }
+            else if (isRouteLocation(valid)) {
+                reject(createRouterError(2 /* NAVIGATION_GUARD_REDIRECT */, {
+                    from: to,
+                    to: valid,
+                }));
+            }
+            else {
+                if (enterCallbackArray &&
+                    // since enterCallbackArray is truthy, both record and name also are
+                    record.enterCallbacks[name] === enterCallbackArray &&
+                    typeof valid === 'function')
+                    enterCallbackArray.push(valid);
+                resolve();
+            }
+        };
+        // wrapping with Promise.resolve allows it to work with both async and sync guards
+        const guardReturn = guard.call(record && record.instances[name], to, from, ( true) ? canOnlyBeCalledOnce(next, to, from) : 0);
+        let guardCall = Promise.resolve(guardReturn);
+        if (guard.length < 3)
+            guardCall = guardCall.then(next);
+        if (( true) && guard.length > 2) {
+            const message = `The "next" callback was never called inside of ${guard.name ? '"' + guard.name + '"' : ''}:\n${guard.toString()}\n. If you are returning a value instead of calling "next", make sure to remove the "next" parameter from your function.`;
+            if (typeof guardReturn === 'object' && 'then' in guardReturn) {
+                guardCall = guardCall.then(resolvedValue => {
+                    // @ts-expect-error: _called is added at canOnlyBeCalledOnce
+                    if (!next._called) {
+                        warn(message);
+                        return Promise.reject(new Error('Invalid navigation guard'));
+                    }
+                    return resolvedValue;
+                });
+                // TODO: test me!
+            }
+            else if (guardReturn !== undefined) {
+                // @ts-expect-error: _called is added at canOnlyBeCalledOnce
+                if (!next._called) {
+                    warn(message);
+                    reject(new Error('Invalid navigation guard'));
+                    return;
+                }
+            }
+        }
+        guardCall.catch(err => reject(err));
+    });
+}
+function canOnlyBeCalledOnce(next, to, from) {
+    let called = 0;
+    return function () {
+        if (called++ === 1)
+            warn(`The "next" callback was called more than once in one navigation guard when going from "${from.fullPath}" to "${to.fullPath}". It should be called exactly one time in each navigation guard. This will fail in production.`);
+        // @ts-expect-error: we put it in the original one because it's easier to check
+        next._called = true;
+        if (called === 1)
+            next.apply(null, arguments);
+    };
+}
+function extractComponentsGuards(matched, guardType, to, from) {
+    const guards = [];
+    for (const record of matched) {
+        for (const name in record.components) {
+            let rawComponent = record.components[name];
+            if ((true)) {
+                if (!rawComponent ||
+                    (typeof rawComponent !== 'object' &&
+                        typeof rawComponent !== 'function')) {
+                    warn(`Component "${name}" in record with path "${record.path}" is not` +
+                        ` a valid component. Received "${String(rawComponent)}".`);
+                    // throw to ensure we stop here but warn to ensure the message isn't
+                    // missed by the user
+                    throw new Error('Invalid route component');
+                }
+                else if ('then' in rawComponent) {
+                    // warn if user wrote import('/component.vue') instead of () =>
+                    // import('./component.vue')
+                    warn(`Component "${name}" in record with path "${record.path}" is a ` +
+                        `Promise instead of a function that returns a Promise. Did you ` +
+                        `write "import('./MyPage.vue')" instead of ` +
+                        `"() => import('./MyPage.vue')" ? This will break in ` +
+                        `production if not fixed.`);
+                    const promise = rawComponent;
+                    rawComponent = () => promise;
+                }
+                else if (rawComponent.__asyncLoader &&
+                    // warn only once per component
+                    !rawComponent.__warnedDefineAsync) {
+                    rawComponent.__warnedDefineAsync = true;
+                    warn(`Component "${name}" in record with path "${record.path}" is defined ` +
+                        `using "defineAsyncComponent()". ` +
+                        `Write "() => import('./MyPage.vue')" instead of ` +
+                        `"defineAsyncComponent(() => import('./MyPage.vue'))".`);
+                }
+            }
+            // skip update and leave guards if the route component is not mounted
+            if (guardType !== 'beforeRouteEnter' && !record.instances[name])
+                continue;
+            if (isRouteComponent(rawComponent)) {
+                // __vccOpts is added by vue-class-component and contain the regular options
+                const options = rawComponent.__vccOpts || rawComponent;
+                const guard = options[guardType];
+                guard && guards.push(guardToPromiseFn(guard, to, from, record, name));
+            }
+            else {
+                // start requesting the chunk already
+                let componentPromise = rawComponent();
+                if (( true) && !('catch' in componentPromise)) {
+                    warn(`Component "${name}" in record with path "${record.path}" is a function that does not return a Promise. If you were passing a functional component, make sure to add a "displayName" to the component. This will break in production if not fixed.`);
+                    componentPromise = Promise.resolve(componentPromise);
+                }
+                guards.push(() => componentPromise.then(resolved => {
+                    if (!resolved)
+                        return Promise.reject(new Error(`Couldn't resolve component "${name}" at "${record.path}"`));
+                    const resolvedComponent = isESModule(resolved)
+                        ? resolved.default
+                        : resolved;
+                    // replace the function with the resolved component
+                    record.components[name] = resolvedComponent;
+                    // __vccOpts is added by vue-class-component and contain the regular options
+                    const options = resolvedComponent.__vccOpts || resolvedComponent;
+                    const guard = options[guardType];
+                    return guard && guardToPromiseFn(guard, to, from, record, name)();
+                }));
+            }
+        }
+    }
+    return guards;
+}
+/**
+ * Allows differentiating lazy components from functional components and vue-class-component
+ *
+ * @param component
+ */
+function isRouteComponent(component) {
+    return (typeof component === 'object' ||
+        'displayName' in component ||
+        'props' in component ||
+        '__vccOpts' in component);
+}
+
+// TODO: we could allow currentRoute as a prop to expose `isActive` and
+// `isExactActive` behavior should go through an RFC
+function useLink(props) {
+    const router = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routerKey);
+    const currentRoute = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routeLocationKey);
+    const route = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => router.resolve((0,vue__WEBPACK_IMPORTED_MODULE_0__.unref)(props.to)));
+    const activeRecordIndex = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => {
+        const { matched } = route.value;
+        const { length } = matched;
+        const routeMatched = matched[length - 1];
+        const currentMatched = currentRoute.matched;
+        if (!routeMatched || !currentMatched.length)
+            return -1;
+        const index = currentMatched.findIndex(isSameRouteRecord.bind(null, routeMatched));
+        if (index > -1)
+            return index;
+        // possible parent record
+        const parentRecordPath = getOriginalPath(matched[length - 2]);
+        return (
+        // we are dealing with nested routes
+        length > 1 &&
+            // if the parent and matched route have the same path, this link is
+            // referring to the empty child. Or we currently are on a different
+            // child of the same parent
+            getOriginalPath(routeMatched) === parentRecordPath &&
+            // avoid comparing the child with its parent
+            currentMatched[currentMatched.length - 1].path !== parentRecordPath
+            ? currentMatched.findIndex(isSameRouteRecord.bind(null, matched[length - 2]))
+            : index);
+    });
+    const isActive = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => activeRecordIndex.value > -1 &&
+        includesParams(currentRoute.params, route.value.params));
+    const isExactActive = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => activeRecordIndex.value > -1 &&
+        activeRecordIndex.value === currentRoute.matched.length - 1 &&
+        isSameRouteLocationParams(currentRoute.params, route.value.params));
+    function navigate(e = {}) {
+        if (guardEvent(e)) {
+            return router[(0,vue__WEBPACK_IMPORTED_MODULE_0__.unref)(props.replace) ? 'replace' : 'push']((0,vue__WEBPACK_IMPORTED_MODULE_0__.unref)(props.to)
+            // avoid uncaught errors are they are logged anyway
+            ).catch(noop);
+        }
+        return Promise.resolve();
+    }
+    // devtools only
+    if (( true) && isBrowser) {
+        const instance = (0,vue__WEBPACK_IMPORTED_MODULE_0__.getCurrentInstance)();
+        if (instance) {
+            const linkContextDevtools = {
+                route: route.value,
+                isActive: isActive.value,
+                isExactActive: isExactActive.value,
+            };
+            // @ts-expect-error: this is internal
+            instance.__vrl_devtools = instance.__vrl_devtools || [];
+            // @ts-expect-error: this is internal
+            instance.__vrl_devtools.push(linkContextDevtools);
+            (0,vue__WEBPACK_IMPORTED_MODULE_0__.watchEffect)(() => {
+                linkContextDevtools.route = route.value;
+                linkContextDevtools.isActive = isActive.value;
+                linkContextDevtools.isExactActive = isExactActive.value;
+            }, { flush: 'post' });
+        }
+    }
+    return {
+        route,
+        href: (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => route.value.href),
+        isActive,
+        isExactActive,
+        navigate,
+    };
+}
+const RouterLinkImpl = /*#__PURE__*/ (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: 'RouterLink',
+    props: {
+        to: {
+            type: [String, Object],
+            required: true,
+        },
+        replace: Boolean,
+        activeClass: String,
+        // inactiveClass: String,
+        exactActiveClass: String,
+        custom: Boolean,
+        ariaCurrentValue: {
+            type: String,
+            default: 'page',
+        },
+    },
+    useLink,
+    setup(props, { slots }) {
+        const link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)(useLink(props));
+        const { options } = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routerKey);
+        const elClass = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => ({
+            [getLinkClass(props.activeClass, options.linkActiveClass, 'router-link-active')]: link.isActive,
+            // [getLinkClass(
+            //   props.inactiveClass,
+            //   options.linkInactiveClass,
+            //   'router-link-inactive'
+            // )]: !link.isExactActive,
+            [getLinkClass(props.exactActiveClass, options.linkExactActiveClass, 'router-link-exact-active')]: link.isExactActive,
+        }));
+        return () => {
+            const children = slots.default && slots.default(link);
+            return props.custom
+                ? children
+                : (0,vue__WEBPACK_IMPORTED_MODULE_0__.h)('a', {
+                    'aria-current': link.isExactActive
+                        ? props.ariaCurrentValue
+                        : null,
+                    href: link.href,
+                    // this would override user added attrs but Vue will still add
+                    // the listener so we end up triggering both
+                    onClick: link.navigate,
+                    class: elClass.value,
+                }, children);
+        };
+    },
+});
+// export the public type for h/tsx inference
+// also to avoid inline import() in generated d.ts files
+/**
+ * Component to render a link that triggers a navigation on click.
+ */
+const RouterLink = RouterLinkImpl;
+function guardEvent(e) {
+    // don't redirect with control keys
+    if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey)
+        return;
+    // don't redirect when preventDefault called
+    if (e.defaultPrevented)
+        return;
+    // don't redirect on right click
+    if (e.button !== undefined && e.button !== 0)
+        return;
+    // don't redirect if `target="_blank"`
+    // @ts-expect-error getAttribute does exist
+    if (e.currentTarget && e.currentTarget.getAttribute) {
+        // @ts-expect-error getAttribute exists
+        const target = e.currentTarget.getAttribute('target');
+        if (/\b_blank\b/i.test(target))
+            return;
+    }
+    // this may be a Weex event which doesn't have this method
+    if (e.preventDefault)
+        e.preventDefault();
+    return true;
+}
+function includesParams(outer, inner) {
+    for (const key in inner) {
+        const innerValue = inner[key];
+        const outerValue = outer[key];
+        if (typeof innerValue === 'string') {
+            if (innerValue !== outerValue)
+                return false;
+        }
+        else {
+            if (!Array.isArray(outerValue) ||
+                outerValue.length !== innerValue.length ||
+                innerValue.some((value, i) => value !== outerValue[i]))
+                return false;
+        }
+    }
+    return true;
+}
+/**
+ * Get the original path value of a record by following its aliasOf
+ * @param record
+ */
+function getOriginalPath(record) {
+    return record ? (record.aliasOf ? record.aliasOf.path : record.path) : '';
+}
+/**
+ * Utility class to get the active class based on defaults.
+ * @param propClass
+ * @param globalClass
+ * @param defaultClass
+ */
+const getLinkClass = (propClass, globalClass, defaultClass) => propClass != null
+    ? propClass
+    : globalClass != null
+        ? globalClass
+        : defaultClass;
+
+const RouterViewImpl = /*#__PURE__*/ (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+    name: 'RouterView',
+    // #674 we manually inherit them
+    inheritAttrs: false,
+    props: {
+        name: {
+            type: String,
+            default: 'default',
+        },
+        route: Object,
+    },
+    setup(props, { attrs, slots }) {
+        ( true) && warnDeprecatedUsage();
+        const injectedRoute = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routerViewLocationKey);
+        const routeToDisplay = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => props.route || injectedRoute.value);
+        const depth = (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(viewDepthKey, 0);
+        const matchedRouteRef = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => routeToDisplay.value.matched[depth]);
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.provide)(viewDepthKey, depth + 1);
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.provide)(matchedRouteKey, matchedRouteRef);
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.provide)(routerViewLocationKey, routeToDisplay);
+        const viewRef = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)();
+        // watch at the same time the component instance, the route record we are
+        // rendering, and the name
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(() => [viewRef.value, matchedRouteRef.value, props.name], ([instance, to, name], [oldInstance, from, oldName]) => {
+            // copy reused instances
+            if (to) {
+                // this will update the instance for new instances as well as reused
+                // instances when navigating to a new route
+                to.instances[name] = instance;
+                // the component instance is reused for a different route or name so
+                // we copy any saved update or leave guards. With async setup, the
+                // mounting component will mount before the matchedRoute changes,
+                // making instance === oldInstance, so we check if guards have been
+                // added before. This works because we remove guards when
+                // unmounting/deactivating components
+                if (from && from !== to && instance && instance === oldInstance) {
+                    if (!to.leaveGuards.size) {
+                        to.leaveGuards = from.leaveGuards;
+                    }
+                    if (!to.updateGuards.size) {
+                        to.updateGuards = from.updateGuards;
+                    }
+                }
+            }
+            // trigger beforeRouteEnter next callbacks
+            if (instance &&
+                to &&
+                // if there is no instance but to and from are the same this might be
+                // the first visit
+                (!from || !isSameRouteRecord(to, from) || !oldInstance)) {
+                (to.enterCallbacks[name] || []).forEach(callback => callback(instance));
+            }
+        }, { flush: 'post' });
+        return () => {
+            const route = routeToDisplay.value;
+            const matchedRoute = matchedRouteRef.value;
+            const ViewComponent = matchedRoute && matchedRoute.components[props.name];
+            // we need the value at the time we render because when we unmount, we
+            // navigated to a different location so the value is different
+            const currentName = props.name;
+            if (!ViewComponent) {
+                return normalizeSlot(slots.default, { Component: ViewComponent, route });
+            }
+            // props from route configuration
+            const routePropsOption = matchedRoute.props[props.name];
+            const routeProps = routePropsOption
+                ? routePropsOption === true
+                    ? route.params
+                    : typeof routePropsOption === 'function'
+                        ? routePropsOption(route)
+                        : routePropsOption
+                : null;
+            const onVnodeUnmounted = vnode => {
+                // remove the instance reference to prevent leak
+                if (vnode.component.isUnmounted) {
+                    matchedRoute.instances[currentName] = null;
+                }
+            };
+            const component = (0,vue__WEBPACK_IMPORTED_MODULE_0__.h)(ViewComponent, assign({}, routeProps, attrs, {
+                onVnodeUnmounted,
+                ref: viewRef,
+            }));
+            if (( true) &&
+                isBrowser &&
+                component.ref) {
+                // TODO: can display if it's an alias, its props
+                const info = {
+                    depth,
+                    name: matchedRoute.name,
+                    path: matchedRoute.path,
+                    meta: matchedRoute.meta,
+                };
+                const internalInstances = Array.isArray(component.ref)
+                    ? component.ref.map(r => r.i)
+                    : [component.ref.i];
+                internalInstances.forEach(instance => {
+                    // @ts-expect-error
+                    instance.__vrv_devtools = info;
+                });
+            }
+            return (
+            // pass the vnode to the slot as a prop.
+            // h and <component :is="..."> both accept vnodes
+            normalizeSlot(slots.default, { Component: component, route }) ||
+                component);
+        };
+    },
+});
+function normalizeSlot(slot, data) {
+    if (!slot)
+        return null;
+    const slotContent = slot(data);
+    return slotContent.length === 1 ? slotContent[0] : slotContent;
+}
+// export the public type for h/tsx inference
+// also to avoid inline import() in generated d.ts files
+/**
+ * Component to display the current route the user is at.
+ */
+const RouterView = RouterViewImpl;
+// warn against deprecated usage with <transition> & <keep-alive>
+// due to functional component being no longer eager in Vue 3
+function warnDeprecatedUsage() {
+    const instance = (0,vue__WEBPACK_IMPORTED_MODULE_0__.getCurrentInstance)();
+    const parentName = instance.parent && instance.parent.type.name;
+    if (parentName &&
+        (parentName === 'KeepAlive' || parentName.includes('Transition'))) {
+        const comp = parentName === 'KeepAlive' ? 'keep-alive' : 'transition';
+        warn(`<router-view> can no longer be used directly inside <transition> or <keep-alive>.\n` +
+            `Use slot props instead:\n\n` +
+            `<router-view v-slot="{ Component }">\n` +
+            `  <${comp}>\n` +
+            `    <component :is="Component" />\n` +
+            `  </${comp}>\n` +
+            `</router-view>`);
+    }
+}
+
+function formatRouteLocation(routeLocation, tooltip) {
+    const copy = assign({}, routeLocation, {
+        // remove variables that can contain vue instances
+        matched: routeLocation.matched.map(matched => omit(matched, ['instances', 'children', 'aliasOf'])),
+    });
+    return {
+        _custom: {
+            type: null,
+            readOnly: true,
+            display: routeLocation.fullPath,
+            tooltip,
+            value: copy,
+        },
+    };
+}
+function formatDisplay(display) {
+    return {
+        _custom: {
+            display,
+        },
+    };
+}
+// to support multiple router instances
+let routerId = 0;
+function addDevtools(app, router, matcher) {
+    // Take over router.beforeEach and afterEach
+    // make sure we are not registering the devtool twice
+    if (router.__hasDevtools)
+        return;
+    router.__hasDevtools = true;
+    // increment to support multiple router instances
+    const id = routerId++;
+    (0,_vue_devtools_api__WEBPACK_IMPORTED_MODULE_1__.setupDevtoolsPlugin)({
+        id: 'org.vuejs.router' + (id ? '.' + id : ''),
+        label: 'Vue Router',
+        packageName: 'vue-router',
+        homepage: 'https://router.vuejs.org',
+        logo: 'https://router.vuejs.org/logo.png',
+        componentStateTypes: ['Routing'],
+        app,
+    }, api => {
+        // display state added by the router
+        api.on.inspectComponent((payload, ctx) => {
+            if (payload.instanceData) {
+                payload.instanceData.state.push({
+                    type: 'Routing',
+                    key: '$route',
+                    editable: false,
+                    value: formatRouteLocation(router.currentRoute.value, 'Current Route'),
+                });
+            }
+        });
+        // mark router-link as active and display tags on router views
+        api.on.visitComponentTree(({ treeNode: node, componentInstance }) => {
+            if (componentInstance.__vrv_devtools) {
+                const info = componentInstance.__vrv_devtools;
+                node.tags.push({
+                    label: (info.name ? `${info.name.toString()}: ` : '') + info.path,
+                    textColor: 0,
+                    tooltip: 'This component is rendered by &lt;router-view&gt;',
+                    backgroundColor: PINK_500,
+                });
+            }
+            // if multiple useLink are used
+            if (Array.isArray(componentInstance.__vrl_devtools)) {
+                componentInstance.__devtoolsApi = api;
+                componentInstance.__vrl_devtools.forEach(devtoolsData => {
+                    let backgroundColor = ORANGE_400;
+                    let tooltip = '';
+                    if (devtoolsData.isExactActive) {
+                        backgroundColor = LIME_500;
+                        tooltip = 'This is exactly active';
+                    }
+                    else if (devtoolsData.isActive) {
+                        backgroundColor = BLUE_600;
+                        tooltip = 'This link is active';
+                    }
+                    node.tags.push({
+                        label: devtoolsData.route.path,
+                        textColor: 0,
+                        tooltip,
+                        backgroundColor,
+                    });
+                });
+            }
+        });
+        (0,vue__WEBPACK_IMPORTED_MODULE_0__.watch)(router.currentRoute, () => {
+            // refresh active state
+            refreshRoutesView();
+            api.notifyComponentUpdate();
+            api.sendInspectorTree(routerInspectorId);
+            api.sendInspectorState(routerInspectorId);
+        });
+        const navigationsLayerId = 'router:navigations:' + id;
+        api.addTimelineLayer({
+            id: navigationsLayerId,
+            label: `Router${id ? ' ' + id : ''} Navigations`,
+            color: 0x40a8c4,
+        });
+        // const errorsLayerId = 'router:errors'
+        // api.addTimelineLayer({
+        //   id: errorsLayerId,
+        //   label: 'Router Errors',
+        //   color: 0xea5455,
+        // })
+        router.onError((error, to) => {
+            api.addTimelineEvent({
+                layerId: navigationsLayerId,
+                event: {
+                    title: 'Error during Navigation',
+                    subtitle: to.fullPath,
+                    logType: 'error',
+                    time: api.now(),
+                    data: { error },
+                    groupId: to.meta.__navigationId,
+                },
+            });
+        });
+        // attached to `meta` and used to group events
+        let navigationId = 0;
+        router.beforeEach((to, from) => {
+            const data = {
+                guard: formatDisplay('beforeEach'),
+                from: formatRouteLocation(from, 'Current Location during this navigation'),
+                to: formatRouteLocation(to, 'Target location'),
+            };
+            // Used to group navigations together, hide from devtools
+            Object.defineProperty(to.meta, '__navigationId', {
+                value: navigationId++,
+            });
+            api.addTimelineEvent({
+                layerId: navigationsLayerId,
+                event: {
+                    time: api.now(),
+                    title: 'Start of navigation',
+                    subtitle: to.fullPath,
+                    data,
+                    groupId: to.meta.__navigationId,
+                },
+            });
+        });
+        router.afterEach((to, from, failure) => {
+            const data = {
+                guard: formatDisplay('afterEach'),
+            };
+            if (failure) {
+                data.failure = {
+                    _custom: {
+                        type: Error,
+                        readOnly: true,
+                        display: failure ? failure.message : '',
+                        tooltip: 'Navigation Failure',
+                        value: failure,
+                    },
+                };
+                data.status = formatDisplay('❌');
+            }
+            else {
+                data.status = formatDisplay('✅');
+            }
+            // we set here to have the right order
+            data.from = formatRouteLocation(from, 'Current Location during this navigation');
+            data.to = formatRouteLocation(to, 'Target location');
+            api.addTimelineEvent({
+                layerId: navigationsLayerId,
+                event: {
+                    title: 'End of navigation',
+                    subtitle: to.fullPath,
+                    time: api.now(),
+                    data,
+                    logType: failure ? 'warning' : 'default',
+                    groupId: to.meta.__navigationId,
+                },
+            });
+        });
+        /**
+         * Inspector of Existing routes
+         */
+        const routerInspectorId = 'router-inspector:' + id;
+        api.addInspector({
+            id: routerInspectorId,
+            label: 'Routes' + (id ? ' ' + id : ''),
+            icon: 'book',
+            treeFilterPlaceholder: 'Search routes',
+        });
+        function refreshRoutesView() {
+            // the routes view isn't active
+            if (!activeRoutesPayload)
+                return;
+            const payload = activeRoutesPayload;
+            // children routes will appear as nested
+            let routes = matcher.getRoutes().filter(route => !route.parent);
+            // reset match state to false
+            routes.forEach(resetMatchStateOnRouteRecord);
+            // apply a match state if there is a payload
+            if (payload.filter) {
+                routes = routes.filter(route => 
+                // save matches state based on the payload
+                isRouteMatching(route, payload.filter.toLowerCase()));
+            }
+            // mark active routes
+            routes.forEach(route => markRouteRecordActive(route, router.currentRoute.value));
+            payload.rootNodes = routes.map(formatRouteRecordForInspector);
+        }
+        let activeRoutesPayload;
+        api.on.getInspectorTree(payload => {
+            activeRoutesPayload = payload;
+            if (payload.app === app && payload.inspectorId === routerInspectorId) {
+                refreshRoutesView();
+            }
+        });
+        /**
+         * Display information about the currently selected route record
+         */
+        api.on.getInspectorState(payload => {
+            if (payload.app === app && payload.inspectorId === routerInspectorId) {
+                const routes = matcher.getRoutes();
+                const route = routes.find(route => route.record.__vd_id === payload.nodeId);
+                if (route) {
+                    payload.state = {
+                        options: formatRouteRecordMatcherForStateInspector(route),
+                    };
+                }
+            }
+        });
+        api.sendInspectorTree(routerInspectorId);
+        api.sendInspectorState(routerInspectorId);
+    });
+}
+function modifierForKey(key) {
+    if (key.optional) {
+        return key.repeatable ? '*' : '?';
+    }
+    else {
+        return key.repeatable ? '+' : '';
+    }
+}
+function formatRouteRecordMatcherForStateInspector(route) {
+    const { record } = route;
+    const fields = [
+        { editable: false, key: 'path', value: record.path },
+    ];
+    if (record.name != null) {
+        fields.push({
+            editable: false,
+            key: 'name',
+            value: record.name,
+        });
+    }
+    fields.push({ editable: false, key: 'regexp', value: route.re });
+    if (route.keys.length) {
+        fields.push({
+            editable: false,
+            key: 'keys',
+            value: {
+                _custom: {
+                    type: null,
+                    readOnly: true,
+                    display: route.keys
+                        .map(key => `${key.name}${modifierForKey(key)}`)
+                        .join(' '),
+                    tooltip: 'Param keys',
+                    value: route.keys,
+                },
+            },
+        });
+    }
+    if (record.redirect != null) {
+        fields.push({
+            editable: false,
+            key: 'redirect',
+            value: record.redirect,
+        });
+    }
+    if (route.alias.length) {
+        fields.push({
+            editable: false,
+            key: 'aliases',
+            value: route.alias.map(alias => alias.record.path),
+        });
+    }
+    fields.push({
+        key: 'score',
+        editable: false,
+        value: {
+            _custom: {
+                type: null,
+                readOnly: true,
+                display: route.score.map(score => score.join(', ')).join(' | '),
+                tooltip: 'Score used to sort routes',
+                value: route.score,
+            },
+        },
+    });
+    return fields;
+}
+/**
+ * Extracted from tailwind palette
+ */
+const PINK_500 = 0xec4899;
+const BLUE_600 = 0x2563eb;
+const LIME_500 = 0x84cc16;
+const CYAN_400 = 0x22d3ee;
+const ORANGE_400 = 0xfb923c;
+// const GRAY_100 = 0xf4f4f5
+const DARK = 0x666666;
+function formatRouteRecordForInspector(route) {
+    const tags = [];
+    const { record } = route;
+    if (record.name != null) {
+        tags.push({
+            label: String(record.name),
+            textColor: 0,
+            backgroundColor: CYAN_400,
+        });
+    }
+    if (record.aliasOf) {
+        tags.push({
+            label: 'alias',
+            textColor: 0,
+            backgroundColor: ORANGE_400,
+        });
+    }
+    if (route.__vd_match) {
+        tags.push({
+            label: 'matches',
+            textColor: 0,
+            backgroundColor: PINK_500,
+        });
+    }
+    if (route.__vd_exactActive) {
+        tags.push({
+            label: 'exact',
+            textColor: 0,
+            backgroundColor: LIME_500,
+        });
+    }
+    if (route.__vd_active) {
+        tags.push({
+            label: 'active',
+            textColor: 0,
+            backgroundColor: BLUE_600,
+        });
+    }
+    if (record.redirect) {
+        tags.push({
+            label: 'redirect: ' +
+                (typeof record.redirect === 'string' ? record.redirect : 'Object'),
+            textColor: 0xffffff,
+            backgroundColor: DARK,
+        });
+    }
+    // add an id to be able to select it. Using the `path` is not possible because
+    // empty path children would collide with their parents
+    let id = record.__vd_id;
+    if (id == null) {
+        id = String(routeRecordId++);
+        record.__vd_id = id;
+    }
+    return {
+        id,
+        label: record.path,
+        tags,
+        children: route.children.map(formatRouteRecordForInspector),
+    };
+}
+//  incremental id for route records and inspector state
+let routeRecordId = 0;
+const EXTRACT_REGEXP_RE = /^\/(.*)\/([a-z]*)$/;
+function markRouteRecordActive(route, currentRoute) {
+    // no route will be active if matched is empty
+    // reset the matching state
+    const isExactActive = currentRoute.matched.length &&
+        isSameRouteRecord(currentRoute.matched[currentRoute.matched.length - 1], route.record);
+    route.__vd_exactActive = route.__vd_active = isExactActive;
+    if (!isExactActive) {
+        route.__vd_active = currentRoute.matched.some(match => isSameRouteRecord(match, route.record));
+    }
+    route.children.forEach(childRoute => markRouteRecordActive(childRoute, currentRoute));
+}
+function resetMatchStateOnRouteRecord(route) {
+    route.__vd_match = false;
+    route.children.forEach(resetMatchStateOnRouteRecord);
+}
+function isRouteMatching(route, filter) {
+    const found = String(route.re).match(EXTRACT_REGEXP_RE);
+    route.__vd_match = false;
+    if (!found || found.length < 3) {
+        return false;
+    }
+    // use a regexp without $ at the end to match nested routes better
+    const nonEndingRE = new RegExp(found[1].replace(/\$$/, ''), found[2]);
+    if (nonEndingRE.test(filter)) {
+        // mark children as matches
+        route.children.forEach(child => isRouteMatching(child, filter));
+        // exception case: `/`
+        if (route.record.path !== '/' || filter === '/') {
+            route.__vd_match = route.re.test(filter);
+            return true;
+        }
+        // hide the / route
+        return false;
+    }
+    const path = route.record.path.toLowerCase();
+    const decodedPath = decode(path);
+    // also allow partial matching on the path
+    if (!filter.startsWith('/') &&
+        (decodedPath.includes(filter) || path.includes(filter)))
+        return true;
+    if (decodedPath.startsWith(filter) || path.startsWith(filter))
+        return true;
+    if (route.record.name && String(route.record.name).includes(filter))
+        return true;
+    return route.children.some(child => isRouteMatching(child, filter));
+}
+function omit(obj, keys) {
+    const ret = {};
+    for (const key in obj) {
+        if (!keys.includes(key)) {
+            // @ts-expect-error
+            ret[key] = obj[key];
+        }
+    }
+    return ret;
+}
+
+/**
+ * Creates a Router instance that can be used by a Vue app.
+ *
+ * @param options - {@link RouterOptions}
+ */
+function createRouter(options) {
+    const matcher = createRouterMatcher(options.routes, options);
+    const parseQuery$1 = options.parseQuery || parseQuery;
+    const stringifyQuery$1 = options.stringifyQuery || stringifyQuery;
+    const routerHistory = options.history;
+    if (( true) && !routerHistory)
+        throw new Error('Provide the "history" option when calling "createRouter()":' +
+            ' https://next.router.vuejs.org/api/#history.');
+    const beforeGuards = useCallbacks();
+    const beforeResolveGuards = useCallbacks();
+    const afterGuards = useCallbacks();
+    const currentRoute = (0,vue__WEBPACK_IMPORTED_MODULE_0__.shallowRef)(START_LOCATION_NORMALIZED);
+    let pendingLocation = START_LOCATION_NORMALIZED;
+    // leave the scrollRestoration if no scrollBehavior is provided
+    if (isBrowser && options.scrollBehavior && 'scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    const normalizeParams = applyToParams.bind(null, paramValue => '' + paramValue);
+    const encodeParams = applyToParams.bind(null, encodeParam);
+    const decodeParams = 
+    // @ts-expect-error: intentionally avoid the type check
+    applyToParams.bind(null, decode);
+    function addRoute(parentOrRoute, route) {
+        let parent;
+        let record;
+        if (isRouteName(parentOrRoute)) {
+            parent = matcher.getRecordMatcher(parentOrRoute);
+            record = route;
+        }
+        else {
+            record = parentOrRoute;
+        }
+        return matcher.addRoute(record, parent);
+    }
+    function removeRoute(name) {
+        const recordMatcher = matcher.getRecordMatcher(name);
+        if (recordMatcher) {
+            matcher.removeRoute(recordMatcher);
+        }
+        else if ((true)) {
+            warn(`Cannot remove non-existent route "${String(name)}"`);
+        }
+    }
+    function getRoutes() {
+        return matcher.getRoutes().map(routeMatcher => routeMatcher.record);
+    }
+    function hasRoute(name) {
+        return !!matcher.getRecordMatcher(name);
+    }
+    function resolve(rawLocation, currentLocation) {
+        // const objectLocation = routerLocationAsObject(rawLocation)
+        // we create a copy to modify it later
+        currentLocation = assign({}, currentLocation || currentRoute.value);
+        if (typeof rawLocation === 'string') {
+            const locationNormalized = parseURL(parseQuery$1, rawLocation, currentLocation.path);
+            const matchedRoute = matcher.resolve({ path: locationNormalized.path }, currentLocation);
+            const href = routerHistory.createHref(locationNormalized.fullPath);
+            if ((true)) {
+                if (href.startsWith('//'))
+                    warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
+                else if (!matchedRoute.matched.length) {
+                    warn(`No match found for location with path "${rawLocation}"`);
+                }
+            }
+            // locationNormalized is always a new object
+            return assign(locationNormalized, matchedRoute, {
+                params: decodeParams(matchedRoute.params),
+                hash: decode(locationNormalized.hash),
+                redirectedFrom: undefined,
+                href,
+            });
+        }
+        let matcherLocation;
+        // path could be relative in object as well
+        if ('path' in rawLocation) {
+            if (( true) &&
+                'params' in rawLocation &&
+                !('name' in rawLocation) &&
+                // @ts-expect-error: the type is never
+                Object.keys(rawLocation.params).length) {
+                warn(`Path "${
+                // @ts-expect-error: the type is never
+                rawLocation.path}" was passed with params but they will be ignored. Use a named route alongside params instead.`);
+            }
+            matcherLocation = assign({}, rawLocation, {
+                path: parseURL(parseQuery$1, rawLocation.path, currentLocation.path).path,
+            });
+        }
+        else {
+            // remove any nullish param
+            const targetParams = assign({}, rawLocation.params);
+            for (const key in targetParams) {
+                if (targetParams[key] == null) {
+                    delete targetParams[key];
+                }
+            }
+            // pass encoded values to the matcher so it can produce encoded path and fullPath
+            matcherLocation = assign({}, rawLocation, {
+                params: encodeParams(rawLocation.params),
+            });
+            // current location params are decoded, we need to encode them in case the
+            // matcher merges the params
+            currentLocation.params = encodeParams(currentLocation.params);
+        }
+        const matchedRoute = matcher.resolve(matcherLocation, currentLocation);
+        const hash = rawLocation.hash || '';
+        if (( true) && hash && !hash.startsWith('#')) {
+            warn(`A \`hash\` should always start with the character "#". Replace "${hash}" with "#${hash}".`);
+        }
+        // decoding them) the matcher might have merged current location params so
+        // we need to run the decoding again
+        matchedRoute.params = normalizeParams(decodeParams(matchedRoute.params));
+        const fullPath = stringifyURL(stringifyQuery$1, assign({}, rawLocation, {
+            hash: encodeHash(hash),
+            path: matchedRoute.path,
+        }));
+        const href = routerHistory.createHref(fullPath);
+        if ((true)) {
+            if (href.startsWith('//')) {
+                warn(`Location "${rawLocation}" resolved to "${href}". A resolved location cannot start with multiple slashes.`);
+            }
+            else if (!matchedRoute.matched.length) {
+                warn(`No match found for location with path "${'path' in rawLocation ? rawLocation.path : rawLocation}"`);
+            }
+        }
+        return assign({
+            fullPath,
+            // keep the hash encoded so fullPath is effectively path + encodedQuery +
+            // hash
+            hash,
+            query: 
+            // if the user is using a custom query lib like qs, we might have
+            // nested objects, so we keep the query as is, meaning it can contain
+            // numbers at `$route.query`, but at the point, the user will have to
+            // use their own type anyway.
+            // https://github.com/vuejs/router/issues/328#issuecomment-649481567
+            stringifyQuery$1 === stringifyQuery
+                ? normalizeQuery(rawLocation.query)
+                : (rawLocation.query || {}),
+        }, matchedRoute, {
+            redirectedFrom: undefined,
+            href,
+        });
+    }
+    function locationAsObject(to) {
+        return typeof to === 'string'
+            ? parseURL(parseQuery$1, to, currentRoute.value.path)
+            : assign({}, to);
+    }
+    function checkCanceledNavigation(to, from) {
+        if (pendingLocation !== to) {
+            return createRouterError(8 /* NAVIGATION_CANCELLED */, {
+                from,
+                to,
+            });
+        }
+    }
+    function push(to) {
+        return pushWithRedirect(to);
+    }
+    function replace(to) {
+        return push(assign(locationAsObject(to), { replace: true }));
+    }
+    function handleRedirectRecord(to) {
+        const lastMatched = to.matched[to.matched.length - 1];
+        if (lastMatched && lastMatched.redirect) {
+            const { redirect } = lastMatched;
+            let newTargetLocation = typeof redirect === 'function' ? redirect(to) : redirect;
+            if (typeof newTargetLocation === 'string') {
+                newTargetLocation =
+                    newTargetLocation.includes('?') || newTargetLocation.includes('#')
+                        ? (newTargetLocation = locationAsObject(newTargetLocation))
+                        : // force empty params
+                            { path: newTargetLocation };
+                // @ts-expect-error: force empty params when a string is passed to let
+                // the router parse them again
+                newTargetLocation.params = {};
+            }
+            if (( true) &&
+                !('path' in newTargetLocation) &&
+                !('name' in newTargetLocation)) {
+                warn(`Invalid redirect found:\n${JSON.stringify(newTargetLocation, null, 2)}\n when navigating to "${to.fullPath}". A redirect must contain a name or path. This will break in production.`);
+                throw new Error('Invalid redirect');
+            }
+            return assign({
+                query: to.query,
+                hash: to.hash,
+                params: to.params,
+            }, newTargetLocation);
+        }
+    }
+    function pushWithRedirect(to, redirectedFrom) {
+        const targetLocation = (pendingLocation = resolve(to));
+        const from = currentRoute.value;
+        const data = to.state;
+        const force = to.force;
+        // to could be a string where `replace` is a function
+        const replace = to.replace === true;
+        const shouldRedirect = handleRedirectRecord(targetLocation);
+        if (shouldRedirect)
+            return pushWithRedirect(assign(locationAsObject(shouldRedirect), {
+                state: data,
+                force,
+                replace,
+            }), 
+            // keep original redirectedFrom if it exists
+            redirectedFrom || targetLocation);
+        // if it was a redirect we already called `pushWithRedirect` above
+        const toLocation = targetLocation;
+        toLocation.redirectedFrom = redirectedFrom;
+        let failure;
+        if (!force && isSameRouteLocation(stringifyQuery$1, from, targetLocation)) {
+            failure = createRouterError(16 /* NAVIGATION_DUPLICATED */, { to: toLocation, from });
+            // trigger scroll to allow scrolling to the same anchor
+            handleScroll(from, from, 
+            // this is a push, the only way for it to be triggered from a
+            // history.listen is with a redirect, which makes it become a push
+            true, 
+            // This cannot be the first navigation because the initial location
+            // cannot be manually navigated to
+            false);
+        }
+        return (failure ? Promise.resolve(failure) : navigate(toLocation, from))
+            .catch((error) => isNavigationFailure(error)
+            ? // navigation redirects still mark the router as ready
+                isNavigationFailure(error, 2 /* NAVIGATION_GUARD_REDIRECT */)
+                    ? error
+                    : markAsReady(error) // also returns the error
+            : // reject any unknown error
+                triggerError(error, toLocation, from))
+            .then((failure) => {
+            if (failure) {
+                if (isNavigationFailure(failure, 2 /* NAVIGATION_GUARD_REDIRECT */)) {
+                    if (( true) &&
+                        // we are redirecting to the same location we were already at
+                        isSameRouteLocation(stringifyQuery$1, resolve(failure.to), toLocation) &&
+                        // and we have done it a couple of times
+                        redirectedFrom &&
+                        // @ts-expect-error: added only in dev
+                        (redirectedFrom._count = redirectedFrom._count
+                            ? // @ts-expect-error
+                                redirectedFrom._count + 1
+                            : 1) > 10) {
+                        warn(`Detected an infinite redirection in a navigation guard when going from "${from.fullPath}" to "${toLocation.fullPath}". Aborting to avoid a Stack Overflow. This will break in production if not fixed.`);
+                        return Promise.reject(new Error('Infinite redirect in navigation guard'));
+                    }
+                    return pushWithRedirect(
+                    // keep options
+                    assign(locationAsObject(failure.to), {
+                        state: data,
+                        force,
+                        replace,
+                    }), 
+                    // preserve the original redirectedFrom if any
+                    redirectedFrom || toLocation);
+                }
+            }
+            else {
+                // if we fail we don't finalize the navigation
+                failure = finalizeNavigation(toLocation, from, true, replace, data);
+            }
+            triggerAfterEach(toLocation, from, failure);
+            return failure;
+        });
+    }
+    /**
+     * Helper to reject and skip all navigation guards if a new navigation happened
+     * @param to
+     * @param from
+     */
+    function checkCanceledNavigationAndReject(to, from) {
+        const error = checkCanceledNavigation(to, from);
+        return error ? Promise.reject(error) : Promise.resolve();
+    }
+    // TODO: refactor the whole before guards by internally using router.beforeEach
+    function navigate(to, from) {
+        let guards;
+        const [leavingRecords, updatingRecords, enteringRecords] = extractChangingRecords(to, from);
+        // all components here have been resolved once because we are leaving
+        guards = extractComponentsGuards(leavingRecords.reverse(), 'beforeRouteLeave', to, from);
+        // leavingRecords is already reversed
+        for (const record of leavingRecords) {
+            record.leaveGuards.forEach(guard => {
+                guards.push(guardToPromiseFn(guard, to, from));
+            });
+        }
+        const canceledNavigationCheck = checkCanceledNavigationAndReject.bind(null, to, from);
+        guards.push(canceledNavigationCheck);
+        // run the queue of per route beforeRouteLeave guards
+        return (runGuardQueue(guards)
+            .then(() => {
+            // check global guards beforeEach
+            guards = [];
+            for (const guard of beforeGuards.list()) {
+                guards.push(guardToPromiseFn(guard, to, from));
+            }
+            guards.push(canceledNavigationCheck);
+            return runGuardQueue(guards);
+        })
+            .then(() => {
+            // check in components beforeRouteUpdate
+            guards = extractComponentsGuards(updatingRecords, 'beforeRouteUpdate', to, from);
+            for (const record of updatingRecords) {
+                record.updateGuards.forEach(guard => {
+                    guards.push(guardToPromiseFn(guard, to, from));
+                });
+            }
+            guards.push(canceledNavigationCheck);
+            // run the queue of per route beforeEnter guards
+            return runGuardQueue(guards);
+        })
+            .then(() => {
+            // check the route beforeEnter
+            guards = [];
+            for (const record of to.matched) {
+                // do not trigger beforeEnter on reused views
+                if (record.beforeEnter && !from.matched.includes(record)) {
+                    if (Array.isArray(record.beforeEnter)) {
+                        for (const beforeEnter of record.beforeEnter)
+                            guards.push(guardToPromiseFn(beforeEnter, to, from));
+                    }
+                    else {
+                        guards.push(guardToPromiseFn(record.beforeEnter, to, from));
+                    }
+                }
+            }
+            guards.push(canceledNavigationCheck);
+            // run the queue of per route beforeEnter guards
+            return runGuardQueue(guards);
+        })
+            .then(() => {
+            // NOTE: at this point to.matched is normalized and does not contain any () => Promise<Component>
+            // clear existing enterCallbacks, these are added by extractComponentsGuards
+            to.matched.forEach(record => (record.enterCallbacks = {}));
+            // check in-component beforeRouteEnter
+            guards = extractComponentsGuards(enteringRecords, 'beforeRouteEnter', to, from);
+            guards.push(canceledNavigationCheck);
+            // run the queue of per route beforeEnter guards
+            return runGuardQueue(guards);
+        })
+            .then(() => {
+            // check global guards beforeResolve
+            guards = [];
+            for (const guard of beforeResolveGuards.list()) {
+                guards.push(guardToPromiseFn(guard, to, from));
+            }
+            guards.push(canceledNavigationCheck);
+            return runGuardQueue(guards);
+        })
+            // catch any navigation canceled
+            .catch(err => isNavigationFailure(err, 8 /* NAVIGATION_CANCELLED */)
+            ? err
+            : Promise.reject(err)));
+    }
+    function triggerAfterEach(to, from, failure) {
+        // navigation is confirmed, call afterGuards
+        // TODO: wrap with error handlers
+        for (const guard of afterGuards.list())
+            guard(to, from, failure);
+    }
+    /**
+     * - Cleans up any navigation guards
+     * - Changes the url if necessary
+     * - Calls the scrollBehavior
+     */
+    function finalizeNavigation(toLocation, from, isPush, replace, data) {
+        // a more recent navigation took place
+        const error = checkCanceledNavigation(toLocation, from);
+        if (error)
+            return error;
+        // only consider as push if it's not the first navigation
+        const isFirstNavigation = from === START_LOCATION_NORMALIZED;
+        const state = !isBrowser ? {} : history.state;
+        // change URL only if the user did a push/replace and if it's not the initial navigation because
+        // it's just reflecting the url
+        if (isPush) {
+            // on the initial navigation, we want to reuse the scroll position from
+            // history state if it exists
+            if (replace || isFirstNavigation)
+                routerHistory.replace(toLocation.fullPath, assign({
+                    scroll: isFirstNavigation && state && state.scroll,
+                }, data));
+            else
+                routerHistory.push(toLocation.fullPath, data);
+        }
+        // accept current navigation
+        currentRoute.value = toLocation;
+        handleScroll(toLocation, from, isPush, isFirstNavigation);
+        markAsReady();
+    }
+    let removeHistoryListener;
+    // attach listener to history to trigger navigations
+    function setupListeners() {
+        removeHistoryListener = routerHistory.listen((to, _from, info) => {
+            // cannot be a redirect route because it was in history
+            const toLocation = resolve(to);
+            // due to dynamic routing, and to hash history with manual navigation
+            // (manually changing the url or calling history.hash = '#/somewhere'),
+            // there could be a redirect record in history
+            const shouldRedirect = handleRedirectRecord(toLocation);
+            if (shouldRedirect) {
+                pushWithRedirect(assign(shouldRedirect, { replace: true }), toLocation).catch(noop);
+                return;
+            }
+            pendingLocation = toLocation;
+            const from = currentRoute.value;
+            // TODO: should be moved to web history?
+            if (isBrowser) {
+                saveScrollPosition(getScrollKey(from.fullPath, info.delta), computeScrollPosition());
+            }
+            navigate(toLocation, from)
+                .catch((error) => {
+                if (isNavigationFailure(error, 4 /* NAVIGATION_ABORTED */ | 8 /* NAVIGATION_CANCELLED */)) {
+                    return error;
+                }
+                if (isNavigationFailure(error, 2 /* NAVIGATION_GUARD_REDIRECT */)) {
+                    // Here we could call if (info.delta) routerHistory.go(-info.delta,
+                    // false) but this is bug prone as we have no way to wait the
+                    // navigation to be finished before calling pushWithRedirect. Using
+                    // a setTimeout of 16ms seems to work but there is not guarantee for
+                    // it to work on every browser. So Instead we do not restore the
+                    // history entry and trigger a new navigation as requested by the
+                    // navigation guard.
+                    // the error is already handled by router.push we just want to avoid
+                    // logging the error
+                    pushWithRedirect(error.to, toLocation
+                    // avoid an uncaught rejection, let push call triggerError
+                    )
+                        .then(failure => {
+                        // manual change in hash history #916 ending up in the URL not
+                        // changing but it was changed by the manual url change, so we
+                        // need to manually change it ourselves
+                        if (isNavigationFailure(failure, 4 /* NAVIGATION_ABORTED */ |
+                            16 /* NAVIGATION_DUPLICATED */) &&
+                            !info.delta &&
+                            info.type === NavigationType.pop) {
+                            routerHistory.go(-1, false);
+                        }
+                    })
+                        .catch(noop);
+                    // avoid the then branch
+                    return Promise.reject();
+                }
+                // do not restore history on unknown direction
+                if (info.delta)
+                    routerHistory.go(-info.delta, false);
+                // unrecognized error, transfer to the global handler
+                return triggerError(error, toLocation, from);
+            })
+                .then((failure) => {
+                failure =
+                    failure ||
+                        finalizeNavigation(
+                        // after navigation, all matched components are resolved
+                        toLocation, from, false);
+                // revert the navigation
+                if (failure) {
+                    if (info.delta) {
+                        routerHistory.go(-info.delta, false);
+                    }
+                    else if (info.type === NavigationType.pop &&
+                        isNavigationFailure(failure, 4 /* NAVIGATION_ABORTED */ | 16 /* NAVIGATION_DUPLICATED */)) {
+                        // manual change in hash history #916
+                        // it's like a push but lacks the information of the direction
+                        routerHistory.go(-1, false);
+                    }
+                }
+                triggerAfterEach(toLocation, from, failure);
+            })
+                .catch(noop);
+        });
+    }
+    // Initialization and Errors
+    let readyHandlers = useCallbacks();
+    let errorHandlers = useCallbacks();
+    let ready;
+    /**
+     * Trigger errorHandlers added via onError and throws the error as well
+     *
+     * @param error - error to throw
+     * @param to - location we were navigating to when the error happened
+     * @param from - location we were navigating from when the error happened
+     * @returns the error as a rejected promise
+     */
+    function triggerError(error, to, from) {
+        markAsReady(error);
+        const list = errorHandlers.list();
+        if (list.length) {
+            list.forEach(handler => handler(error, to, from));
+        }
+        else {
+            if ((true)) {
+                warn('uncaught error during route navigation:');
+            }
+            console.error(error);
+        }
+        return Promise.reject(error);
+    }
+    function isReady() {
+        if (ready && currentRoute.value !== START_LOCATION_NORMALIZED)
+            return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            readyHandlers.add([resolve, reject]);
+        });
+    }
+    function markAsReady(err) {
+        if (!ready) {
+            // still not ready if an error happened
+            ready = !err;
+            setupListeners();
+            readyHandlers
+                .list()
+                .forEach(([resolve, reject]) => (err ? reject(err) : resolve()));
+            readyHandlers.reset();
+        }
+        return err;
+    }
+    // Scroll behavior
+    function handleScroll(to, from, isPush, isFirstNavigation) {
+        const { scrollBehavior } = options;
+        if (!isBrowser || !scrollBehavior)
+            return Promise.resolve();
+        const scrollPosition = (!isPush && getSavedScrollPosition(getScrollKey(to.fullPath, 0))) ||
+            ((isFirstNavigation || !isPush) &&
+                history.state &&
+                history.state.scroll) ||
+            null;
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.nextTick)()
+            .then(() => scrollBehavior(to, from, scrollPosition))
+            .then(position => position && scrollToPosition(position))
+            .catch(err => triggerError(err, to, from));
+    }
+    const go = (delta) => routerHistory.go(delta);
+    let started;
+    const installedApps = new Set();
+    const router = {
+        currentRoute,
+        addRoute,
+        removeRoute,
+        hasRoute,
+        getRoutes,
+        resolve,
+        options,
+        push,
+        replace,
+        go,
+        back: () => go(-1),
+        forward: () => go(1),
+        beforeEach: beforeGuards.add,
+        beforeResolve: beforeResolveGuards.add,
+        afterEach: afterGuards.add,
+        onError: errorHandlers.add,
+        isReady,
+        install(app) {
+            const router = this;
+            app.component('RouterLink', RouterLink);
+            app.component('RouterView', RouterView);
+            app.config.globalProperties.$router = router;
+            Object.defineProperty(app.config.globalProperties, '$route', {
+                enumerable: true,
+                get: () => (0,vue__WEBPACK_IMPORTED_MODULE_0__.unref)(currentRoute),
+            });
+            // this initial navigation is only necessary on client, on server it doesn't
+            // make sense because it will create an extra unnecessary navigation and could
+            // lead to problems
+            if (isBrowser &&
+                // used for the initial navigation client side to avoid pushing
+                // multiple times when the router is used in multiple apps
+                !started &&
+                currentRoute.value === START_LOCATION_NORMALIZED) {
+                // see above
+                started = true;
+                push(routerHistory.location).catch(err => {
+                    if ((true))
+                        warn('Unexpected error when starting the router:', err);
+                });
+            }
+            const reactiveRoute = {};
+            for (const key in START_LOCATION_NORMALIZED) {
+                // @ts-expect-error: the key matches
+                reactiveRoute[key] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.computed)(() => currentRoute.value[key]);
+            }
+            app.provide(routerKey, router);
+            app.provide(routeLocationKey, (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)(reactiveRoute));
+            app.provide(routerViewLocationKey, currentRoute);
+            const unmountApp = app.unmount;
+            installedApps.add(app);
+            app.unmount = function () {
+                installedApps.delete(app);
+                // the router is not attached to an app anymore
+                if (installedApps.size < 1) {
+                    // invalidate the current navigation
+                    pendingLocation = START_LOCATION_NORMALIZED;
+                    removeHistoryListener && removeHistoryListener();
+                    currentRoute.value = START_LOCATION_NORMALIZED;
+                    started = false;
+                    ready = false;
+                }
+                unmountApp();
+            };
+            if (( true) && isBrowser) {
+                addDevtools(app, router, matcher);
+            }
+        },
+    };
+    return router;
+}
+function runGuardQueue(guards) {
+    return guards.reduce((promise, guard) => promise.then(() => guard()), Promise.resolve());
+}
+function extractChangingRecords(to, from) {
+    const leavingRecords = [];
+    const updatingRecords = [];
+    const enteringRecords = [];
+    const len = Math.max(from.matched.length, to.matched.length);
+    for (let i = 0; i < len; i++) {
+        const recordFrom = from.matched[i];
+        if (recordFrom) {
+            if (to.matched.find(record => isSameRouteRecord(record, recordFrom)))
+                updatingRecords.push(recordFrom);
+            else
+                leavingRecords.push(recordFrom);
+        }
+        const recordTo = to.matched[i];
+        if (recordTo) {
+            // the type doesn't matter because we are comparing per reference
+            if (!from.matched.find(record => isSameRouteRecord(record, recordTo))) {
+                enteringRecords.push(recordTo);
+            }
+        }
+    }
+    return [leavingRecords, updatingRecords, enteringRecords];
+}
+
+/**
+ * Returns the router instance. Equivalent to using `$router` inside
+ * templates.
+ */
+function useRouter() {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routerKey);
+}
+/**
+ * Returns the current route location. Equivalent to using `$route` inside
+ * templates.
+ */
+function useRoute() {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.inject)(routeLocationKey);
+}
+
+
 
 
 /***/ }),
@@ -38120,6 +45704,39 @@ function render(_ctx, _cache) {
       "stroke-linecap": "round",
       "stroke-linejoin": "round",
       d: "M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+    })
+  ]))
+}
+
+/***/ }),
+
+/***/ "./node_modules/@heroicons/vue/outline/esm/ArrowNarrowRightIcon.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/@heroicons/vue/outline/esm/ArrowNarrowRightIcon.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+function render(_ctx, _cache) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    "stroke-width": "2",
+    stroke: "currentColor",
+    "aria-hidden": "true"
+  }, [
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("path", {
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      d: "M17 8l4 4m0 0l-4 4m4-4H3"
     })
   ]))
 }
