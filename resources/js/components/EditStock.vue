@@ -1,22 +1,17 @@
 <template>
     <div class="Main__Wrap">
         <form action="">
-            <h1>Add Category</h1>
             <div class="Input__Container">
-                <label for="name">Name</label>
+                <p>
+                    Current Value <span><strong>25</strong> </span>
+                </p>
+            </div>
+            <div class="Input__Container">
+                <label for="name"><strong>New value</strong> </label>
                 <input name="name" v-model="name" />
             </div>
-            <div class="Input__Container">
-                <label for="description">Description</label>
-                <textarea
-                    id="w3review"
-                    name="description"
-                    rows="4"
-                    cols="30"
-                ></textarea>
-            </div>
 
-            <button>Add</button>
+            <button>Save</button>
         </form>
     </div>
 </template>
@@ -30,7 +25,7 @@ export default {};
     position: absolute;
     border-top: 1px solid gray;
     background: #fff;
-    top: 50px;
+    top: 30px;
     right: 200px;
     border-radius: 5px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
@@ -38,9 +33,7 @@ export default {};
 
     form {
         padding: 20px;
-        h1 {
-            font-weight: 800;
-        }
+
         .Input__Container {
             margin-top: 10px;
             display: flex;

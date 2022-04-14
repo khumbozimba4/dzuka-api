@@ -2,9 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../pages/Dashboard.vue";
 import Stock from "../pages/Stock.vue";
 import Inventory from "../pages/Inventory.vue";
+import Products from "../pages/Products.vue";
+import Sales from "../pages/Sales.vue";
 import Analytics from "../pages/Analytics.vue";
 import About from "../pages/About.vue";
 import Users from "../pages/Users.vue";
+import Expenses from "../pages/Expenses.vue";
 const routes = [
     {
         path: "/",
@@ -23,11 +26,35 @@ const routes = [
         },
     },
     {
+        path: "/products",
+        name: "products",
+        component: Products,
+        meta: {
+            title: "Products",
+        },
+    },
+    {
         path: "/stock",
         name: "stock",
         component: Stock,
         meta: {
             title: "Stock",
+        },
+    },
+    {
+        path: "/sales",
+        name: "sales",
+        component: Sales,
+        meta: {
+            title: "Sales",
+        },
+    },
+    {
+        path: "/expenses",
+        name: "expenses",
+        component: Expenses,
+        meta: {
+            title: "Expenses",
         },
     },
     {

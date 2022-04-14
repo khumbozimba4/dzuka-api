@@ -1,13 +1,21 @@
 <template>
     <div class="Main__Wrap">
         <form action="">
-            <h1>Add Category</h1>
+            <h1>Add sale</h1>
             <div class="Input__Container">
                 <label for="name">Name</label>
                 <input name="name" v-model="name" />
             </div>
             <div class="Input__Container">
-                <label for="description">Description</label>
+                <label for="name">Product</label>
+                <input name="name" v-model="name" />
+            </div>
+            <div class="Input__Container">
+                <label for="name">Customer</label>
+                <input name="name" v-model="name" />
+            </div>
+            <div class="Input__Container">
+                <label for="description">Additional details</label>
                 <textarea
                     id="w3review"
                     name="description"

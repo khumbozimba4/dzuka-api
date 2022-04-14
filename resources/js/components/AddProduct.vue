@@ -1,7 +1,7 @@
 <template>
     <div class="Main__Wrap">
         <form action="">
-            <h1>Add Category</h1>
+            <h1>Add Product</h1>
             <div class="Input__Container">
                 <label for="name">Name</label>
                 <input name="name" v-model="name" />
