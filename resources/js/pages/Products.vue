@@ -3,7 +3,7 @@
         <div class="NavBar__Container">
             <div class="Title">
                 <CollectionIcon class="Icon" />
-                <p>Products</p>
+                <p>Category | Products</p>
             </div>
             <div class="Search__Bar">
                 <input type="text" class="Input" placeholder="Search product" />
@@ -11,6 +11,7 @@
             </div>
             <div class="Options"></div>
         </div>
+
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -18,29 +19,33 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Add Category</div>
+                    <div class="Add__Category">Add Product</div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddCategory />
+                <AddProduct />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>Product Category</td>
-                            <td>Available products</td>
-                            <td>View</td>
+                            <td>Product name</td>
+                            <td>Total Stock</td>
+                            <td>Allocated</td>
+                            <td>Available</td>
+                            <td>Incoming</td>
+                            <td>Cost</td>
+                            <td>Price</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr class="Tr">
                             <td>School Shoe</td>
                             <td>25</td>
-                            <td>
-                                <router-link to="/products"
-                                    ><ArrowNarrowRightIcon class="Icon"
-                                /></router-link>
-                            </td>
+                            <td>0</td>
+                            <td>20</td>
+                            <td>0</td>
+                            <td>25,000</td>
+                            <td>30,000</td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,19 +57,15 @@
 <script>
 import {
     CollectionIcon,
-    ColorSwatchIcon,
     AdjustmentsIcon,
-    ShoppingBagIcon,
-    ChartPieIcon,
-    UsersIcon,
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
 } from "@heroicons/vue/outline";
-import AddCategory from "../components/AddCategory.vue";
+import AddProduct from "../components/AddProduct.vue";
 export default {
     components: {
-        AddCategory,
+        AddProduct,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,

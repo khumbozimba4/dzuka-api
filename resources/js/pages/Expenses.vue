@@ -2,8 +2,8 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <CollectionIcon class="Icon" />
-                <p>Products</p>
+                <CreditCardIcon class="Icon" />
+                <p>Expenses</p>
             </div>
             <div class="Search__Bar">
                 <input type="text" class="Input" placeholder="Search product" />
@@ -11,6 +11,7 @@
             </div>
             <div class="Options"></div>
         </div>
+
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -18,65 +19,27 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">
-                        Add Category
-                        <AddCategory />
-                    </div>
+                    <div class="Add__Category">Record Expense</div>
                     <PrinterIcon class="Icon" />
                 </div>
+                <AddExpense />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>Product Category</td>
-                            <td>Available products</td>
-                            <td>View</td>
+                            <td>Date</td>
+                            <td>Type</td>
+                            <td>Description</td>
+                            <td>Amount</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr class="Tr">
-                            <td>School Shoe</td>
-                            <td>25</td>
-                            <td><ArrowNarrowRightIcon class="Icon" /></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="Contents__Container">
-            <div class="Heading">
-                <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
-                    Filters
-                </div>
-                <div class="Right__Side">
-                    <div class="Add__Category">Add Product</div>
-                    <PrinterIcon class="Icon" />
-                </div>
-            </div>
-            <div class="Table__Container">
-                <table class="Table">
-                    <thead class="Table__Head">
-                        <tr class="Tr">
-                            <td>Product name</td>
-                            <td>Total Stock</td>
-                            <td>Allocated</td>
-                            <td>Available</td>
-                            <td>Incoming</td>
-                            <td>Cost</td>
-                            <td>Price</td>
-                        </tr>
-                    </thead>
-                    <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>School Shoe</td>
-                            <td>25</td>
-                            <td>0</td>
-                            <td>20</td>
-                            <td>0</td>
-                            <td>25,000</td>
-                            <td>30,000</td>
+                            <td>1/12/2022</td>
+                            <td>Investment</td>
+                            <td>Expenses made on ....</td>
+                            <td>50000</td>
                         </tr>
                     </tbody>
                 </table>
@@ -88,25 +51,25 @@
 <script>
 import {
     CollectionIcon,
-    ColorSwatchIcon,
     AdjustmentsIcon,
-    ShoppingBagIcon,
-    ChartPieIcon,
-    UsersIcon,
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
+    ShoppingBagIcon,
+    CreditCardIcon,
 } from "@heroicons/vue/outline";
-import AddCategory from "./AddCategory.vue";
+import AddExpense from "../components/AddExpense.vue";
 export default {
     components: {
-        AddCategory,
+        AddExpense,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
+        CreditCardIcon,
+        ShoppingBagIcon,
     },
 };
 </script>
@@ -165,7 +128,10 @@ export default {
         border-radius: 3px;
         display: flex;
         flex-direction: column;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
         .Heading {
+            position: relative;
             display: flex;
             justify-content: space-between;
             padding: 20px;
@@ -188,7 +154,6 @@ export default {
                 align-items: center;
                 gap: 10px;
                 .Add__Category {
-                    position: relative;
                     padding: 5px 20px;
                     border: 1px solid rgb(115 115 115);
                     border-radius: 3px;

@@ -2,30 +2,42 @@
     <div class="Main__Wrapper">
         <div class="Dzuka__Logo">DZUKA SALES</div>
         <div class="Nav__Options">
-            <div class="Nav__Option">
-                <ColorSwatchIcon class="Icon" />
-                <p class="Title">Dashboard</p>
-            </div>
-            <div class="Nav__Option">
-                <CollectionIcon class="Icon" />
-                <p class="Title">Inventory</p>
-            </div>
-            <div class="Nav__Option">
-                <AdjustmentsIcon class="Icon" />
-                <p class="Title">Stock Control</p>
-            </div>
-            <div class="Nav__Option">
-                <ShoppingBagIcon class="Icon" />
-                <p class="Title">Sales</p>
-            </div>
-            <div class="Nav__Option">
-                <ChartPieIcon class="Icon" />
-                <p class="Title">Analytics</p>
-            </div>
-            <div class="Nav__Option">
-                <UsersIcon class="Icon" />
-                <p class="Title">Users</p>
-            </div>
+            <router-link to="/">
+                <div class="Nav__Option">
+                    <ColorSwatchIcon class="Icon" />
+                    <p class="Title">Dashboard</p>
+                </div></router-link
+            >
+            <router-link to="/inventory">
+                <div class="Nav__Option">
+                    <CollectionIcon class="Icon" />
+                    <p class="Title">Inventory</p>
+                </div>
+            </router-link>
+            <router-link to="/stock">
+                <div class="Nav__Option">
+                    <AdjustmentsIcon class="Icon" />
+                    <p class="Title">Stock Control</p>
+                </div>
+            </router-link>
+            <router-link to="/sales">
+                <div class="Nav__Option">
+                    <ShoppingBagIcon class="Icon" />
+                    <p class="Title">Sales</p>
+                </div>
+            </router-link>
+            <router-link to="/expenses">
+                <div class="Nav__Option">
+                    <CreditCardIcon class="Icon" />
+                    <p class="Title">Expenses</p>
+                </div></router-link
+            >
+            <router-link to="/users">
+                <div class="Nav__Option">
+                    <UsersIcon class="Icon" />
+                    <p class="Title">Users</p>
+                </div>
+            </router-link>
         </div>
         <div class="Sign__Out">
             <LogoutIcon class="Icon" />
@@ -41,6 +53,7 @@ import {
     ShoppingBagIcon,
     ChartPieIcon,
     UsersIcon,
+    CreditCardIcon,
     LogoutIcon,
 } from "@heroicons/vue/outline";
 export default {
@@ -52,6 +65,7 @@ export default {
         ChartPieIcon,
         UsersIcon,
         LogoutIcon,
+        CreditCardIcon,
     },
 };
 </script>

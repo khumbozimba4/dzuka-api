@@ -2,8 +2,8 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <CollectionIcon class="Icon" />
-                <p>Products</p>
+                <ShoppingBagIcon class="Icon" />
+                <p>Sales</p>
             </div>
             <div class="Search__Bar">
                 <input type="text" class="Input" placeholder="Search product" />
@@ -11,6 +11,7 @@
             </div>
             <div class="Options"></div>
         </div>
+
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -18,29 +19,29 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Add Category</div>
+                    <div class="Add__Category">Create Sale</div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddCategory />
+                <AddSale />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>Product Category</td>
-                            <td>Available products</td>
-                            <td>View</td>
+                            <td>Date</td>
+                            <td>Customer</td>
+                            <td>Mode</td>
+                            <td>Products/Services</td>
+                            <td>Price</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr class="Tr">
-                            <td>School Shoe</td>
-                            <td>25</td>
-                            <td>
-                                <router-link to="/products"
-                                    ><ArrowNarrowRightIcon class="Icon"
-                                /></router-link>
-                            </td>
+                            <td>1/12/2022</td>
+                            <td>Chidobvu</td>
+                            <td>Email</td>
+                            <td>Printers</td>
+                            <td>30,000</td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,25 +53,23 @@
 <script>
 import {
     CollectionIcon,
-    ColorSwatchIcon,
     AdjustmentsIcon,
-    ShoppingBagIcon,
-    ChartPieIcon,
-    UsersIcon,
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
+    ShoppingBagIcon,
 } from "@heroicons/vue/outline";
-import AddCategory from "../components/AddCategory.vue";
+import AddSale from "../components/AddSale.vue";
 export default {
     components: {
-        AddCategory,
+        AddSale,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
+        ShoppingBagIcon,
     },
 };
 </script>

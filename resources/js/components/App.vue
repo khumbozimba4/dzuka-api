@@ -2,19 +2,16 @@
     <div class="Main__Wrapper">
         <SideBar />
         <div class="Page__Content">
-            <Body />
+            <router-view></router-view>
         </div>
-        <router-view></router-view>
     </div>
 </template>
 
 <script>
 import SideBar from "./SideBar.vue";
-import Body from "./Body.vue";
 export default {
     components: {
         SideBar,
-        Body,
     },
 };
 </script>
