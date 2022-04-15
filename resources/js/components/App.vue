@@ -18,11 +18,11 @@ export default {
 
 <style lang="scss" scoped>
 .Main__Wrapper {
-    widows: 100%;
     display: flex;
     .Page__Content {
         flex: 0.8;
         background: rgb(245 245 245);
+        overflow-y: scroll;
     }
 }
 </style>
