@@ -1,28 +1,74 @@
 <template>
     <div class="Main__Wrap">
-        <form action="">
+        <form @submit.prevent="addProduct">
             <h1>Add Product</h1>
             <div class="Input__Container">
                 <label for="name">Name</label>
                 <input name="name" v-model="name" />
             </div>
             <div class="Input__Container">
+                <label for="measurement">Measurement (Kg,g,l)</label>
+                <input name="measurement" type="number" v-model="measurement" />
+            </div>
+            <div class="Input__Container">
+                <label for="price">Price (MWK)</label>
+                <input name="price" type="number" v-model="price" />
+            </div>
+            <div class="Input__Container">
                 <label for="description">Description</label>
                 <textarea
                     id="w3review"
                     name="description"
+                    v-model="description"
                     rows="4"
                     cols="30"
                 ></textarea>
             </div>
 
             <button>Add</button>
+
+            <div v-if="errorMessage">{{ errorMessage }}</div>
         </form>
     </div>
 </template>
 
 <script>
-export default {};
+import axios from "axios";
+export default {
+    emits: ["getProducts", "closeModal"],
+    props: ["category_id"],
+    data() {
+        return {
+            description: "",
+            name: "",
+            measurement: "",
+            price: null,
+            errorMessage: null,
+        };
+    },
+    computed: {},
+    methods: {
+        addProduct() {
+            axios
+                .post("api/products/store", {
+                    product_name: this.name,
+                    description: this.description,
+                    measurement: this.measurement,
+                    price: this.price,
+                    category_id: this.category_id,
+                })
+                .then(() => {
+                    this.$emit("closeModal");
+                })
+                .then(() => {
+                    this.$emit("getProducts");
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -33,6 +79,7 @@ export default {};
     top: 50px;
     right: 200px;
     border-radius: 5px;
+    width: 500px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
         0 4px 6px -4px rgb(0 0 0 / 0.1);
 
