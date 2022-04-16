@@ -3,7 +3,7 @@
         <div class="NavBar__Container">
             <div class="Title">
                 <CollectionIcon class="Icon" />
-                <p>Category | Products</p>
+                <p>{{ categoryName }} | Products</p>
             </div>
             <div class="Search__Bar">
                 <input type="text" class="Input" placeholder="Search product" />
@@ -19,37 +19,46 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Add Product</div>
+                    <div class="Add__Category" @click="isOpen = !isOpen">
+                        Add Product
+                    </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddProduct />
+                <AddProduct
+                    v-if="isOpen"
+                    @getProducts="getProducts"
+                    @closeModal="closeModal"
+                    :category_id="category_id"
+                />
             </div>
-            <div class="Table__Container">
+
+            <div class="Table__Container" v-if="!errorMessage">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
                             <td>Product name</td>
                             <td>Total Stock</td>
                             <td>Allocated</td>
-                            <td>Available</td>
-                            <td>Incoming</td>
-                            <td>Cost</td>
-                            <td>Price</td>
+                            <td>Cost (MWK)</td>
+                            <td>Price (MWK)</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>School Shoe</td>
+                        <tr
+                            class="Tr"
+                            v-for="product in products"
+                            :key="product.id"
+                        >
+                            <td>{{ product.product_name }}</td>
                             <td>25</td>
                             <td>0</td>
                             <td>20</td>
-                            <td>0</td>
-                            <td>25,000</td>
-                            <td>30,000</td>
+                            <td>{{ product.price }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div v-else>{{ errorMessage }}</div>
         </div>
     </div>
 </template>
@@ -63,6 +72,7 @@ import {
     ArrowNarrowRightIcon,
 } from "@heroicons/vue/outline";
 import AddProduct from "../components/AddProduct.vue";
+import axios from "axios";
 export default {
     components: {
         AddProduct,
@@ -72,6 +82,38 @@ export default {
         PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
+    },
+    data() {
+        return {
+            products: [],
+            isOpen: false,
+            categoryName: "",
+            category_id: null,
+            errorMessage: null,
+        };
+    },
+    created() {
+        this.getProducts();
+    },
+    methods: {
+        getProducts() {
+            console.log("yo");
+            this.categoryName = this.$route.params.categoryName;
+            this.category_id = this.$route.params.category_id;
+
+            axios
+                .get(`api/categories/${this.category_id}/products`)
+                .then((response) => {
+                    this.products = response.data;
+                    console.log(this.products);
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        closeModal() {
+            this.isOpen = false;
+        },
     },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div class="Main__Wrap">
-        <form action="">
+        <form @submit.prevent="addCategory">
             <h1>Add Category</h1>
             <div class="Input__Container">
                 <label for="name">Name</label>
@@ -11,6 +11,7 @@
                 <textarea
                     id="w3review"
                     name="description"
+                    v-model="description"
                     rows="4"
                     cols="30"
                 ></textarea>
@@ -22,7 +23,31 @@
 </template>
 
 <script>
-export default {};
+import axios from "axios";
+export default {
+    emits: ["getCategories"],
+    data() {
+        return {
+            description: "",
+            name: "",
+        };
+    },
+    methods: {
+        addCategory() {
+            axios
+                .post("api/categories/store", {
+                    category_name: this.name,
+                    description: this.description,
+                })
+                .then(() => {
+                    this.$emit("getCategories");
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>

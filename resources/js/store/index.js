@@ -1,12 +1,8 @@
-import Vue from "vue";
-import Vuex from "vuex";
 import axios from "axios";
-
-Vue.use(Vuex);
-
+import { createStore } from "vuex";
 // axios.defaults.baseURL = "http://127.0.0.1:8000/api";
 
-export default new Vuex.Store({
+export default createStore({
     state: {
         mobile: false,
         mobileNav: false,
@@ -139,6 +135,4 @@ export default new Vuex.Store({
                 state.name.match(/(\b\S)?/g).join("");
         },
     },
-
-    modules: {},
 });

@@ -18,10 +18,12 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Add Category</div>
+                    <div class="Add__Category" @click="isOpen = !isOpen">
+                        Add Category
+                    </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddCategory />
+                <AddCategory @getCategories="getCategories" v-if="isOpen" />
             </div>
             <div class="Table__Container">
                 <table class="Table">
@@ -33,13 +35,18 @@
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>School Shoe</td>
-                            <td>25</td>
+                        <tr
+                            class="Tr"
+                            v-for="category in categories"
+                            :key="category.id"
+                        >
+                            <td>{{ category.category_name }}</td>
+                            <td>{{ category.products.length }}</td>
                             <td>
-                                <router-link to="/products"
-                                    ><ArrowNarrowRightIcon class="Icon"
-                                /></router-link>
+                                <ArrowNarrowRightIcon
+                                    class="Icon"
+                                    @click="gotoProducts(category)"
+                                />
                             </td>
                         </tr>
                     </tbody>
@@ -52,16 +59,13 @@
 <script>
 import {
     CollectionIcon,
-    ColorSwatchIcon,
     AdjustmentsIcon,
-    ShoppingBagIcon,
-    ChartPieIcon,
-    UsersIcon,
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
 } from "@heroicons/vue/outline";
 import AddCategory from "../components/AddCategory.vue";
+import axios from "axios";
 export default {
     components: {
         AddCategory,
@@ -70,7 +74,39 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
-        PrinterIcon,
+    },
+    data() {
+        return {
+            isOpen: false,
+            categories: [],
+        };
+    },
+    created() {
+        this.getCategories();
+    },
+    methods: {
+        getCategories() {
+            axios
+                .get("api/categories")
+                .then((response) => {
+                    this.categories = response.data;
+                })
+                .then(() => {
+                    this.isOpen = false;
+                })
+                .catch((err) => {
+                    console.log("error", err);
+                });
+        },
+        gotoProducts(category) {
+            this.$router.push({
+                name: "products",
+                params: {
+                    categoryName: category.category_name,
+                    category_id: category.id,
+                },
+            });
+        },
     },
 };
 </script>

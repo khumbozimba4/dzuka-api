@@ -1,17 +1,16 @@
 <template>
     <div class="Main__Wrap">
         <form action="">
-            <h1>Add sale</h1>
+            <div class="Heading">
+                <h1>Add sale</h1>
+                <XCircleIcon class="Icon" />
+            </div>
             <div class="Input__Container">
-                <label for="name">Name</label>
+                <label for="name">Customer Name</label>
                 <input name="name" v-model="name" />
             </div>
             <div class="Input__Container">
-                <label for="name">Product</label>
-                <input name="name" v-model="name" />
-            </div>
-            <div class="Input__Container">
-                <label for="name">Customer</label>
+                <label for="name">Customer Contact</label>
                 <input name="name" v-model="name" />
             </div>
             <div class="Input__Container">
@@ -23,6 +22,19 @@
                     cols="30"
                 ></textarea>
             </div>
+            <button>Save</button>
+        </form>
+        <form action=" ">
+            <h1 class="pt-4">Add Products</h1>
+
+            <div class="Input__Container">
+                <label for="name">Product</label>
+                <input name="name" v-model="name" />
+            </div>
+            <div class="Input__Container">
+                <label for="name">Quantity</label>
+                <input name="name" v-model="name" />
+            </div>
 
             <button>Add</button>
         </form>
@@ -30,7 +42,12 @@
 </template>
 
 <script>
-export default {};
+import { XCircleIcon } from "@heroicons/vue/solid";
+export default {
+    components: {
+        XCircleIcon,
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -43,12 +60,29 @@ export default {};
     border-radius: 5px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
         0 4px 6px -4px rgb(0 0 0 / 0.1);
+    padding: 20px;
+    h1 {
+        font-weight: 800;
+    }
 
     form {
-        padding: 20px;
-        h1 {
-            font-weight: 800;
+        width: 500px;
+        .Heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            h1 {
+                font-weight: 800;
+            }
+            .Icon {
+                width: 20px;
+                object-fit: contain;
+                color: rgb(30 41 59);
+                background: #fff;
+                cursor: pointer;
+            }
         }
+
         .Input__Container {
             margin-top: 10px;
             display: flex;
