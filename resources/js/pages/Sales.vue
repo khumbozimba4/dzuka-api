@@ -24,7 +24,7 @@
                     </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddSale v-if="isOpen" />
+                <AddSale v-if="isOpen" @closeAddSale="isOpen = !isOpen" />
             </div>
             <div class="Table__Container">
                 <table class="Table">

@@ -3,7 +3,7 @@
         <form @submit.prevent="addSale" v-if="addSaleOpen">
             <div class="Heading">
                 <h1>Add sale</h1>
-                <XCircleIcon class="Icon" />
+                <XCircleIcon class="Icon" @click="closeAddSale" />
             </div>
             <div class="Input__Container">
                 <label for="date">Date</label>
@@ -27,33 +27,44 @@
                     cols="30"
                 ></textarea>
             </div>
-            <button>Save</button>
+            <button class="mt-4">Save</button>
             <div v-if="errMessage">{{ errMessage }}</div>
         </form>
         <!-- Success Add -->
         <div class="Second__Step" v-if="!addSaleOpen && addedSale">
+            <div class="Heading">
+                <h1>Add sale</h1>
+                <XCircleIcon class="Icon" @click="closeAddSale" />
+            </div>
             <h6>
                 <span><CheckCircleIcon class="Icon" /></span>
                 Sale successfully added.
             </h6>
-            <p>SaleID: {{ addedSale.id }}</p>
-            <p>Customer: {{ addedSale.customer_name }}</p>
+            <p>
+                SaleID: <strong>{{ addedSale.id }}</strong>
+            </p>
+            <p>
+                Customer: <strong>{{ addedSale.customer_name }}</strong>
+            </p>
         </div>
         <!-- Add products Form -->
-        <form
-            @submit.prevent="addProductsSale"
-            v-if="!addSaleOpen && addedSale"
-        >
+        <div class="Add__Products__Wrap" v-if="!addSaleOpen && addedSale">
             <h1 class="pt-4">Add Products</h1>
 
             <div class="Input__Search">
-                <label for="name">Product</label>
                 <div>
                     <SearchIcon class="Icon" />
-                    <input name="name" placeholder="Search" v-model="search" />
+                    <input
+                        name="name"
+                        placeholder="Search products"
+                        v-model="search"
+                    />
                     <!-- Search results -->
                     <div class="Product__List" v-if="search">
-                        <h1>SELECT PRODUCTS</h1>
+                        <div class="Heading">
+                            <h1>SELECT PRODUCTS</h1>
+                            <XCircleIcon class="Icon" @click="resetSearch" />
+                        </div>
                         <div v-for="item in products" :key="item.id">
                             <label for="selected">
                                 {{ item.product_name }}
@@ -72,7 +83,7 @@
             <div class="Selected__Products" v-if="selected">
                 <h1 v-if="selected">Products Sold</h1>
                 <div v-for="(item, index) in selected" :key="item.id">
-                    <form @submit.prevent="addProduct(item.id)">
+                    <form @submit.prevent="addProduct(item.id, index)">
                         <p>
                             <strong>{{ index + 1 }}</strong>
                         </p>
@@ -89,7 +100,7 @@
                     </form>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </template>
 
@@ -103,6 +114,7 @@ export default {
         CheckCircleIcon,
         SearchIcon,
     },
+    emits: ["closeAddSale"],
     data() {
         return {
             addProductOpen: false,
@@ -139,15 +151,28 @@ export default {
                     this.errMessage = err.message;
                 });
         },
-        addProduct(id) {
-            axios
-                .post(`api/sales/product/${this.addedSale.id}/store`, {
-                    quantity: this.quantity,
-                    product_id: id,
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+        addProduct(id, index) {
+            if (this.quantity !== "") {
+                axios
+                    .post(`api/sales/product/${this.addedSale.id}/store`, {
+                        quantity: this.quantity,
+                        product_id: id,
+                    })
+                    .then(() => {
+                        this.selected.splice(index, 1);
+                    })
+                    .catch((err) => {
+                        this.errMessage = err.message;
+                    });
+            } else {
+                return;
+            }
+        },
+        closeAddSale() {
+            this.$emit("closeAddSale");
+        },
+        resetSearch() {
+            this.search = "";
         },
     },
     watch: {
@@ -158,7 +183,7 @@ export default {
                     this.products = res.data;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    this.errMessage = err.message;
                 });
         },
     },
@@ -176,27 +201,76 @@ export default {
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
         0 4px 6px -4px rgb(0 0 0 / 0.1);
     padding: 20px;
+
+    .Heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        h1 {
+            font-weight: 800;
+        }
+        .Icon {
+            width: 20px;
+            object-fit: contain;
+            color: rgb(30 41 59);
+            background: #fff;
+            cursor: pointer;
+        }
+    }
+    button {
+        padding: 5px 10px;
+        background-color: rgb(30 41 59);
+        color: #fff;
+        border-radius: 3px;
+
+        &:hover {
+            background: rgb(15 23 42);
+        }
+    }
+
     h1 {
         font-weight: 800;
     }
 
     form {
         width: 500px;
-        .Heading {
+
+        .Input__Container {
+            margin-top: 10px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            h1 {
-                font-weight: 800;
+            flex-direction: column;
+            input {
+                background: none;
+                outline: none;
+                border-bottom: 1px solid gray;
+                color: gray;
             }
-            .Icon {
-                width: 20px;
-                object-fit: contain;
-                color: rgb(30 41 59);
-                background: #fff;
-                cursor: pointer;
+            div {
+                display: flex;
+                align-items: center;
+                .Icon {
+                    height: 20px;
+                    object-fit: contain;
+                }
             }
         }
+    }
+    .Second__Step {
+        padding: 20px 0;
+        h6 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            .Icon {
+                height: 20px;
+                object-fit: contain;
+                color: rgb(34 197 94);
+            }
+        }
+    }
+    .Add__Products__Wrap {
+        width: 500px;
 
         .Input__Container {
             margin-top: 10px;
@@ -242,15 +316,16 @@ export default {
                     position: absolute;
                     width: 300px;
                     left: 300px;
-                    bottom: 0;
+                    bottom: -50px;
                     background-color: #fff;
                     border-radius: 5px;
                     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
                         0 4px 6px -4px rgb(0 0 0 / 0.1);
                     padding: 20px;
+                    border-top: 1px solid gray;
                     border-left: 1px solid gray;
                     h1 {
-                        padding: 20px 0;
+                        padding: 10px 0;
                     }
                     div {
                         width: 100%;
@@ -286,31 +361,6 @@ export default {
                         }
                     }
                 }
-            }
-        }
-        button {
-            padding: 5px 10px;
-            background-color: rgb(30 41 59);
-            color: #fff;
-            border-radius: 3px;
-            margin-top: 10px;
-
-            &:hover {
-                background: rgb(15 23 42);
-            }
-        }
-    }
-    .Second__Step {
-        padding: 20px 0;
-        h6 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
-            .Icon {
-                height: 20px;
-                object-fit: contain;
-                color: rgb(34 197 94);
             }
         }
     }
