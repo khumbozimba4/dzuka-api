@@ -14,7 +14,7 @@ class UpdateSalesTable extends Migration
     public function up()
     {
         Schema::table('sales', function (Blueprint $table) {
-            $table->string('customer');
+            $table->string('customer_contact');
             $table->string('description');
         });
     }

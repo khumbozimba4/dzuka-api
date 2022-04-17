@@ -19,10 +19,12 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Create Sale</div>
+                    <div class="Add__Category" @click="isOpen = !isOpen">
+                        Create Sale
+                    </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddSale />
+                <AddSale v-if="isOpen" />
             </div>
             <div class="Table__Container">
                 <table class="Table">
@@ -70,6 +72,11 @@ export default {
         ArrowNarrowRightIcon,
         PrinterIcon,
         ShoppingBagIcon,
+    },
+    data() {
+        return {
+            isOpen: false,
+        };
     },
 };
 </script>
