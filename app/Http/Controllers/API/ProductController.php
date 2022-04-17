@@ -13,6 +13,11 @@ class ProductController extends Controller
     {
         return Product::get();
     }
+
+    public function search($name)
+    {
+        return Product::where('product_name','like','%'.$name.'%')->with('category')->get();
+    }
   
     public function store(Request $request)
     {
