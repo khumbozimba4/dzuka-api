@@ -31,18 +31,18 @@
             <div v-if="errMessage">{{ errMessage }}</div>
         </form>
         <!-- Success Add -->
-        <div class="Second__Step" v-if="!addSaleOpen && addedProduct">
+        <div class="Second__Step" v-if="!addSaleOpen && addedSale">
             <h6>
                 <span><CheckCircleIcon class="Icon" /></span>
                 Sale successfully added.
             </h6>
-            <p>SaleID: {{ addedProduct.id }}</p>
-            <p>Customer: {{ addedProduct.customer_name }}</p>
+            <p>SaleID: {{ addedSale.id }}</p>
+            <p>Customer: {{ addedSale.customer_name }}</p>
         </div>
         <!-- Add products Form -->
         <form
             @submit.prevent="addProductsSale"
-            v-if="!addSaleOpen && addedProduct"
+            v-if="!addSaleOpen && addedSale"
         >
             <h1 class="pt-4">Add Products</h1>
 
@@ -53,18 +53,39 @@
                     <input name="name" placeholder="Search" v-model="search" />
                     <!-- Search results -->
                     <div class="Product__List" v-if="search">
-                        <div v-for="selected in products" :key="selected.id">
-                            <input type="checkbox" :value="selected" />
+                        <h1>SELECT PRODUCTS</h1>
+                        <div v-for="item in products" :key="item.id">
+                            <label for="selected">
+                                {{ item.product_name }}
+                            </label>
+                            <input
+                                type="checkbox"
+                                name="selected"
+                                :value="item"
+                                v-model="selected"
+                            />
                         </div>
                     </div>
                 </div>
             </div>
             <!-- selected products -->
             <div class="Selected__Products" v-if="selected">
-                <div v-for="item in selected" :key="item.id">
+                <h1 v-if="selected">Products Sold</h1>
+                <div v-for="(item, index) in selected" :key="item.id">
                     <form @submit.prevent="addProduct(item.id)">
-                        {{ item.product_name }}
-                        <input type="text" name="quantity" v-model="quantity" />
+                        <p>
+                            <strong>{{ index + 1 }}</strong>
+                        </p>
+                        <p>{{ item.product_name }}</p>
+                        <div class="Input__Wrap">
+                            <label for="quantity">Quantity</label>
+                            <input
+                                type="text"
+                                name="quantity"
+                                v-model="quantity"
+                            />
+                        </div>
+                        <button type="submit">Save</button>
                     </form>
                 </div>
             </div>
@@ -91,10 +112,11 @@ export default {
             date: null,
             description: "",
             errMessage: "",
-            addedProduct: {},
+            addedSale: {},
             products: [],
             search: "",
             selected: [],
+            quantity: "",
         };
     },
     methods: {
@@ -107,7 +129,7 @@ export default {
                     description: this.description,
                 })
                 .then((response) => {
-                    this.addedProduct = response.data;
+                    this.addedSale = response.data;
                 })
                 .then(() => {
                     this.addSaleOpen = false;
@@ -115,6 +137,16 @@ export default {
                 })
                 .catch((err) => {
                     this.errMessage = err.message;
+                });
+        },
+        addProduct(id) {
+            axios
+                .post(`api/sales/product/${this.addedSale.id}/store`, {
+                    quantity: this.quantity,
+                    product_id: id,
+                })
+                .catch((err) => {
+                    console.log(err);
                 });
         },
     },
@@ -205,6 +237,8 @@ export default {
                     padding: 0 5px;
                 }
                 .Product__List {
+                    display: flex;
+                    flex-direction: column;
                     position: absolute;
                     width: 300px;
                     left: 300px;
@@ -215,6 +249,42 @@ export default {
                         0 4px 6px -4px rgb(0 0 0 / 0.1);
                     padding: 20px;
                     border-left: 1px solid gray;
+                    h1 {
+                        padding: 20px 0;
+                    }
+                    div {
+                        width: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        border-top: 1px solid rgb(229 229 229);
+                        padding: 5px 0;
+                    }
+                }
+            }
+        }
+        .Selected__Products {
+            margin-top: 20px;
+
+            div {
+                border-top: 1px solid rgb(229 229 229);
+                padding: 5px;
+
+                form {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    justify-content: space-between;
+                    .Input__Wrap {
+                        display: flex;
+                        align-items: center;
+                        gap: 5px;
+                        input {
+                            height: 30px;
+                            width: 50px;
+                            border-radius: 2px;
+                        }
+                    }
                 }
             }
         }

@@ -22588,10 +22588,11 @@ __webpack_require__.r(__webpack_exports__);
       date: null,
       description: "",
       errMessage: "",
-      addedProduct: {},
+      addedSale: {},
       products: [],
       search: "",
-      selected: []
+      selected: [],
+      quantity: ""
     };
   },
   methods: {
@@ -22604,12 +22605,20 @@ __webpack_require__.r(__webpack_exports__);
         date: this.date,
         description: this.description
       }).then(function (response) {
-        _this.addedProduct = response.data;
+        _this.addedSale = response.data;
       }).then(function () {
         _this.addSaleOpen = false;
         _this.addProductOpen = true;
       })["catch"](function (err) {
         _this.errMessage = err.message;
+      });
+    },
+    addProduct: function addProduct(id) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/sales/product/".concat(this.addedSale.id, "/store"), {
+        quantity: this.quantity,
+        product_id: id
+      })["catch"](function (err) {
+        console.log(err);
       });
     }
   },
@@ -23490,12 +23499,45 @@ var _hoisted_19 = {
   key: 0,
   "class": "Product__List"
 };
-var _hoisted_20 = ["value"];
+
+var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, "SELECT PRODUCTS", -1
+  /* HOISTED */
+  );
+});
+
 var _hoisted_21 = {
+  "for": "selected"
+};
+var _hoisted_22 = ["value"];
+var _hoisted_23 = {
   key: 0,
   "class": "Selected__Products"
 };
-var _hoisted_22 = ["onSubmit"];
+var _hoisted_24 = {
+  key: 0
+};
+var _hoisted_25 = ["onSubmit"];
+var _hoisted_26 = {
+  "class": "Input__Wrap"
+};
+
+var _hoisted_27 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+    "for": "quantity"
+  }, "Quantity", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    type: "submit"
+  }, "Save", -1
+  /* HOISTED */
+  );
+});
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_XCircleIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("XCircleIcon");
 
@@ -23546,15 +23588,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 32
   /* HYDRATE_EVENTS */
-  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Success Add "), !$data.addSaleOpen && $data.addedProduct ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckCircleIcon, {
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Success Add "), !$data.addSaleOpen && $data.addedSale ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckCircleIcon, {
     "class": "Icon"
-  })]), _hoisted_15]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "SaleID: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedProduct.id), 1
+  })]), _hoisted_15]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "SaleID: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedSale.id), 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Customer: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedProduct.customer_name), 1
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Customer: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedSale.customer_name), 1
   /* TEXT */
-  )])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Add products Form "), !$data.addSaleOpen && $data.addedProduct ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
+  )])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Add products Form "), !$data.addSaleOpen && $data.addedSale ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
     key: 2,
-    onSubmit: _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+    onSubmit: _cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return _ctx.addProductsSale && _ctx.addProductsSale.apply(_ctx, arguments);
     }, ["prevent"]))
   }, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchIcon, {
@@ -23567,37 +23609,45 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.search]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Search results "), $data.search ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.products, function (selected) {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.search]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Search results "), $data.search ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [_hoisted_20, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.products, function (item) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
-      key: selected.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      key: item.id
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
-      value: selected
+      name: "selected",
+      value: item,
+      "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+        return $data.selected = $event;
+      })
     }, null, 8
     /* PROPS */
-    , _hoisted_20)]);
+    , _hoisted_22), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $data.selected]])]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selected products "), $data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_21, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected, function (item) {
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selected products "), $data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_23, [$data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h1", _hoisted_24, "Products Sold")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected, function (item, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: item.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
       onSubmit: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
-        return _ctx.addProduct(item.id);
+        return $options.addProduct(item.id);
       }, ["prevent"])
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name) + " ", 1
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [_hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "text",
       name: "quantity",
-      "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
-        return _ctx.quantity = $event;
+      "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+        return $data.quantity = $event;
       })
     }, null, 512
     /* NEED_PATCH */
-    ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.quantity]])], 40
+    ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.quantity]])]), _hoisted_28], 40
     /* PROPS, HYDRATE_EVENTS */
-    , _hoisted_22)]);
+    , _hoisted_25)]);
   }), 128
   /* KEYED_FRAGMENT */
   ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 32
@@ -25230,7 +25280,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrap[data-v-10d119ed] {\n  position: absolute;\n  border-top: 1px solid gray;\n  background: #fff;\n  top: 50px;\n  right: 200px;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n}\n.Main__Wrap h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap form .Heading[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.Main__Wrap form .Heading h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form .Heading .Icon[data-v-10d119ed] {\n  width: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(30, 41, 59);\n  background: #fff;\n  cursor: pointer;\n}\n.Main__Wrap form .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap form .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap form .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap form .Input__Search[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrap form .Input__Search div[data-v-10d119ed] {\n  position: relative;\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Search div .Icon[data-v-10d119ed] {\n  height: 20px;\n  color: black;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap form .Input__Search div input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  padding: 0 5px;\n}\n.Main__Wrap form .Input__Search div .Product__List[data-v-10d119ed] {\n  position: absolute;\n  width: 300px;\n  left: 300px;\n  bottom: 0;\n  background-color: #fff;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n  border-left: 1px solid gray;\n}\n.Main__Wrap form button[data-v-10d119ed] {\n  padding: 5px 10px;\n  background-color: rgb(30, 41, 59);\n  color: #fff;\n  border-radius: 3px;\n  margin-top: 10px;\n}\n.Main__Wrap form button[data-v-10d119ed]:hover {\n  background: rgb(15, 23, 42);\n}\n.Main__Wrap .Second__Step[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap .Second__Step h6[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-weight: 500;\n}\n.Main__Wrap .Second__Step h6 .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(34, 197, 94);\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrap[data-v-10d119ed] {\n  position: absolute;\n  border-top: 1px solid gray;\n  background: #fff;\n  top: 50px;\n  right: 200px;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n}\n.Main__Wrap h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap form .Heading[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.Main__Wrap form .Heading h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form .Heading .Icon[data-v-10d119ed] {\n  width: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(30, 41, 59);\n  background: #fff;\n  cursor: pointer;\n}\n.Main__Wrap form .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap form .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap form .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap form .Input__Search[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrap form .Input__Search div[data-v-10d119ed] {\n  position: relative;\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Search div .Icon[data-v-10d119ed] {\n  height: 20px;\n  color: black;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap form .Input__Search div input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  padding: 0 5px;\n}\n.Main__Wrap form .Input__Search div .Product__List[data-v-10d119ed] {\n  display: flex;\n  flex-direction: column;\n  position: absolute;\n  width: 300px;\n  left: 300px;\n  bottom: 0;\n  background-color: #fff;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n  border-left: 1px solid gray;\n}\n.Main__Wrap form .Input__Search div .Product__List h1[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap form .Input__Search div .Product__List div[data-v-10d119ed] {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px 0;\n}\n.Main__Wrap form .Selected__Products[data-v-10d119ed] {\n  margin-top: 20px;\n}\n.Main__Wrap form .Selected__Products div[data-v-10d119ed] {\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px;\n}\n.Main__Wrap form .Selected__Products div form[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  justify-content: space-between;\n}\n.Main__Wrap form .Selected__Products div form .Input__Wrap[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n}\n.Main__Wrap form .Selected__Products div form .Input__Wrap input[data-v-10d119ed] {\n  height: 30px;\n  width: 50px;\n  border-radius: 2px;\n}\n.Main__Wrap form button[data-v-10d119ed] {\n  padding: 5px 10px;\n  background-color: rgb(30, 41, 59);\n  color: #fff;\n  border-radius: 3px;\n  margin-top: 10px;\n}\n.Main__Wrap form button[data-v-10d119ed]:hover {\n  background: rgb(15, 23, 42);\n}\n.Main__Wrap .Second__Step[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap .Second__Step h6[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-weight: 500;\n}\n.Main__Wrap .Second__Step h6 .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(34, 197, 94);\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
