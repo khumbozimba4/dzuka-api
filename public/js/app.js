@@ -22579,6 +22579,7 @@ __webpack_require__.r(__webpack_exports__);
     CheckCircleIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__["default"],
     SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
+  emits: ["closeAddSale"],
   data: function data() {
     return {
       addProductOpen: false,
@@ -22613,23 +22614,37 @@ __webpack_require__.r(__webpack_exports__);
         _this.errMessage = err.message;
       });
     },
-    addProduct: function addProduct(id) {
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/sales/product/".concat(this.addedSale.id, "/store"), {
-        quantity: this.quantity,
-        product_id: id
-      })["catch"](function (err) {
-        console.log(err);
-      });
+    addProduct: function addProduct(id, index) {
+      var _this2 = this;
+
+      if (this.quantity !== "") {
+        axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/sales/product/".concat(this.addedSale.id, "/store"), {
+          quantity: this.quantity,
+          product_id: id
+        }).then(function () {
+          _this2.selected.splice(index, 1);
+        })["catch"](function (err) {
+          _this2.errMessage = err.message;
+        });
+      } else {
+        return;
+      }
+    },
+    closeAddSale: function closeAddSale() {
+      this.$emit("closeAddSale");
+    },
+    resetSearch: function resetSearch() {
+      this.search = "";
     }
   },
   watch: {
     search: function search(value) {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default().get("api/products/search/".concat(value)).then(function (res) {
-        _this2.products = res.data;
+        _this3.products = res.data;
       })["catch"](function (err) {
-        console.log(err);
+        _this3.errMessage = err.message;
       });
     }
   }
@@ -23460,7 +23475,9 @@ var _hoisted_11 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", null, "Save", -1
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "mt-4"
+  }, "Save", -1
   /* HOISTED */
   );
 });
@@ -23472,10 +23489,28 @@ var _hoisted_14 = {
   key: 1,
   "class": "Second__Step"
 };
-
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Sale successfully added. ");
+var _hoisted_15 = {
+  "class": "Heading"
+};
 
 var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, "Add sale", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Sale successfully added. ");
+
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" SaleID: ");
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Customer: ");
+
+var _hoisted_20 = {
+  key: 2,
+  "class": "Add__Products__Wrap"
+};
+
+var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", {
     "class": "pt-4"
   }, "Add Products", -1
@@ -23483,46 +23518,40 @@ var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_17 = {
+var _hoisted_22 = {
   "class": "Input__Search"
 };
-
-var _hoisted_18 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-    "for": "name"
-  }, "Product", -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_19 = {
+var _hoisted_23 = {
   key: 0,
   "class": "Product__List"
 };
+var _hoisted_24 = {
+  "class": "Heading"
+};
 
-var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", null, "SELECT PRODUCTS", -1
   /* HOISTED */
   );
 });
 
-var _hoisted_21 = {
+var _hoisted_26 = {
   "for": "selected"
 };
-var _hoisted_22 = ["value"];
-var _hoisted_23 = {
+var _hoisted_27 = ["value"];
+var _hoisted_28 = {
   key: 0,
   "class": "Selected__Products"
 };
-var _hoisted_24 = {
+var _hoisted_29 = {
   key: 0
 };
-var _hoisted_25 = ["onSubmit"];
-var _hoisted_26 = {
+var _hoisted_30 = ["onSubmit"];
+var _hoisted_31 = {
   "class": "Input__Wrap"
 };
 
-var _hoisted_27 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "for": "quantity"
   }, "Quantity", -1
@@ -23530,7 +23559,7 @@ var _hoisted_27 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_33 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     type: "submit"
   }, "Save", -1
@@ -23551,8 +23580,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return $options.addSale && $options.addSale.apply($options, arguments);
     }, ["prevent"]))
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_XCircleIcon, {
-    "class": "Icon"
-  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    "class": "Icon",
+    onClick: $options.closeAddSale
+  }, null, 8
+  /* PROPS */
+  , ["onClick"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     name: "date",
     type: "date",
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
@@ -23588,31 +23620,36 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 32
   /* HYDRATE_EVENTS */
-  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Success Add "), !$data.addSaleOpen && $data.addedSale ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckCircleIcon, {
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Success Add "), !$data.addSaleOpen && $data.addedSale ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_XCircleIcon, {
+    "class": "Icon",
+    onClick: $options.closeAddSale
+  }, null, 8
+  /* PROPS */
+  , ["onClick"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h6", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_CheckCircleIcon, {
     "class": "Icon"
-  })]), _hoisted_15]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "SaleID: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedSale.id), 1
+  })]), _hoisted_17]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedSale.id), 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Customer: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedSale.customer_name), 1
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.addedSale.customer_name), 1
   /* TEXT */
-  )])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Add products Form "), !$data.addSaleOpen && $data.addedSale ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
-    key: 2,
-    onSubmit: _cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
-      return _ctx.addProductsSale && _ctx.addProductsSale.apply(_ctx, arguments);
-    }, ["prevent"]))
-  }, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchIcon, {
+  )])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Add products Form "), !$data.addSaleOpen && $data.addedSale ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_20, [_hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchIcon, {
     "class": "Icon"
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     name: "name",
-    placeholder: "Search",
+    placeholder: "Search products",
     "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
       return $data.search = $event;
     })
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.search]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Search results "), $data.search ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [_hoisted_20, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.products, function (item) {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.search]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Search results "), $data.search ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [_hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_XCircleIcon, {
+    "class": "Icon",
+    onClick: $options.resetSearch
+  }, null, 8
+  /* PROPS */
+  , ["onClick"])]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.products, function (item) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: item.id
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_26, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "checkbox",
@@ -23623,21 +23660,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       })
     }, null, 8
     /* PROPS */
-    , _hoisted_22), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $data.selected]])]);
+    , _hoisted_27), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $data.selected]])]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selected products "), $data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_23, [$data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h1", _hoisted_24, "Products Sold")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected, function (item, index) {
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selected products "), $data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_28, [$data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h1", _hoisted_29, "Products Sold")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected, function (item, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: item.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
       onSubmit: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
-        return $options.addProduct(item.id);
+        return $options.addProduct(item.id, index);
       }, ["prevent"])
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1), 1
     /* TEXT */
     )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [_hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_31, [_hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "text",
       name: "quantity",
       "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
@@ -23645,14 +23682,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       })
     }, null, 512
     /* NEED_PATCH */
-    ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.quantity]])]), _hoisted_28], 40
+    ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.quantity]])]), _hoisted_33], 40
     /* PROPS, HYDRATE_EVENTS */
-    , _hoisted_25)]);
+    , _hoisted_30)]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 32
-  /* HYDRATE_EVENTS */
-  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
 /***/ }),
@@ -24665,7 +24700,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, " Create Sale "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_PrinterIcon, {
     "class": "Icon"
   })]), $data.isOpen ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_AddSale, {
-    key: 0
+    key: 0,
+    onCloseAddSale: _cache[1] || (_cache[1] = function ($event) {
+      return $data.isOpen = !$data.isOpen;
+    })
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), _hoisted_13])]);
 }
 
@@ -25280,7 +25318,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrap[data-v-10d119ed] {\n  position: absolute;\n  border-top: 1px solid gray;\n  background: #fff;\n  top: 50px;\n  right: 200px;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n}\n.Main__Wrap h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap form .Heading[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.Main__Wrap form .Heading h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form .Heading .Icon[data-v-10d119ed] {\n  width: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(30, 41, 59);\n  background: #fff;\n  cursor: pointer;\n}\n.Main__Wrap form .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap form .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap form .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap form .Input__Search[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrap form .Input__Search div[data-v-10d119ed] {\n  position: relative;\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Search div .Icon[data-v-10d119ed] {\n  height: 20px;\n  color: black;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap form .Input__Search div input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  padding: 0 5px;\n}\n.Main__Wrap form .Input__Search div .Product__List[data-v-10d119ed] {\n  display: flex;\n  flex-direction: column;\n  position: absolute;\n  width: 300px;\n  left: 300px;\n  bottom: 0;\n  background-color: #fff;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n  border-left: 1px solid gray;\n}\n.Main__Wrap form .Input__Search div .Product__List h1[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap form .Input__Search div .Product__List div[data-v-10d119ed] {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px 0;\n}\n.Main__Wrap form .Selected__Products[data-v-10d119ed] {\n  margin-top: 20px;\n}\n.Main__Wrap form .Selected__Products div[data-v-10d119ed] {\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px;\n}\n.Main__Wrap form .Selected__Products div form[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  justify-content: space-between;\n}\n.Main__Wrap form .Selected__Products div form .Input__Wrap[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n}\n.Main__Wrap form .Selected__Products div form .Input__Wrap input[data-v-10d119ed] {\n  height: 30px;\n  width: 50px;\n  border-radius: 2px;\n}\n.Main__Wrap form button[data-v-10d119ed] {\n  padding: 5px 10px;\n  background-color: rgb(30, 41, 59);\n  color: #fff;\n  border-radius: 3px;\n  margin-top: 10px;\n}\n.Main__Wrap form button[data-v-10d119ed]:hover {\n  background: rgb(15, 23, 42);\n}\n.Main__Wrap .Second__Step[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap .Second__Step h6[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-weight: 500;\n}\n.Main__Wrap .Second__Step h6 .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(34, 197, 94);\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrap[data-v-10d119ed] {\n  position: absolute;\n  border-top: 1px solid gray;\n  background: #fff;\n  top: 50px;\n  right: 200px;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n}\n.Main__Wrap .Heading[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.Main__Wrap .Heading h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap .Heading .Icon[data-v-10d119ed] {\n  width: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(30, 41, 59);\n  background: #fff;\n  cursor: pointer;\n}\n.Main__Wrap button[data-v-10d119ed] {\n  padding: 5px 10px;\n  background-color: rgb(30, 41, 59);\n  color: #fff;\n  border-radius: 3px;\n}\n.Main__Wrap button[data-v-10d119ed]:hover {\n  background: rgb(15, 23, 42);\n}\n.Main__Wrap h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap form .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap form .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap form .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Second__Step[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap .Second__Step h6[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-weight: 500;\n}\n.Main__Wrap .Second__Step h6 .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(34, 197, 94);\n}\n.Main__Wrap .Add__Products__Wrap[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div[data-v-10d119ed] {\n  position: relative;\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Icon[data-v-10d119ed] {\n  height: 20px;\n  color: black;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  padding: 0 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List[data-v-10d119ed] {\n  display: flex;\n  flex-direction: column;\n  position: absolute;\n  width: 300px;\n  left: 300px;\n  bottom: -50px;\n  background-color: #fff;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n  border-top: 1px solid gray;\n  border-left: 1px solid gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List h1[data-v-10d119ed] {\n  padding: 10px 0;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List div[data-v-10d119ed] {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px 0;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products[data-v-10d119ed] {\n  margin-top: 20px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div[data-v-10d119ed] {\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  justify-content: space-between;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form .Input__Wrap[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form .Input__Wrap input[data-v-10d119ed] {\n  height: 30px;\n  width: 50px;\n  border-radius: 2px;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
