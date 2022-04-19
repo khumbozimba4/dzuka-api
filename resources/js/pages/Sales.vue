@@ -33,22 +33,23 @@
                             <td>Date</td>
                             <td>Customer</td>
                             <td>Mode</td>
-                            <td>Products/Services</td>
+                            <td>Products</td>
                             <td>Price</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>1/12/2022</td>
-                            <td>Chidobvu</td>
-                            <td>Email</td>
-                            <td>Printers</td>
+                        <tr class="Tr" v-for="sale in sales" :key="sale.id">
+                            <td>{{ sale.date }}</td>
+                            <td>{{ sale.customer_name }}</td>
+                            <td>{{ sale.customer_contact }}</td>
+                            <td>{{ sale.products.length }}</td>
                             <td>30,000</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
@@ -62,6 +63,7 @@ import {
     ShoppingBagIcon,
 } from "@heroicons/vue/outline";
 import AddSale from "../components/AddSale.vue";
+import axios from "axios";
 export default {
     components: {
         AddSale,
@@ -76,7 +78,24 @@ export default {
     data() {
         return {
             isOpen: false,
+            sales: [],
+            errorMessage: "",
         };
+    },
+    created() {
+        this.getSales();
+    },
+    methods: {
+        getSales() {
+            axios
+                .get("api/sales")
+                .then((res) => {
+                    this.sales = res.data;
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
     },
 };
 </script>

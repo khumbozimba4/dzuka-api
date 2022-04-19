@@ -36,23 +36,21 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
+                            <td></td>
                             <td>Product name</td>
                             <td>Total Stock</td>
-                            <td>Allocated</td>
-                            <td>Cost (MWK)</td>
                             <td>Price (MWK)</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="product in products"
+                            v-for="(product, index) in products"
                             :key="product.id"
                         >
+                            <td>{{ index + 1 }}</td>
                             <td>{{ product.product_name }}</td>
-                            <td>25</td>
-                            <td>0</td>
-                            <td>20</td>
+                            <td>{{ product.stock }}</td>
                             <td>{{ product.price }}</td>
                         </tr>
                     </tbody>
@@ -97,7 +95,6 @@ export default {
     },
     methods: {
         getProducts() {
-            console.log("yo");
             this.categoryName = this.$route.params.categoryName;
             this.category_id = this.$route.params.category_id;
 
@@ -105,7 +102,6 @@ export default {
                 .get(`api/categories/${this.category_id}/products`)
                 .then((response) => {
                     this.products = response.data;
-                    console.log(this.products);
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;

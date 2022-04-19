@@ -11,7 +11,7 @@ class CategoriesController extends Controller
 
     public function index()
     {
-        return Category::with("products")->get();
+        return Category::with("products")->orderBy('created_at', 'desc')->get();
         
     }
 

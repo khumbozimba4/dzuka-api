@@ -1,23 +1,58 @@
 <template>
     <div class="Main__Wrap">
-        <form action="">
+        <form @submit.prevent="addToStock">
             <div class="Input__Container">
                 <p>
-                    Current Value <span><strong>25</strong> </span>
+                    Current Value
+                    <span
+                        ><strong>{{ this.currentStock }}</strong>
+                    </span>
                 </p>
             </div>
             <div class="Input__Container">
-                <label for="name"><strong>New value</strong> </label>
-                <input name="name" v-model="name" />
+                <label for="added_stock"
+                    ><strong>Add to stock (Quantity)</strong>
+                </label>
+                <input name="added_stock" v-model="added_stock" type="number" />
             </div>
 
             <button>Save</button>
         </form>
+        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
-export default {};
+import axios from "axios";
+export default {
+    props: ["currentStock", "productID"],
+    emits: ["getProducts"],
+    data() {
+        return {
+            added_stock: null,
+            errorMessage: "",
+            stock: null,
+        };
+    },
+    methods: {
+        addToStock() {
+            this.stock = this.added_stock + this.currentStock;
+
+            axios
+                .patch(`api/products/${this.productID}/update`, {
+                    stock: this.stock,
+                    previous_stock: this.currentStock,
+                    recently_allocated: this.added_stock,
+                })
+                .then(() => {
+                    this.$emit("getProducts");
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>

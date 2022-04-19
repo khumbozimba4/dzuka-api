@@ -16,7 +16,11 @@ class UpdateProductsTable extends Migration
         Schema::table('products', function (Blueprint $table) {
             $table->float('measurement');
             $table->float('price');
+            $table->float('previous_stock')->default(0);
+            $table->float('stock')->default(0);
+            $table->float('recently_allocated')->default(0);
             $table->string('description');
+           
         });
     }
 
@@ -31,6 +35,9 @@ class UpdateProductsTable extends Migration
             $table->dropColumn('measurement');
             $table->dropColumn('price');
             $table->dropColumn('description');
+            $table->dropColumn('previous_stock');
+            $table->dropColumn('stock');
+            $table->dropColumn('recently_allocated');
         });
     }
 }

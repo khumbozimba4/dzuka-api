@@ -83,7 +83,9 @@
             <div class="Selected__Products" v-if="selected">
                 <h1 v-if="selected">Products Sold</h1>
                 <div v-for="(item, index) in selected" :key="item.id">
-                    <form @submit.prevent="addProduct(item.id, index)">
+                    <form
+                        @submit.prevent="addProduct(item.id, index, item.stock)"
+                    >
                         <p>
                             <strong>{{ index + 1 }}</strong>
                         </p>
@@ -128,7 +130,7 @@ export default {
             products: [],
             search: "",
             selected: [],
-            quantity: "",
+            quantity: null,
         };
     },
     methods: {
@@ -151,7 +153,7 @@ export default {
                     this.errMessage = err.message;
                 });
         },
-        addProduct(id, index) {
+        addProduct(id, index, stock) {
             if (this.quantity !== "") {
                 axios
                     .post(`api/sales/product/${this.addedSale.id}/store`, {
@@ -161,12 +163,21 @@ export default {
                     .then(() => {
                         this.selected.splice(index, 1);
                     })
+                    .then(() => {
+                        this.subtractFromInventory(id, stock);
+                    })
                     .catch((err) => {
                         this.errMessage = err.message;
                     });
             } else {
                 return;
             }
+        },
+        subtractFromInventory(id, stock) {
+            stock = stock - this.quantity;
+            axios.patch(`api/products/${id}/inventory/subtract`, {
+                stock: stock,
+            });
         },
         closeAddSale() {
             this.$emit("closeAddSale");
