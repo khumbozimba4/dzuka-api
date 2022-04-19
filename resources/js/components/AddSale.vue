@@ -84,7 +84,9 @@
                 <h1 v-if="selected">Products Sold</h1>
                 <div v-for="(item, index) in selected" :key="item.id">
                     <form
-                        @submit.prevent="addProduct(item.id, index, item.stock)"
+                        @submit.prevent="
+                            addProduct(item.id, index, item.stock, item.price)
+                        "
                     >
                         <p>
                             <strong>{{ index + 1 }}</strong>
@@ -98,6 +100,10 @@
                                 v-model="quantity"
                             />
                         </div>
+                        <p>
+                            Price total:
+                            <strong>{{ this.quantity * item.price }}</strong>
+                        </p>
                         <button type="submit">Save</button>
                     </form>
                 </div>
@@ -116,7 +122,7 @@ export default {
         CheckCircleIcon,
         SearchIcon,
     },
-    emits: ["closeAddSale"],
+    emits: ["closeAddSale", "getSales"],
     data() {
         return {
             addProductOpen: false,
@@ -153,18 +159,22 @@ export default {
                     this.errMessage = err.message;
                 });
         },
-        addProduct(id, index, stock) {
+        addProduct(id, index, stock, price) {
             if (this.quantity !== "") {
                 axios
                     .post(`api/sales/product/${this.addedSale.id}/store`, {
                         quantity: this.quantity,
                         product_id: id,
+                        total_price: this.quantity * price,
+                    })
+                    .then(() => {
+                        this.subtractFromInventory(id, stock);
                     })
                     .then(() => {
                         this.selected.splice(index, 1);
                     })
                     .then(() => {
-                        this.subtractFromInventory(id, stock);
+                        this.$emit("getSales");
                     })
                     .catch((err) => {
                         this.errMessage = err.message;

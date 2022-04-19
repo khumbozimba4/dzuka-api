@@ -29,6 +29,7 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
+                            <td>#</td>
                             <td>Product Category</td>
                             <td>Available products</td>
                             <td>View</td>
@@ -37,9 +38,12 @@
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="category in categories"
+                            v-for="(category, index) in categories"
                             :key="category.id"
                         >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
                             <td>{{ category.category_name }}</td>
                             <td>{{ category.products.length }}</td>
                             <td>

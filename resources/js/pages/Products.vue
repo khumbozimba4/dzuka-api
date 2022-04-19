@@ -36,7 +36,7 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td></td>
+                            <td>#</td>
                             <td>Product name</td>
                             <td>Total Stock</td>
                             <td>Price (MWK)</td>
@@ -48,7 +48,9 @@
                             v-for="(product, index) in products"
                             :key="product.id"
                         >
-                            <td>{{ index + 1 }}</td>
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
                             <td>{{ product.product_name }}</td>
                             <td>{{ product.stock }}</td>
                             <td>{{ product.price }}</td>

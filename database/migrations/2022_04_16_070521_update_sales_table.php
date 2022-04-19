@@ -15,6 +15,7 @@ class UpdateSalesTable extends Migration
     {
         Schema::table('sales', function (Blueprint $table) {
             $table->string('customer_contact');
+            $table->float('sale_amount')->default(0);
             $table->string('description');
         });
     }
@@ -28,6 +29,7 @@ class UpdateSalesTable extends Migration
     {
         Schema::table('sales', function (Blueprint $table) {
             $table->dropColumn('customer');
+            $table->dropColumn('sale_amount');
             $table->dropColumn('description');
         });
     }

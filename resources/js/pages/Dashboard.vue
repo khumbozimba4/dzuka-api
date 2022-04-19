@@ -27,24 +27,26 @@
 
         <div class="Contents__Container">
             <div class="Heading">
+                <div class="Right__Side">
+                    <h1>
+                        <strong class="font-bold">Sales Today</strong>
+                        ({{ date }})
+                    </h1>
+                </div>
                 <div class="Left__Side">
                     <AdjustmentsIcon class="Icon" />
                     Filters
-                </div>
-                <div class="Right__Side">
-                    <div class="Add__Category">Create Sale</div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddSale />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>#</td>
+                            <td>SaleID</td>
                             <td>Date</td>
                             <td>Customer</td>
-                            <td>Mode</td>
+                            <td>Customer contact</td>
                             <td>Products/Services</td>
                             <td>Price</td>
                         </tr>
@@ -52,11 +54,11 @@
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="(sale, index) in salesToday"
+                            v-for="sale in salesToday"
                             :key="sale.id"
                         >
                             <td>
-                                <strong>{{ index + 1 }}</strong>
+                                <strong>{{ sale.id }}</strong>
                             </td>
                             <td>{{ sale.date }}</td>
                             <td>{{ sale.customer_name }}</td>
@@ -81,11 +83,10 @@ import {
     ShoppingBagIcon,
     ColorSwatchIcon,
 } from "@heroicons/vue/outline";
-import AddSale from "../components/AddSale.vue";
 import Card from "../components/Card.vue";
+import moment from "moment";
 export default {
     components: {
-        AddSale,
         Card,
         SearchIcon,
         ColorSwatchIcon,
@@ -107,6 +108,7 @@ export default {
     created() {
         this.getProducts();
         this.getSalesToday();
+        this.getDate();
     },
     methods: {
         getProducts() {
@@ -136,6 +138,9 @@ export default {
             this.outOfStock = this.products.filter(
                 (product) => product.stock == 0.0
             );
+        },
+        getDate() {
+            this.date = moment(new Date()).format("MMM Do YY");
         },
     },
 };

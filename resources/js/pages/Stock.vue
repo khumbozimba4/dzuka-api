@@ -48,8 +48,15 @@
                             <td>{{ product.stock }}</td>
                             <td>{{ product.recently_allocated }}</td>
                             <td class="Allocate__Stock">
-                                <PencilIcon class="Icon" />
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEdit(index)"
+                                />
                                 <EditStock
+                                    v-if="
+                                        isOpen &&
+                                        products[index] === clickedProduct
+                                    "
                                     :productID="product.id"
                                     :currentStock="product.stock"
                                     @getProducts="getProducts"
@@ -95,6 +102,8 @@ export default {
             products: [],
             errorMessage: null,
             allocateIsOpen: false,
+            isOpen: false,
+            clickedProduct: null,
         };
     },
     created() {
@@ -110,6 +119,10 @@ export default {
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
+        },
+        toggleEdit(index) {
+            this.clickedProduct = this.products[index];
+            this.isOpen = !this.isOpen;
         },
     },
 };
