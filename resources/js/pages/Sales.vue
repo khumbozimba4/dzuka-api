@@ -24,12 +24,17 @@
                     </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddSale v-if="isOpen" @closeAddSale="isOpen = !isOpen" />
+                <AddSale
+                    v-if="isOpen"
+                    @closeAddSale="isOpen = !isOpen"
+                    @getSales="getSales"
+                />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
+                            <td>SaleID</td>
                             <td>Date</td>
                             <td>Customer</td>
                             <td>Mode</td>
@@ -39,6 +44,9 @@
                     </thead>
                     <tbody class="Table__Body">
                         <tr class="Tr" v-for="sale in sales" :key="sale.id">
+                            <td>
+                                <strong>{{ sale.id }}</strong>
+                            </td>
                             <td>{{ sale.date }}</td>
                             <td>{{ sale.customer_name }}</td>
                             <td>{{ sale.customer_contact }}</td>
