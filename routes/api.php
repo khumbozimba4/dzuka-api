@@ -29,8 +29,11 @@ Route::post('/categories/store',[CategoriesController::class,'store']);
 Route::get('/products',[ProductController::class,'index']);
 Route::get('/products/search/{name}',[ProductController::class,'search']);
 Route::post('/products/store',[ProductController::class,'store']);
+Route::patch('/products/{id}/update',[ProductController::class,'update']);
+Route::patch('/products/{id}/inventory/subtract',[ProductController::class,'subtract']);
 
 Route::get('/sales',[SaleController::class,'index']);
+Route::get('/sales/today',[SaleController::class,'today']);
 Route::post('/sales/store',[SaleController::class,'store']);
 
 Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);

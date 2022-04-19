@@ -14,7 +14,7 @@ class AddQuantityToProductSaleTable extends Migration
     public function up()
     {
         Schema::table('product_sale', function (Blueprint $table) {
-            $table->float('quantity');
+            $table->float('quantity')->default(1);
         });
     }
 

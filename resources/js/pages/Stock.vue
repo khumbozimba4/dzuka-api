@@ -26,19 +26,34 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>Product Name</td>
-                            <td>Available</td>
+                            <td>#</td>
+                            <td>Product name</td>
+                            <td>Previous stock</td>
+                            <td>Available stock</td>
+                            <td>Recently added stock</td>
                             <td>Allocate stock</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>School Shoe</td>
-                            <td>25</td>
-
+                        <tr
+                            class="Tr"
+                            v-for="(product, index) in products"
+                            :key="product.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.previous_stock }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td>{{ product.recently_allocated }}</td>
                             <td class="Allocate__Stock">
                                 <PencilIcon class="Icon" />
-                                <EditStock />
+                                <EditStock
+                                    :productID="product.id"
+                                    :currentStock="product.stock"
+                                    @getProducts="getProducts"
+                                />
                             </td>
                         </tr>
                     </tbody>
@@ -62,6 +77,7 @@ import {
     PencilIcon,
 } from "@heroicons/vue/outline";
 import EditStock from "../components/EditStock.vue";
+import axios from "axios";
 export default {
     components: {
         EditStock,
@@ -73,6 +89,28 @@ export default {
         ArrowNarrowRightIcon,
         PrinterIcon,
         PencilIcon,
+    },
+    data() {
+        return {
+            products: [],
+            errorMessage: null,
+            allocateIsOpen: false,
+        };
+    },
+    created() {
+        this.getProducts();
+    },
+    methods: {
+        getProducts() {
+            axios
+                .get("api/products")
+                .then((res) => {
+                    this.products = res.data;
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
     },
 };
 </script>

@@ -11,7 +11,7 @@
             <router-link to="/inventory">
                 <div class="Nav__Option">
                     <CollectionIcon class="Icon" />
-                    <p class="Title">Inventory</p>
+                    <p class="Title">Products</p>
                 </div>
             </router-link>
             <router-link to="/stock">

@@ -12,8 +12,16 @@
             <div class="Options"></div>
         </div>
         <div class="Cards__Wrap">
-            <Card cardNote="25" src="checkoutcart" title="Total sales today" />
-            <Card cardNote="25" src="outofstock" title="Out of stock" />
+            <Card
+                :cardNote="salesToday.length"
+                src="checkoutcart"
+                title="Total sales today"
+            />
+            <Card
+                :cardNote="outOfStock.length"
+                src="outofstock"
+                title="Out of stock"
+            />
             <Card cardNote="25" src="shoppinglist" title="Transactions today" />
         </div>
 
@@ -33,6 +41,7 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
+                            <td>#</td>
                             <td>Date</td>
                             <td>Customer</td>
                             <td>Mode</td>
@@ -41,12 +50,19 @@
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>1/12/2022</td>
-                            <td>Chidobvu</td>
-                            <td>Email</td>
-                            <td>Printers</td>
-                            <td>30,000</td>
+                        <tr
+                            class="Tr"
+                            v-for="(sale, index) in salesToday"
+                            :key="sale.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ sale.date }}</td>
+                            <td>{{ sale.customer_name }}</td>
+                            <td>{{ sale.customer_contact }}</td>
+                            <td>{{ sale.products.length }}</td>
+                            <td>{{ sale.date }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -79,6 +95,48 @@ export default {
         ArrowNarrowRightIcon,
         PrinterIcon,
         ShoppingBagIcon,
+    },
+    data() {
+        return {
+            products: [],
+            outOfStock: [],
+            salesToday: [],
+            date: null,
+        };
+    },
+    created() {
+        this.getProducts();
+        this.getSalesToday();
+    },
+    methods: {
+        getProducts() {
+            axios
+                .get("api/products")
+                .then((res) => {
+                    this.products = res.data;
+                })
+                .then(() => {
+                    this.getOutOfStock();
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                });
+        },
+        getSalesToday() {
+            axios
+                .get("api/sales/today")
+                .then((res) => {
+                    this.salesToday = res.data;
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                });
+        },
+        getOutOfStock() {
+            this.outOfStock = this.products.filter(
+                (product) => product.stock == 0.0
+            );
+        },
     },
 };
 </script>

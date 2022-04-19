@@ -11,7 +11,11 @@ class ProductController extends Controller
  
     public function index()
     {
-        return Product::get();
+        return Product::orderBy('created_at', 'desc')->get();
+    }
+    public function zero()
+    {
+        return Product::where('stock',"=",0)->orderBy('created_at', 'desc')->get();
     }
 
     public function search($name)
@@ -40,9 +44,23 @@ class ProductController extends Controller
         return $product;
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $product = Product::find($id);
+        $product->update([
+            'stock'=>$request->stock,
+            'recently_allocated'=>$request->recently_allocated,
+            'previous_stock'=>$request->previous_stock
+        ]);
+        return $product;
+    }
+    public function subtract(Request $request, $id)
+    {
+        $product = Product::find($id);
+        $product->update([
+            'stock'=>$request->stock,
+        ]);
+        return $product;
     }
 
 
