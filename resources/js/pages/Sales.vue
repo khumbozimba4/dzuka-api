@@ -37,9 +37,10 @@
                             <td>SaleID</td>
                             <td>Date</td>
                             <td>Customer</td>
-                            <td>Mode</td>
+                            <td>Customer Contact</td>
                             <td>Products</td>
                             <td>Price</td>
+                            <td>View Sale</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -52,6 +53,12 @@
                             <td>{{ sale.customer_contact }}</td>
                             <td>{{ sale.products.length }}</td>
                             <td>30,000</td>
+                            <td>
+                                <ArrowNarrowRightIcon
+                                    class="Icon"
+                                    @click="gotoSale(sale)"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,6 +110,14 @@ export default {
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
+        },
+        gotoSale(sale) {
+            this.$router.push({
+                name: "sale",
+                params: {
+                    saleID: sale.id,
+                },
+            });
         },
     },
 };

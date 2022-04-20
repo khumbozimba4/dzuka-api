@@ -4,6 +4,7 @@ import Stock from "../pages/Stock.vue";
 import Inventory from "../pages/Inventory.vue";
 import Products from "../pages/Products.vue";
 import Sales from "../pages/Sales.vue";
+import Sale from "../pages/Sale.vue";
 import Analytics from "../pages/Analytics.vue";
 import About from "../pages/About.vue";
 import Users from "../pages/Users.vue";
@@ -47,6 +48,14 @@ const routes = [
         component: Sales,
         meta: {
             title: "Sales",
+        },
+    },
+    {
+        path: "/sales/sale",
+        name: "sale",
+        component: Sale,
+        meta: {
+            title: "Sale",
         },
     },
     {

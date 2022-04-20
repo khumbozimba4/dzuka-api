@@ -66,6 +66,9 @@
                             <td>{{ sale.products.length }}</td>
                             <td>{{ sale.date }}</td>
                         </tr>
+                        <div v-if="salesToday.length === 0">
+                            No sales made yet!
+                        </div>
                     </tbody>
                 </table>
             </div>

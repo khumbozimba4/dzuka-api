@@ -59,6 +59,8 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->update([
             'stock'=>$request->stock,
+            'recently_subtracted'=>$request->recently_subtracted,
+            'previous_stock'=>$request->previous_stock
         ]);
         return $product;
     }

@@ -20,7 +20,8 @@ class Product extends Model
         'quantity',
         'previous_stock',
         'stock',
-        'recently_allocated'
+        'recently_allocated',
+        'recently_subtracted'
     ];
 
     public function sales(){

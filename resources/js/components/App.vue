@@ -22,7 +22,6 @@ export default {
     .Page__Content {
         flex: 0.8;
         background: rgb(245 245 245);
-        overflow-y: scroll;
     }
 }
 </style>

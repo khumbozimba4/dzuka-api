@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\CategoriesController;
+use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ProductSaleController;
 use App\Http\Controllers\API\SaleController;
@@ -35,5 +36,10 @@ Route::patch('/products/{id}/inventory/subtract',[ProductController::class,'subt
 Route::get('/sales',[SaleController::class,'index']);
 Route::get('/sales/today',[SaleController::class,'today']);
 Route::post('/sales/store',[SaleController::class,'store']);
+
+Route::get('/expenses',[ExpenseController::class,'index']);
+Route::get('/expenses/today',[ExpenseController::class,'today']);
+Route::post('/expenses/store',[ExpenseController::class,'store']);
+
 
 Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);

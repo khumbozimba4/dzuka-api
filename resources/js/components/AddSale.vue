@@ -98,11 +98,12 @@
                                 type="text"
                                 name="quantity"
                                 v-model="quantity"
+                                required
                             />
                         </div>
                         <p>
                             Price total:
-                            <strong>{{ this.quantity * item.price }}</strong>
+                            <strong>K {{ this.quantity * item.price }}</strong>
                         </p>
                         <button type="submit">Save</button>
                     </form>
@@ -184,9 +185,10 @@ export default {
             }
         },
         subtractFromInventory(id, stock) {
-            stock = stock - this.quantity;
             axios.patch(`api/products/${id}/inventory/subtract`, {
-                stock: stock,
+                stock: stock - this.quantity,
+                recently_subtracted: this.quantity,
+                previous_stock: stock,
             });
         },
         closeAddSale() {

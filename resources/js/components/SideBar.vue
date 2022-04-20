@@ -3,7 +3,13 @@
         <div class="Dzuka__Logo">DZUKA SALES</div>
         <div class="Nav__Options">
             <router-link to="/">
-                <div class="Nav__Option">
+                <div
+                    :class="[
+                        activeRoute == dashboard
+                            ? Nav__Option__Active
+                            : Nav__Option,
+                    ]"
+                >
                     <ColorSwatchIcon class="Icon" />
                     <p class="Title">Dashboard</p>
                 </div></router-link
@@ -67,6 +73,23 @@ export default {
         LogoutIcon,
         CreditCardIcon,
     },
+    data() {
+        return {
+            activeRoute: null,
+            Nav__Option: "Nav__Option",
+            Nav__Option__Active: "Nav__Option",
+            dashboard: "/",
+        };
+    },
+    created() {
+        this.getActiveRoute();
+    },
+    methods: {
+        getActiveRoute() {
+            this.activeRoute = this.$route.path;
+            console.log(this.activeRoute);
+        },
+    },
 };
 </script>
 
@@ -112,6 +135,25 @@ export default {
             .Title {
                 color: rgb(203 213 225);
 
+                &:hover {
+                    color: #fff;
+                }
+            }
+        }
+        .Nav__Option__Active {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgb(15 23 42);
+            color: rgb(29 78 216);
+            cursor: pointer;
+
+            .Icon {
+                height: 25px;
+            }
+            .Title {
+                color: rgb(203 213 225);
                 &:hover {
                     color: #fff;
                 }

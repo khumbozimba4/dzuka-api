@@ -11,6 +11,7 @@
             </div>
             <div class="Options"></div>
         </div>
+        <div v-if="errorMessage">{{ errorMessage }}</div>
 
         <div class="Contents__Container">
             <div class="Heading">
@@ -19,27 +20,41 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Record Expense</div>
+                    <div class="Add__Category" @click="isOpen = !isOpen">
+                        Record Expense
+                    </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddExpense />
+                <AddExpense
+                    @getExpenses="getExpenses"
+                    v-if="isOpen"
+                    @closeAdd="isOpen = !isOpen"
+                />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
+                            <td>ExpenseID</td>
                             <td>Date</td>
-                            <td>Type</td>
-                            <td>Description</td>
+                            <td>Expense on</td>
                             <td>Amount</td>
+                            <td>Description</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
-                            <td>1/12/2022</td>
-                            <td>Investment</td>
-                            <td>Expenses made on ....</td>
-                            <td>50000</td>
+                        <tr
+                            class="Tr"
+                            v-for="expense in expenses"
+                            :key="expense.id"
+                        >
+                            <td>
+                                <strong>{{ expense.id }}</strong>
+                            </td>
+                            <td>{{ expense.date }}</td>
+                            <td>{{ expense.expense_on }}</td>
+                            <td>{{ expense.amount }}</td>
+                            <td>{{ expense.description }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -59,6 +74,7 @@ import {
     CreditCardIcon,
 } from "@heroicons/vue/outline";
 import AddExpense from "../components/AddExpense.vue";
+import axios from "axios";
 export default {
     components: {
         AddExpense,
@@ -70,6 +86,28 @@ export default {
         PrinterIcon,
         CreditCardIcon,
         ShoppingBagIcon,
+    },
+    data() {
+        return {
+            expenses: [],
+            isOpen: false,
+            errorMessage: null,
+        };
+    },
+    created() {
+        this.getExpenses();
+    },
+    methods: {
+        getExpenses() {
+            axios
+                .get("api/expenses")
+                .then((res) => {
+                    this.expenses = res.data;
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
     },
 };
 </script>

@@ -2,8 +2,8 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <AdjustmentsIcon class="Icon" />
-                <p>Stock Control</p>
+                <ShoppingBagIcon class="Icon" />
+                <p>Sale</p>
             </div>
             <div class="Search__Bar">
                 <input type="text" class="Input" placeholder="Search product" />
@@ -11,6 +11,7 @@
             </div>
             <div class="Options"></div>
         </div>
+
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -18,7 +19,9 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Add Category</div>
+                    <div class="Add__Category" @click="isOpen = !isOpen">
+                        Create Sale
+                    </div>
                     <PrinterIcon class="Icon" />
                 </div>
             </div>
@@ -26,101 +29,74 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>Product name</td>
-                            <td>Previous stock</td>
-                            <td>Recently added stock</td>
-                            <td>Recently sold</td>
-                            <td>Available stock</td>
-                            <td>Allocate stock</td>
+                            <td>SaleID</td>
+                            <td>Date</td>
+                            <td>Customer</td>
+                            <td>Mode</td>
+                            <td>Products</td>
+                            <td>Price</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr
-                            class="Tr"
-                            v-for="(product, index) in products"
-                            :key="product.id"
-                        >
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.previous_stock }}</td>
-                            <td>{{ product.recently_allocated }}</td>
-                            <td>{{ product.recently_subtracted }}</td>
-                            <td>{{ product.stock }}</td>
-                            <td class="Allocate__Stock">
-                                <PencilIcon
-                                    class="Icon"
-                                    @click="toggleEdit(index)"
-                                />
-                                <EditStock
-                                    v-if="
-                                        isOpen &&
-                                        products[index] === clickedProduct
-                                    "
-                                    :productID="product.id"
-                                    :currentStock="product.stock"
-                                    @getProducts="getProducts"
-                                />
+                        <tr class="Tr" v-for="sale in sales" :key="sale.id">
+                            <td>
+                                <strong>{{ sale.id }}</strong>
                             </td>
+                            <td>{{ sale.date }}</td>
+                            <td>{{ sale.customer_name }}</td>
+                            <td>{{ sale.customer_contact }}</td>
+                            <td>{{ sale.products.length }}</td>
+                            <td>30,000</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
 import {
     CollectionIcon,
-    ColorSwatchIcon,
     AdjustmentsIcon,
-    ShoppingBagIcon,
-    ChartPieIcon,
-    UsersIcon,
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
-    PencilIcon,
+    ShoppingBagIcon,
 } from "@heroicons/vue/outline";
-import EditStock from "../components/EditStock.vue";
+import AddSale from "../components/AddSale.vue";
 import axios from "axios";
 export default {
     components: {
-        EditStock,
         SearchIcon,
         CollectionIcon,
-        AdjustmentsIcon,
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
-        PencilIcon,
+        ShoppingBagIcon,
     },
     data() {
         return {
-            products: [],
-            errorMessage: null,
-            allocateIsOpen: false,
             isOpen: false,
-            clickedProduct: null,
+            sales: [],
+            errorMessage: "",
         };
     },
     created() {
-        this.getProducts();
+        this.getSales();
     },
     methods: {
-        getProducts() {
+        getSales() {
             axios
-                .get("api/products")
+                .get("api/sales")
                 .then((res) => {
-                    this.products = res.data;
+                    this.sales = res.data;
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
-        },
-        toggleEdit(index) {
-            this.clickedProduct = this.products[index];
-            this.isOpen = !this.isOpen;
         },
     },
 };
@@ -244,14 +220,9 @@ export default {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
-
-                        .Allocate__Stock {
-                            position: relative;
-                            display: flex;
-                            align-items: center;
-                            gap: 20px;
+                        td {
                             .Icon {
-                                height: 20px;
+                                height: 30px;
                                 object-fit: contain;
                                 cursor: pointer;
                             }

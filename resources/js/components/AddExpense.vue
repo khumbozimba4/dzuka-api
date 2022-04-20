@@ -1,20 +1,30 @@
 <template>
     <div class="Main__Wrap">
-        <form action="">
+        <form @submit.prevent="addExpense">
             <h1>Record Expense</h1>
             <div class="Input__Container">
-                <label for="name">Type</label>
-                <input name="name" v-model="name" />
+                <label for="date">Date</label>
+                <input name="date" type="date" v-model="date" required />
             </div>
             <div class="Input__Container">
-                <label for="name">Amount (MKW)</label>
-                <input name="name" v-model="name" type="number" />
+                <label for="expense_on">Expense on</label>
+                <input
+                    name="expense_on"
+                    v-model="expense_on"
+                    type="text"
+                    required
+                />
+            </div>
+            <div class="Input__Container">
+                <label for="amount">Amount (MKW)</label>
+                <input name="amount" v-model="amount" type="number" required />
             </div>
             <div class="Input__Container">
                 <label for="description">Description</label>
                 <textarea
                     id="w3review"
                     name="description"
+                    v-model="description"
                     rows="4"
                     cols="30"
                 ></textarea>
@@ -22,11 +32,44 @@
 
             <button>Add</button>
         </form>
+        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
-export default {};
+import axios from "axios";
+export default {
+    emits: ["getExpenses", "closeAdd"],
+    data() {
+        return {
+            date: null,
+            expense_on: "",
+            amount: null,
+            description: "",
+            errorMessage: null,
+        };
+    },
+    methods: {
+        addExpense() {
+            axios
+                .post("api/expenses/store", {
+                    date: this.date,
+                    expense_on: this.expense_on,
+                    amount: this.amount,
+                    description: this.description,
+                })
+                .then(() => {
+                    this.$emit("closeAdd");
+                })
+                .then(() => {
+                    this.$emit("getExpenses");
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>
