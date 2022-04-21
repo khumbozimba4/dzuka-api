@@ -36,6 +36,8 @@ Route::patch('/products/{id}/inventory/subtract',[ProductController::class,'subt
 Route::get('/sales',[SaleController::class,'index']);
 Route::get('/sales/today',[SaleController::class,'today']);
 Route::post('/sales/store',[SaleController::class,'store']);
+Route::patch('/sales/{sale}/amount/update',[SaleController::class,'amount']);
+Route::patch('/sales/{sale}/update',[SaleController::class,'update']);
 
 Route::get('/expenses',[ExpenseController::class,'index']);
 Route::get('/expenses/today',[ExpenseController::class,'today']);
@@ -43,3 +45,4 @@ Route::post('/expenses/store',[ExpenseController::class,'store']);
 
 
 Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);
+Route::get('/sales/{sale}/products',[ProductSaleController::class,'index']);

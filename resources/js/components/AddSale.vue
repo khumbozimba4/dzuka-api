@@ -174,8 +174,15 @@ export default {
                     .then(() => {
                         this.selected.splice(index, 1);
                     })
+
+                    .then(() => {
+                        this.updateSale(this.addedSale.id, price);
+                    })
                     .then(() => {
                         this.$emit("getSales");
+                    })
+                    .then(() => {
+                        this.quantity = "";
                     })
                     .catch((err) => {
                         this.errMessage = err.message;
@@ -190,6 +197,15 @@ export default {
                 recently_subtracted: this.quantity,
                 previous_stock: stock,
             });
+        },
+        updateSale(id, price) {
+            axios
+                .patch(`api/sales/${id}/amount/update`, {
+                    amount: this.quantity * price,
+                })
+                .catch((err) => {
+                    this.errMessage = err.message;
+                });
         },
         closeAddSale() {
             this.$emit("closeAddSale");

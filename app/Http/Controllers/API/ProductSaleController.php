@@ -11,6 +11,14 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 class ProductSaleController extends Controller
 {
 
+    public function index($sale)
+
+    {      
+        $sale = Sale::find($sale);
+        $products=$sale->products;
+        return $products;
+    }
+
     public function store(Request $request, $sale)
 
     {      

@@ -52,7 +52,7 @@
                             <td>{{ sale.customer_name }}</td>
                             <td>{{ sale.customer_contact }}</td>
                             <td>{{ sale.products.length }}</td>
-                            <td>30,000</td>
+                            <td>K{{ sale.sale_amount }}</td>
                             <td>
                                 <ArrowNarrowRightIcon
                                     class="Icon"
@@ -95,6 +95,7 @@ export default {
             isOpen: false,
             sales: [],
             errorMessage: "",
+            totalAmount: 0,
         };
     },
     created() {
@@ -115,7 +116,9 @@ export default {
             this.$router.push({
                 name: "sale",
                 params: {
-                    saleID: sale.id,
+                    sale_id: sale.id,
+                    customer_name: sale.customer_name,
+                    customer_contact: sale.customer_contact,
                 },
             });
         },

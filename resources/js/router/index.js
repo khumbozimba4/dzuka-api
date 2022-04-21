@@ -51,7 +51,7 @@ const routes = [
         },
     },
     {
-        path: "/sales/sale",
+        path: "/sale",
         name: "sale",
         component: Sale,
         meta: {
