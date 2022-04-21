@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sale;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -46,10 +47,18 @@ class SaleController extends Controller
     }
 
    
-   
-    public function update(Request $request, Sale $sale)
+    public function amount(Request $request, $sale)
     {
-        //
+        $sale = Sale::find($sale);
+        $sale_amount = $sale->sale_amount;
+        $sale->update([
+            'sale_amount'=>($request->amount) + $sale_amount
+        ]);
+        return $sale;
+    }
+    public function update(Request $request,  $sale)
+    {
+      
     }
 
    

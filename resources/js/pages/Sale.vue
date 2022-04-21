@@ -2,101 +2,97 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <ShoppingBagIcon class="Icon" />
-                <p>Sale</p>
+                <p><strong>SaleID</strong></p>
             </div>
-            <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
-                <SearchIcon class="Search__Icon" />
+
+            <div class="Options">
+                <strong>{{ sale_id }}</strong>
             </div>
-            <div class="Options"></div>
         </div>
 
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
-                    Filters
+                    <p><strong>Customer</strong> : {{ customer_name }}</p>
+                    <p><strong>Total Amount</strong> : K{{ totalAmount }}</p>
                 </div>
                 <div class="Right__Side">
                     <div class="Add__Category" @click="isOpen = !isOpen">
-                        Create Sale
+                        Add Products
                     </div>
-                    <PrinterIcon class="Icon" />
                 </div>
             </div>
-            <div class="Table__Container">
+
+            <div class="Table__Container" v-if="!errorMessage">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>SaleID</td>
-                            <td>Date</td>
-                            <td>Customer</td>
-                            <td>Mode</td>
-                            <td>Products</td>
-                            <td>Price</td>
+                            <td>#</td>
+                            <td>Product</td>
+                            <td>Quantity</td>
+                            <td>Total Price</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr" v-for="sale in sales" :key="sale.id">
+                        <tr
+                            class="Tr"
+                            v-for="(product, index) in products"
+                            :key="product.id"
+                        >
                             <td>
-                                <strong>{{ sale.id }}</strong>
+                                <strong>{{ index + 1 }}</strong>
                             </td>
-                            <td>{{ sale.date }}</td>
-                            <td>{{ sale.customer_name }}</td>
-                            <td>{{ sale.customer_contact }}</td>
-                            <td>{{ sale.products.length }}</td>
-                            <td>30,000</td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.pivot.quantity }}</td>
+                            <td>
+                                K{{ product.price * product.pivot.quantity }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div v-else>{{ errorMessage }}</div>
         </div>
-        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
-import {
-    CollectionIcon,
-    AdjustmentsIcon,
-    SearchIcon,
-    PrinterIcon,
-    ArrowNarrowRightIcon,
-    ShoppingBagIcon,
-} from "@heroicons/vue/outline";
-import AddSale from "../components/AddSale.vue";
 import axios from "axios";
 export default {
-    components: {
-        SearchIcon,
-        CollectionIcon,
-        AdjustmentsIcon,
-        PrinterIcon,
-        ArrowNarrowRightIcon,
-        PrinterIcon,
-        ShoppingBagIcon,
-    },
     data() {
         return {
+            products: [],
             isOpen: false,
-            sales: [],
-            errorMessage: "",
+            sale_id: null,
+            customer_name: null,
+            customer_contact: null,
+            totalAmount: 0,
+            errorMessage: null,
         };
     },
     created() {
-        this.getSales();
+        this.getProducts();
     },
     methods: {
-        getSales() {
+        getProducts() {
+            this.sale_id = this.$route.params.sale_id;
+            this.customer_name = this.$route.params.customer_name;
+            this.customer_contact = this.$route.params.customer_contact;
             axios
-                .get("api/sales")
-                .then((res) => {
-                    this.sales = res.data;
+                .get(`api/sales/${this.sale_id}/products`)
+                .then((res) => [(this.products = res.data)])
+                .then(() => {
+                    this.getAmount();
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
+        },
+        getAmount() {
+            for (let i = 0; i < this.products.length; i++) {
+                this.totalAmount +=
+                    this.products[i].price * this.products[i].pivot.quantity;
+            }
         },
     },
 };
@@ -166,9 +162,8 @@ export default {
             border-bottom: 1px solid rgb(163 163 163);
             .Left__Side {
                 display: flex;
-                gap: 10px;
-                align-items: center;
-                font-weight: 700;
+                flex-direction: column;
+                gap: 5px;
                 cursor: pointer;
 
                 .Icon {
