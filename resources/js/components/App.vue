@@ -13,6 +13,12 @@ export default {
     components: {
         SideBar,
     },
+    created() {
+        this.getStarted();
+    },
+    methods: {
+        getStarted() {},
+    },
 };
 </script>
 

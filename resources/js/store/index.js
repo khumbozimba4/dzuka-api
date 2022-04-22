@@ -1,20 +1,21 @@
 import axios from "axios";
 import { createStore } from "vuex";
-// axios.defaults.baseURL = "http://127.0.0.1:8000/api";
+axios.defaults.baseURL = "api";
 
-export default createStore({
-    state: {
-        mobile: false,
-        mobileNav: false,
-        windowWidth: null,
-        user: null,
-        userInfo: null,
-        name: null,
-        errorMessage: null,
-        error: false,
-        isLogged: false,
-        loginModal: false,
-        registerModal: false,
+const store = createStore({
+    state() {
+        return {
+            mobile: "yes",
+            mobileNav: false,
+            windowWidth: null,
+            user: null,
+            userInfo: null,
+            errorMessage: null,
+            error: false,
+            isLogged: false,
+            loginModal: false,
+            registerModal: false,
+        };
     },
 
     getters: {
@@ -41,11 +42,6 @@ export default createStore({
                 commit("setMobile", this.mobile);
                 commit("setMobileNav", this.mobileNav);
             }
-        },
-
-        toggleMobileNav({ commit }) {
-            this.mobileNav = !this.mobileNav;
-            commit("setMobileNav", this.mobileNav);
         },
         changeLoginModal({ commit }) {
             this.loginModal = !this.loginModal;
@@ -108,7 +104,6 @@ export default createStore({
 
     mutations: {
         setMobile: (state, mobile) => (state.mobile = mobile),
-        setIsLiked: (state, isLiked) => (state.isLiked = isLiked),
         setIsLoading: (state, isLoading) => (state.isLoading = isLoading),
         setLoginModal: (state, loginModal) => (state.loginModal = loginModal),
         setRegisterModal: (state, registerModal) =>
@@ -129,10 +124,7 @@ export default createStore({
             localStorage.removeItem("user");
             location.reload();
         },
-        setProfileInitials(state) {
-            state.profileInitials =
-                state.name.match(/(\b\S)?/g).join("") +
-                state.name.match(/(\b\S)?/g).join("");
-        },
     },
 });
+
+export default store;

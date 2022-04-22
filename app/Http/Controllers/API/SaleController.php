@@ -17,11 +17,11 @@ class SaleController extends Controller
      */
     public function index()
     {
-        return Sale::with('products')->orderBy('created_at', 'desc')->get();
+        return Sale::with('products')->orderBy('date', 'desc')->get();
     }
     public function today()
     {
-        return Sale::whereDate('created_at', Carbon::today())->with('products')->orderBy('created_at', 'desc')->get();
+        return Sale::whereDate('date', Carbon::today())->with('products')->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)

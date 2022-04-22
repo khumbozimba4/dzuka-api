@@ -46,9 +46,9 @@
                             <td>SaleID</td>
                             <td>Date</td>
                             <td>Customer</td>
-                            <td>Customer contact</td>
+                            <td>Customer Contact</td>
                             <td>Products/Services</td>
-                            <td>Price</td>
+                            <td>Total Price</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -64,7 +64,7 @@
                             <td>{{ sale.customer_name }}</td>
                             <td>{{ sale.customer_contact }}</td>
                             <td>{{ sale.products.length }}</td>
-                            <td>{{ sale.date }}</td>
+                            <td>K{{ sale.sale_amount }}</td>
                         </tr>
                         <div v-if="salesToday.length === 0">
                             No sales made yet!

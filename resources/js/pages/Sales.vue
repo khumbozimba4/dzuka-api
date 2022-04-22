@@ -39,7 +39,7 @@
                             <td>Customer</td>
                             <td>Customer Contact</td>
                             <td>Products</td>
-                            <td>Price</td>
+                            <td>Total Price</td>
                             <td>View Sale</td>
                         </tr>
                     </thead>
