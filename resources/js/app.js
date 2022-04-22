@@ -7,7 +7,8 @@ import App from "./components/App.vue";
 
 const app = createApp({});
 app.component("App", App);
-app.use(router, store);
+app.use(router);
+app.use(store);
 app.mount("#app");
 
 window.Alpine = Alpine;

@@ -29,6 +29,7 @@
                         <tr class="Tr">
                             <td>#</td>
                             <td>Product</td>
+                            <td>Price</td>
                             <td>Quantity</td>
                             <td>Total Price</td>
                         </tr>
@@ -43,6 +44,7 @@
                                 <strong>{{ index + 1 }}</strong>
                             </td>
                             <td>{{ product.product_name }}</td>
+                            <td>K{{ product.price }}</td>
                             <td>{{ product.pivot.quantity }}</td>
                             <td>
                                 K{{ product.price * product.pivot.quantity }}

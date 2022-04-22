@@ -74,7 +74,9 @@
                                 name="selected"
                                 :value="item"
                                 v-model="selected"
+                                v-if="item.stock > 0"
                             />
+                            <p v-else class="text-red-500">Out of Stock</p>
                         </div>
                     </div>
                 </div>
@@ -156,6 +158,9 @@ export default {
                     this.addSaleOpen = false;
                     this.addProductOpen = true;
                 })
+                .then(() => {
+                    this.$emit("getSales");
+                })
                 .catch((err) => {
                     this.errMessage = err.message;
                 });
@@ -209,6 +214,7 @@ export default {
         },
         closeAddSale() {
             this.$emit("closeAddSale");
+            this.$emit("getSales");
         },
         resetSearch() {
             this.search = "";

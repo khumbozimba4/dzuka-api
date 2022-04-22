@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ProductController;
@@ -46,3 +47,14 @@ Route::post('/expenses/store',[ExpenseController::class,'store']);
 
 Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);
 Route::get('/sales/{sale}/products',[ProductSaleController::class,'index']);
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+
+Route::group(['middleware'=>['auth:sanctum']],function(){
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user',function(Request $request){
+        return $request->user();
+    });
+});
