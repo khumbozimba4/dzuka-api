@@ -43,7 +43,7 @@
                             <td>View Sale</td>
                         </tr>
                     </thead>
-                    <tbody class="Table__Body">
+                    <tbody class="Table__Body" v-if="sales.length !== 0">
                         <tr class="Tr" v-for="sale in sales" :key="sale.id">
                             <td>
                                 <strong>{{ sale.id }}</strong>

@@ -5,10 +5,7 @@
                 <CreditCardIcon class="Icon" />
                 <p>Expenses</p>
             </div>
-            <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
-                <SearchIcon class="Search__Icon" />
-            </div>
+
             <div class="Options"></div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -42,7 +39,7 @@
                             <td>Description</td>
                         </tr>
                     </thead>
-                    <tbody class="Table__Body">
+                    <tbody class="Table__Body" v-if="expenses.length !== 0">
                         <tr
                             class="Tr"
                             v-for="expense in expenses"

@@ -35,7 +35,7 @@
                             <td>View</td>
                         </tr>
                     </thead>
-                    <tbody class="Table__Body">
+                    <tbody class="Table__Body" v-if="categories.length !== 0">
                         <tr
                             class="Tr"
                             v-for="(category, index) in categories"

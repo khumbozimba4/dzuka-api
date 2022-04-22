@@ -9,9 +9,18 @@ import Analytics from "../pages/Analytics.vue";
 import About from "../pages/About.vue";
 import Users from "../pages/Users.vue";
 import Expenses from "../pages/Expenses.vue";
+import Login from "../pages/Login.vue";
 const routes = [
     {
         path: "/",
+        name: "login",
+        component: Login,
+        meta: {
+            title: "Login",
+        },
+    },
+    {
+        path: "/dashboard",
         name: "dashboard",
         component: Dashboard,
         meta: {

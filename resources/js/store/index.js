@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createStore } from "vuex";
+import router from "../router";
 axios.defaults.baseURL = "api";
 
 const store = createStore({
@@ -13,7 +14,6 @@ const store = createStore({
             errorMessage: null,
             error: false,
             isLogged: false,
-            loginModal: false,
             registerModal: false,
         };
     },
@@ -21,7 +21,6 @@ const store = createStore({
     getters: {
         mobile: (state) => state.mobile,
         mobileNav: (state) => state.mobileNav,
-        loginModal: (state) => state.loginModal,
         errorMessage: (state) => state.errorMessage,
         error: (state) => state.error,
         isLogged: (state) => state.isLogged,
@@ -60,12 +59,14 @@ const store = createStore({
                     commit("setUserData", data);
                     if (data) {
                         this.isLogged = !this.isLogged;
-                        this.loginModal = false;
+
                         commit("setIsLogged", this.isLogged);
-                        commit("setLoginModal", this.loginModal);
                         this.isLoading = false;
                         commit("setIsLoading", this.isLoading);
                     }
+                })
+                .then(() => {
+                    router.push("/dashboard");
                 })
                 .catch((err) => {
                     this.isLoading = false;
@@ -84,7 +85,6 @@ const store = createStore({
                     if (data) {
                         this.isLogged = !this.isLogged;
                         this.registerModal = !this.registerModal;
-                        this.loginModal = !this.loginModal;
                         commit("setIsLogged", this.isLogged);
                         commit("setRegisterModal", this.registerModal);
                         commit("setLoginModal", this.loginModal);
@@ -105,7 +105,6 @@ const store = createStore({
     mutations: {
         setMobile: (state, mobile) => (state.mobile = mobile),
         setIsLoading: (state, isLoading) => (state.isLoading = isLoading),
-        setLoginModal: (state, loginModal) => (state.loginModal = loginModal),
         setRegisterModal: (state, registerModal) =>
             (state.registerModal = registerModal),
         setMobileNav: (state, mobileNav) => (state.mobileNav = mobileNav),

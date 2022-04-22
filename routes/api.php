@@ -48,12 +48,13 @@ Route::post('/expenses/store',[ExpenseController::class,'store']);
 Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);
 Route::get('/sales/{sale}/products',[ProductSaleController::class,'index']);
 
-Route::post('/register', [AuthController::class, 'register']);
+
 Route::post('/login', [AuthController::class, 'login']);
 
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/register', [AuthController::class, 'register']);
     Route::get('/user',function(Request $request){
         return $request->user();
     });
