@@ -42,7 +42,7 @@
                             <td>Price (MWK)</td>
                         </tr>
                     </thead>
-                    <tbody class="Table__Body" v-if="products.length !== 0">
+                    <tbody class="Table__Body">
                         <tr
                             class="Tr"
                             v-for="(product, index) in products"

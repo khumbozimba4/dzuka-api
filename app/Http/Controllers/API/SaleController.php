@@ -29,6 +29,8 @@ class SaleController extends Controller
         $this->validate($request,[
             "date"=>"required",
             "customer_contact"=>"required",
+            "customer_name"=>"required",
+            "description"=>"required",
         ]);
 
         $sale=new Sale();

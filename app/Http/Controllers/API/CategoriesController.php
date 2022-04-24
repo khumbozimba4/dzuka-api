@@ -17,6 +17,10 @@ class CategoriesController extends Controller
 
     public function store(Request $request)
     {
+        $this->validate($request,[
+            "category_name"=>"required",
+            "description"=>"required",
+        ]);
         $category=new Category();
         $category->category_name=$request->category_name;
         $category->description=$request->description;

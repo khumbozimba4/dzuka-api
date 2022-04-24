@@ -39,7 +39,7 @@
                             <td>Description</td>
                         </tr>
                     </thead>
-                    <tbody class="Table__Body" v-if="expenses.length !== 0">
+                    <tbody class="Table__Body">
                         <tr
                             class="Tr"
                             v-for="expense in expenses"
@@ -55,6 +55,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="p-4" v-if="expenses.length == 0">
+                    No expenses incurred yet
+                </div>
             </div>
         </div>
     </div>

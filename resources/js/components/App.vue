@@ -1,6 +1,5 @@
 <template>
     <div class="Main__Wrapper">
-        <!-- v-if="$store.state.user" -->
         <SideBar v-if="$store.state.user" />
         <div class="Page__Content">
             <router-view></router-view>
@@ -14,6 +13,7 @@
 import SideBar from "./SideBar.vue";
 import RegisterModal from "./RegisterModal.vue";
 import Loading from "./Loading.vue";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         SideBar,
@@ -21,10 +21,17 @@ export default {
         Loading,
     },
     created() {
-        this.getStarted();
+        this.checkUser();
     },
     methods: {
-        getStarted() {},
+        checkUser() {
+            if (!this.user) {
+                this.$router.push("/");
+            }
+        },
+    },
+    computed: {
+        ...mapGetters(["user"]),
     },
 };
 </script>

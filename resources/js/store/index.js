@@ -1,12 +1,11 @@
 import axios from "axios";
 import { createStore } from "vuex";
 import router from "../router";
-axios.defaults.baseURL = "api";
 
 const store = createStore({
     state() {
         return {
-            mobile: "yes",
+            mobile: null,
             mobileNav: false,
             windowWidth: null,
             user: null,
@@ -14,6 +13,7 @@ const store = createStore({
             errorMessage: null,
             error: false,
             isLogged: false,
+            isLoading: false,
             registerModal: false,
         };
     },
@@ -24,6 +24,7 @@ const store = createStore({
         errorMessage: (state) => state.errorMessage,
         error: (state) => state.error,
         isLogged: (state) => state.isLogged,
+        isLoading: (state) => state.isLoading,
         user: (state) => state.user,
         userInfo: (state) => state.userInfo,
         registerModal: (state) => state.registerModal,
@@ -54,7 +55,7 @@ const store = createStore({
             this.isLoading = true;
             commit("setIsLoading", this.isLoading);
             axios
-                .post("/login", credentials)
+                .post("api/login", credentials)
                 .then(({ data }) => {
                     commit("setUserData", data);
                     if (data) {
@@ -74,12 +75,12 @@ const store = createStore({
                     this.error = true;
                     this.errorMessage = err.message;
                     commit("setError", this.error);
-                    commit("setErrorMessage", this.errorMessage);
+                    commit("setErrorMessage", "Incorrect email or password");
                 });
         },
         register({ commit }, credentials) {
             axios
-                .post("/register", credentials)
+                .post("api/register", credentials)
                 .then(({ data }) => {
                     commit("setUserData", data);
                     if (data) {

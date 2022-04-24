@@ -35,7 +35,7 @@
                                 <LockClosedIcon class="icon" />
                             </div>
                             <!-- Error -->
-                            <div class="error" v-show="error">
+                            <div class="error text-red-500" v-show="error">
                                 {{ errorMessage }}
                             </div>
                             <!-- Forgot your password -->
@@ -50,7 +50,6 @@
                     </form>
                     <!-- ---End Form--- -->
                     <!-- background -->
-                    <Loading v-if="isLoading" />
                 </div>
             </div>
         </div>
