@@ -69,6 +69,12 @@
                             <label for="selected">
                                 {{ item.product_name }}
                             </label>
+                            <p>
+                                <span class="text-green-500">{{
+                                    item.stock
+                                }}</span>
+                                Available
+                            </p>
                             <input
                                 type="checkbox"
                                 name="selected"
@@ -107,7 +113,15 @@
                             Price total:
                             <strong>K {{ this.quantity * item.price }}</strong>
                         </p>
-                        <button type="submit">Save</button>
+                        <button
+                            type="submit"
+                            v-if="this.quantity <= item.stock"
+                        >
+                            Save
+                        </button>
+                        <p class="text-red-500" v-else>
+                            Quantity exceeds stock
+                        </p>
                     </form>
                 </div>
             </div>
@@ -359,7 +373,7 @@ export default {
                     display: flex;
                     flex-direction: column;
                     position: absolute;
-                    width: 300px;
+                    width: 400px;
                     left: 300px;
                     bottom: -50px;
                     background-color: #fff;

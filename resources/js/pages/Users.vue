@@ -24,18 +24,20 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>User Id</td>
-                            <td>Profile</td>
+                            <td>UserID</td>
+                            <td>Username</td>
+                            <td>email</td>
                             <td>Role</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr">
+                        <tr class="Tr" v-for="user in users" :key="user.id">
                             <td>
-                                <strong>1</strong>
+                                <strong>{{ user.id }}</strong>
                             </td>
-                            <td>Samson</td>
-                            <td>Admin</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -48,6 +50,7 @@
 <script>
 import { SearchIcon, UserCircleIcon } from "@heroicons/vue/outline";
 import { mapActions } from "vuex";
+import axios from "axios";
 export default {
     components: {
         SearchIcon,
@@ -59,11 +62,24 @@ export default {
             sales: [],
             errorMessage: "",
             totalAmount: 0,
+            users: [],
         };
     },
-    created() {},
+    created() {
+        this.getUsers();
+    },
     methods: {
         ...mapActions(["changeRegisterModal"]),
+        getUsers() {
+            axios
+                .get("api/users")
+                .then((res) => {
+                    this.users = res.data;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
     },
 };
 </script>
@@ -186,6 +202,9 @@ export default {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+                        &:hover {
+                            background-color: rgb(236, 236, 236);
+                        }
                         td {
                             .Icon {
                                 height: 30px;

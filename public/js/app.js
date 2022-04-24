@@ -23373,12 +23373,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SearchIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/CollectionIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/AdjustmentsIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/PrinterIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/ArrowNarrowRightIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/ShoppingBagIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SortAscendingIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SortDescendingIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SearchIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/CollectionIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/AdjustmentsIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/PrinterIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/ArrowNarrowRightIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/ShoppingBagIcon.js");
+/* harmony import */ var _heroicons_vue_solid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @heroicons/vue/solid */ "./node_modules/@heroicons/vue/solid/esm/XCircleIcon.js");
 /* harmony import */ var _components_AddSale_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../components/AddSale.vue */ "./resources/js/components/AddSale.vue");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
@@ -23389,21 +23392,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: (_components = {
     AddSale: _components_AddSale_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__["default"],
-    CollectionIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_3__["default"],
-    AdjustmentsIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__["default"],
-    PrinterIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__["default"],
-    ArrowNarrowRightIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_6__["default"]
-  }, _defineProperty(_components, "PrinterIcon", _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__["default"]), _defineProperty(_components, "ShoppingBagIcon", _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_7__["default"]), _components),
+    SortAscendingIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__["default"],
+    XCircleIcon: _heroicons_vue_solid__WEBPACK_IMPORTED_MODULE_3__["default"],
+    SortDescendingIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_4__["default"],
+    SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_5__["default"],
+    CollectionIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_6__["default"],
+    AdjustmentsIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_7__["default"],
+    PrinterIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_8__["default"],
+    ArrowNarrowRightIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_9__["default"]
+  }, _defineProperty(_components, "PrinterIcon", _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_8__["default"]), _defineProperty(_components, "ShoppingBagIcon", _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_10__["default"]), _components),
   data: function data() {
     return {
       isOpen: false,
       sales: [],
       errorMessage: "",
-      totalAmount: 0
+      totalAmount: 0,
+      filterOpen: false
     };
   },
   created: function created() {
@@ -23428,6 +23436,48 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           customer_contact: sale.customer_contact
         }
       });
+    },
+    sortSalesAmount: function sortSalesAmount(value) {
+      var _this2 = this;
+
+      if (value == 1) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default().get("api/sales/sort/amount/desc").then(function (res) {
+          _this2.sales = res.data;
+        }).then(function () {
+          _this2.filterOpen = false;
+        })["catch"](function (err) {
+          _this2.errorMessage = err.message;
+        });
+      } else if (value == 2) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default().get("api/sales/sort/amount/asc").then(function (res) {
+          _this2.sales = res.data;
+        }).then(function () {
+          _this2.filterOpen = false;
+        })["catch"](function (err) {
+          _this2.errorMessage = err.message;
+        });
+      }
+    },
+    sortSalesDate: function sortSalesDate(value) {
+      var _this3 = this;
+
+      if (value == 1) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default().get("api/sales/sort/date/desc").then(function (res) {
+          _this3.sales = res.data;
+        }).then(function () {
+          _this3.filterOpen = false;
+        })["catch"](function (err) {
+          _this3.errorMessage = err.message;
+        });
+      } else if (value == 2) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default().get("api/sales/sort/date/asc").then(function (res) {
+          _this3.sales = res.data;
+        }).then(function () {
+          _this3.filterOpen = false;
+        })["catch"](function (err) {
+          _this3.errorMessage = err.message;
+        });
+      }
     }
   }
 });
@@ -23510,9 +23560,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SearchIcon.js");
-/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/UserCircleIcon.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/SearchIcon.js");
+/* harmony import */ var _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @heroicons/vue/outline */ "./node_modules/@heroicons/vue/outline/esm/UserCircleIcon.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -23521,21 +23573,35 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
-    SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_0__["default"],
-    UserCircleIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__["default"]
+    SearchIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_1__["default"],
+    UserCircleIcon: _heroicons_vue_outline__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     return {
       isOpen: false,
       sales: [],
       errorMessage: "",
-      totalAmount: 0
+      totalAmount: 0,
+      users: []
     };
   },
-  created: function created() {},
-  methods: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["changeRegisterModal"]))
+  created: function created() {
+    this.getUsers();
+  },
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapActions)(["changeRegisterModal"])), {}, {
+    getUsers: function getUsers() {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default().get("api/users").then(function (res) {
+        _this.users = res.data;
+      })["catch"](function (err) {
+        console.log(err);
+      });
+    }
+  })
 });
 
 /***/ }),
@@ -24039,24 +24105,30 @@ var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_26 = {
   "for": "selected"
 };
-var _hoisted_27 = ["value"];
-var _hoisted_28 = {
+var _hoisted_27 = {
+  "class": "text-green-500"
+};
+
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Available ");
+
+var _hoisted_29 = ["value"];
+var _hoisted_30 = {
   key: 1,
   "class": "text-red-500"
 };
-var _hoisted_29 = {
+var _hoisted_31 = {
   key: 0,
   "class": "Selected__Products"
 };
-var _hoisted_30 = {
+var _hoisted_32 = {
   key: 0
 };
-var _hoisted_31 = ["onSubmit"];
-var _hoisted_32 = {
+var _hoisted_33 = ["onSubmit"];
+var _hoisted_34 = {
   "class": "Input__Wrap"
 };
 
-var _hoisted_33 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "for": "quantity"
   }, "Quantity", -1
@@ -24064,16 +24136,16 @@ var _hoisted_33 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_34 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Price total: ");
+var _hoisted_36 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Price total: ");
 
-var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    type: "submit"
-  }, "Save", -1
-  /* HOISTED */
-  );
-});
-
+var _hoisted_37 = {
+  key: 0,
+  type: "submit"
+};
+var _hoisted_38 = {
+  key: 1,
+  "class": "text-red-500"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _this = this;
 
@@ -24160,7 +24232,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: item.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", _hoisted_26, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
     /* TEXT */
-    ), item.stock > 0 ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("input", {
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.stock), 1
+    /* TEXT */
+    ), _hoisted_28]), item.stock > 0 ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("input", {
       key: 0,
       type: "checkbox",
       name: "selected",
@@ -24170,10 +24244,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       })
     }, null, 8
     /* PROPS */
-    , _hoisted_27)), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $data.selected]]) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_28, "Out of Stock"))]);
+    , _hoisted_29)), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelCheckbox, $data.selected]]) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_30, "Out of Stock"))]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selected products "), $data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_29, [$data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h1", _hoisted_30, "Products Sold")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected, function (item, index) {
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selected products "), $data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_31, [$data.selected ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("h1", _hoisted_32, "Products Sold")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.selected, function (item, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       key: item.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
@@ -24184,7 +24258,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     /* TEXT */
     )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.product_name), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [_hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
       type: "text",
       name: "quantity",
       "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
@@ -24193,11 +24267,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       required: ""
     }, null, 512
     /* NEED_PATCH */
-    ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.quantity]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [_hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, "K " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_this.quantity * item.price), 1
+    ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.quantity]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, [_hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, "K " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_this.quantity * item.price), 1
     /* TEXT */
-    )]), _hoisted_35], 40
+    )]), _this.quantity <= item.stock ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", _hoisted_37, " Save ")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_38, " Quantity exceeds stock "))], 40
     /* PROPS, HYDRATE_EVENTS */
-    , _hoisted_31)]);
+    , _hoisted_33)]);
   }), 128
   /* KEYED_FRAGMENT */
   ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
@@ -25674,21 +25748,7 @@ var _hoisted_4 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_5 = {
-  "class": "Search__Bar"
-};
-
-var _hoisted_6 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    type: "text",
-    "class": "Input",
-    placeholder: "Search product"
-  }, null, -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_5 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "Options"
   }, null, -1
@@ -25696,50 +25756,77 @@ var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_8 = {
+var _hoisted_6 = {
   "class": "Contents__Container"
 };
-var _hoisted_9 = {
+var _hoisted_7 = {
   "class": "Heading"
 };
+
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Filters ");
+
+var _hoisted_9 = {
+  key: 0,
+  "class": "Filters__Container"
+};
 var _hoisted_10 = {
-  "class": "Left__Side"
+  "class": "Filters__Heading"
 };
 
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Filters ");
-
-var _hoisted_12 = {
-  "class": "Right__Side"
-};
-var _hoisted_13 = {
-  "class": "Table__Container"
-};
-var _hoisted_14 = {
-  "class": "Table"
-};
-
-var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
-    "class": "Table__Head"
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
-    "class": "Tr"
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "SaleID"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Date"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Customer"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Customer Contact"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Products"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Total Price"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "View Sale")])], -1
+var _hoisted_11 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", null, "Filter By", -1
   /* HOISTED */
   );
 });
 
+var _hoisted_12 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Date", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Total sales", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_14 = {
+  "class": "Right__Side"
+};
+var _hoisted_15 = {
+  "class": "Table__Container"
+};
 var _hoisted_16 = {
+  "class": "Table"
+};
+
+var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
+    "class": "Table__Head"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
+    "class": "Tr"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "SaleID"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Date"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Customer"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Customer Contact"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Product(s)"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Total Price"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "View Sale")])], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_18 = {
   "class": "Table__Body"
 };
-var _hoisted_17 = {
+var _hoisted_19 = {
   key: 0
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_ShoppingBagIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ShoppingBagIcon");
 
-  var _component_SearchIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SearchIcon");
-
   var _component_AdjustmentsIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AdjustmentsIcon");
+
+  var _component_XCircleIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("XCircleIcon");
+
+  var _component_SortDescendingIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SortDescendingIcon");
+
+  var _component_SortAscendingIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("SortAscendingIcon");
 
   var _component_PrinterIcon = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("PrinterIcon");
 
@@ -25749,26 +25836,51 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ShoppingBagIcon, {
     "class": "Icon"
-  }), _hoisted_4]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchIcon, {
-    "class": "Search__Icon"
-  })]), _hoisted_7]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AdjustmentsIcon, {
+  }), _hoisted_4]), _hoisted_5]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "Left__Side",
+    onClick: _cache[4] || (_cache[4] = function ($event) {
+      return $data.filterOpen = !$data.filterOpen;
+    })
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AdjustmentsIcon, {
     "class": "Icon"
-  }), _hoisted_11]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "Add__Category",
+  }), _hoisted_8, $data.filterOpen ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("ul", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_XCircleIcon, {
+    "class": "Close__Icon"
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SortDescendingIcon, {
+    "class": "Icon",
     onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.sortSalesDate(1);
+    })
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SortAscendingIcon, {
+    "class": "Icon",
+    onClick: _cache[1] || (_cache[1] = function ($event) {
+      return $options.sortSalesDate(2);
+    })
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", null, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SortDescendingIcon, {
+    "class": "Icon",
+    onClick: _cache[2] || (_cache[2] = function ($event) {
+      return $options.sortSalesAmount(1);
+    })
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SortAscendingIcon, {
+    "class": "Icon",
+    onClick: _cache[3] || (_cache[3] = function ($event) {
+      return $options.sortSalesAmount(2);
+    })
+  })])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "Add__Category",
+    onClick: _cache[5] || (_cache[5] = function ($event) {
       return $data.isOpen = !$data.isOpen;
     })
   }, " Create Sale "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_PrinterIcon, {
     "class": "Icon"
   })]), $data.isOpen ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_AddSale, {
     key: 0,
-    onCloseAddSale: _cache[1] || (_cache[1] = function ($event) {
+    onCloseAddSale: _cache[6] || (_cache[6] = function ($event) {
       return $data.isOpen = !$data.isOpen;
     }),
     onGetSales: $options.getSales
   }, null, 8
   /* PROPS */
-  , ["onGetSales"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_16, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.sales, function (sale) {
+  , ["onGetSales"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_18, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.sales, function (sale) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       "class": "Tr",
       key: sale.id
@@ -25794,7 +25906,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     , ["onClick"])])]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])])])]), $data.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errorMessage), 1
+  ))])])])]), $data.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errorMessage), 1
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
@@ -25893,7 +26005,7 @@ var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
     "class": "Table__Head"
   }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
     "class": "Tr"
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Product name"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Previous stock"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Recently added stock"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Recently sold"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Available stock"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Allocate stock")])], -1
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Product name"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Last Allocated"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Previous stock"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Recently sold"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Available stock"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Allocate stock")])], -1
   /* HOISTED */
   );
 });
@@ -25929,9 +26041,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: product.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.product_name), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.previous_stock), 1
-    /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.recently_allocated), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.previous_stock), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(product.recently_subtracted), 1
     /* TEXT */
@@ -26024,10 +26136,27 @@ var _hoisted_9 = {
 var _hoisted_10 = {
   "class": "Right__Side"
 };
-
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"Table__Container\" data-v-91a5db62><table class=\"Table\" data-v-91a5db62><thead class=\"Table__Head\" data-v-91a5db62><tr class=\"Tr\" data-v-91a5db62><td data-v-91a5db62>User Id</td><td data-v-91a5db62>Profile</td><td data-v-91a5db62>Role</td></tr></thead><tbody class=\"Table__Body\" data-v-91a5db62><tr class=\"Tr\" data-v-91a5db62><td data-v-91a5db62><strong data-v-91a5db62>1</strong></td><td data-v-91a5db62>Samson</td><td data-v-91a5db62>Admin</td></tr></tbody></table></div>", 1);
-
+var _hoisted_11 = {
+  "class": "Table__Container"
+};
 var _hoisted_12 = {
+  "class": "Table"
+};
+
+var _hoisted_13 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
+    "class": "Table__Head"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
+    "class": "Tr"
+  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "UserID"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Username"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "email"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, "Role")])], -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_14 = {
+  "class": "Table__Body"
+};
+var _hoisted_15 = {
   key: 0
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -26044,7 +26173,22 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[0] || (_cache[0] = function () {
       return _ctx.changeRegisterModal && _ctx.changeRegisterModal.apply(_ctx, arguments);
     })
-  }, " Create User ")])]), _hoisted_11]), $data.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errorMessage), 1
+  }, " Create User ")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_12, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_14, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.users, function (user) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
+      "class": "Tr",
+      key: user.id
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(user.id), 1
+    /* TEXT */
+    )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(user.name), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(user.email), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(user.role), 1
+    /* TEXT */
+    )]);
+  }), 128
+  /* KEYED_FRAGMENT */
+  ))])])])]), $data.errorMessage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.errorMessage), 1
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
@@ -26503,7 +26647,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrap[data-v-10d119ed] {\n  position: absolute;\n  border-top: 1px solid gray;\n  background: #fff;\n  top: 50px;\n  right: 200px;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n}\n.Main__Wrap .Heading[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.Main__Wrap .Heading h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap .Heading .Icon[data-v-10d119ed] {\n  width: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(30, 41, 59);\n  background: #fff;\n  cursor: pointer;\n}\n.Main__Wrap button[data-v-10d119ed] {\n  padding: 5px 10px;\n  background-color: rgb(30, 41, 59);\n  color: #fff;\n  border-radius: 3px;\n}\n.Main__Wrap button[data-v-10d119ed]:hover {\n  background: rgb(15, 23, 42);\n}\n.Main__Wrap h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap form .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap form .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap form .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Second__Step[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap .Second__Step h6[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-weight: 500;\n}\n.Main__Wrap .Second__Step h6 .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(34, 197, 94);\n}\n.Main__Wrap .Add__Products__Wrap[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div[data-v-10d119ed] {\n  position: relative;\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Icon[data-v-10d119ed] {\n  height: 20px;\n  color: black;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  padding: 0 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List[data-v-10d119ed] {\n  display: flex;\n  flex-direction: column;\n  position: absolute;\n  width: 300px;\n  left: 300px;\n  bottom: -50px;\n  background-color: #fff;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n  border-top: 1px solid gray;\n  border-left: 1px solid gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List h1[data-v-10d119ed] {\n  padding: 10px 0;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List div[data-v-10d119ed] {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px 0;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products[data-v-10d119ed] {\n  margin-top: 20px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div[data-v-10d119ed] {\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  justify-content: space-between;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form .Input__Wrap[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form .Input__Wrap input[data-v-10d119ed] {\n  height: 30px;\n  width: 50px;\n  border-radius: 2px;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrap[data-v-10d119ed] {\n  position: absolute;\n  border-top: 1px solid gray;\n  background: #fff;\n  top: 50px;\n  right: 200px;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n}\n.Main__Wrap .Heading[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n.Main__Wrap .Heading h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap .Heading .Icon[data-v-10d119ed] {\n  width: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(30, 41, 59);\n  background: #fff;\n  cursor: pointer;\n}\n.Main__Wrap button[data-v-10d119ed] {\n  padding: 5px 10px;\n  background-color: rgb(30, 41, 59);\n  color: #fff;\n  border-radius: 3px;\n}\n.Main__Wrap button[data-v-10d119ed]:hover {\n  background: rgb(15, 23, 42);\n}\n.Main__Wrap h1[data-v-10d119ed] {\n  font-weight: 800;\n}\n.Main__Wrap form[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap form .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap form .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap form .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap form .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Second__Step[data-v-10d119ed] {\n  padding: 20px 0;\n}\n.Main__Wrap .Second__Step h6[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  font-weight: 500;\n}\n.Main__Wrap .Second__Step h6 .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  color: rgb(34, 197, 94);\n}\n.Main__Wrap .Add__Products__Wrap[data-v-10d119ed] {\n  width: 500px;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  border-bottom: 1px solid gray;\n  color: gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container div[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Container div .Icon[data-v-10d119ed] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search[data-v-10d119ed] {\n  margin-top: 10px;\n  display: flex;\n  flex-direction: column;\n  border-bottom: 1px solid gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div[data-v-10d119ed] {\n  position: relative;\n  display: flex;\n  align-items: center;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Icon[data-v-10d119ed] {\n  height: 20px;\n  color: black;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div input[data-v-10d119ed] {\n  background: none;\n  outline: none;\n  padding: 0 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List[data-v-10d119ed] {\n  display: flex;\n  flex-direction: column;\n  position: absolute;\n  width: 400px;\n  left: 300px;\n  bottom: -50px;\n  background-color: #fff;\n  border-radius: 5px;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  padding: 20px;\n  border-top: 1px solid gray;\n  border-left: 1px solid gray;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List h1[data-v-10d119ed] {\n  padding: 10px 0;\n}\n.Main__Wrap .Add__Products__Wrap .Input__Search div .Product__List div[data-v-10d119ed] {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px 0;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products[data-v-10d119ed] {\n  margin-top: 20px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div[data-v-10d119ed] {\n  border-top: 1px solid rgb(229, 229, 229);\n  padding: 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  width: 100%;\n  justify-content: space-between;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form .Input__Wrap[data-v-10d119ed] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n}\n.Main__Wrap .Add__Products__Wrap .Selected__Products div form .Input__Wrap input[data-v-10d119ed] {\n  height: 30px;\n  width: 50px;\n  border-radius: 2px;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26671,7 +26815,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-82704d4a] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-82704d4a] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-82704d4a] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-82704d4a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-82704d4a] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-82704d4a] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-82704d4a]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-82704d4a] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Cards__Wrap[data-v-82704d4a] {\n  display: flex;\n  padding: 20px;\n  margin: 20px;\n  justify-content: space-between;\n}\n.Main__Wrapper .Contents__Container[data-v-82704d4a] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-82704d4a] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-82704d4a] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-82704d4a] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-82704d4a] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-82704d4a] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-82704d4a]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-82704d4a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-82704d4a] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-82704d4a] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-82704d4a] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-82704d4a] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-82704d4a] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-82704d4a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-82704d4a] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-82704d4a] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-82704d4a] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-82704d4a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-82704d4a] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-82704d4a] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-82704d4a]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-82704d4a] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Cards__Wrap[data-v-82704d4a] {\n  display: flex;\n  padding: 20px;\n  margin: 20px;\n  justify-content: space-between;\n}\n.Main__Wrapper .Contents__Container[data-v-82704d4a] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-82704d4a] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-82704d4a] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-82704d4a] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-82704d4a] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-82704d4a] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-82704d4a]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-82704d4a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-82704d4a] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-82704d4a] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-82704d4a] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-82704d4a] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-82704d4a] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-82704d4a]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-82704d4a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26695,7 +26839,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-2ef96fb8] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-2ef96fb8] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-2ef96fb8] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-2ef96fb8] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-2ef96fb8] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-2ef96fb8] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-2ef96fb8]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-2ef96fb8] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-2ef96fb8] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-2ef96fb8] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-2ef96fb8] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-2ef96fb8] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-2ef96fb8] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-2ef96fb8] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-2ef96fb8]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-2ef96fb8] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-2ef96fb8] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-2ef96fb8] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-2ef96fb8] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-2ef96fb8] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-2ef96fb8] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-2ef96fb8] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-2ef96fb8] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-2ef96fb8] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-2ef96fb8] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-2ef96fb8] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-2ef96fb8] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-2ef96fb8] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-2ef96fb8]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-2ef96fb8] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-2ef96fb8] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-2ef96fb8] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-2ef96fb8] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-2ef96fb8] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-2ef96fb8] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-2ef96fb8] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-2ef96fb8]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-2ef96fb8] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-2ef96fb8] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-2ef96fb8] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-2ef96fb8] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-2ef96fb8] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-2ef96fb8] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-2ef96fb8]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-2ef96fb8] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26719,7 +26863,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-e4ef37ba] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-e4ef37ba] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-e4ef37ba] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-e4ef37ba] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-e4ef37ba] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-e4ef37ba] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-e4ef37ba]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-e4ef37ba] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-e4ef37ba] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-e4ef37ba] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-e4ef37ba] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-e4ef37ba] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-e4ef37ba] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-e4ef37ba] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-e4ef37ba]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-e4ef37ba] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-e4ef37ba] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-e4ef37ba] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-e4ef37ba] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-e4ef37ba] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-e4ef37ba] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-e4ef37ba] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-e4ef37ba] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-e4ef37ba] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-e4ef37ba] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-e4ef37ba] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-e4ef37ba] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-e4ef37ba] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-e4ef37ba]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-e4ef37ba] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-e4ef37ba] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-e4ef37ba] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-e4ef37ba] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-e4ef37ba] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-e4ef37ba] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-e4ef37ba] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-e4ef37ba]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-e4ef37ba] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-e4ef37ba] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-e4ef37ba] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-e4ef37ba] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-e4ef37ba] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-e4ef37ba] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-e4ef37ba]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-e4ef37ba] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26767,7 +26911,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-4cceec26] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-4cceec26] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-4cceec26] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-4cceec26] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-4cceec26] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-4cceec26] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-4cceec26]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-4cceec26] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-4cceec26] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-4cceec26] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-4cceec26] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-4cceec26] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-4cceec26] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-4cceec26] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-4cceec26]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-4cceec26] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-4cceec26] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-4cceec26] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-4cceec26] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-4cceec26] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-4cceec26] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-4cceec26] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-4cceec26] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-4cceec26] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-4cceec26] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-4cceec26] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-4cceec26] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-4cceec26] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-4cceec26]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-4cceec26] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-4cceec26] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-4cceec26] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-4cceec26] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-4cceec26] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-4cceec26] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-4cceec26] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-4cceec26]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-4cceec26] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-4cceec26] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-4cceec26] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-4cceec26] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-4cceec26] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-4cceec26] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-4cceec26]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-4cceec26] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26815,7 +26959,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-c628a95a] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-c628a95a] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-c628a95a] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-c628a95a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-c628a95a] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-c628a95a] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-c628a95a]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-c628a95a] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-c628a95a] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-c628a95a] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-c628a95a] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-c628a95a] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-c628a95a] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-c628a95a] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-c628a95a]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-c628a95a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-c628a95a] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-c628a95a] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-c628a95a] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-c628a95a] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-c628a95a] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-c628a95a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-c628a95a] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-c628a95a] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-c628a95a] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-c628a95a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-c628a95a] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-c628a95a] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-c628a95a]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-c628a95a] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-c628a95a] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-c628a95a] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-c628a95a] {\n  position: relative;\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-c628a95a] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container[data-v-c628a95a] {\n  position: absolute;\n  width: 300px;\n  background: #fff;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n  top: 30px;\n  left: 20px;\n  border-top: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container .Filters__Heading[data-v-c628a95a] {\n  display: flex;\n  width: 100%;\n  justify-content: space-between;\n  padding: 15px 20px 5px 20px;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container .Filters__Heading .Close__Icon[data-v-c628a95a] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container li[data-v-c628a95a] {\n  padding: 10px 20px;\n  color: rgb(53, 53, 53);\n  display: grid;\n  grid-template-columns: 60% 20% 20%;\n  border-top: 1px solid lightgrey;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container li[data-v-c628a95a]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container li .Icon[data-v-c628a95a] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  transition: all 0.2s ease-in-out;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Filters__Container li .Icon[data-v-c628a95a]:hover {\n  color: rgb(31, 31, 31);\n  transform: scale(1.2);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-c628a95a] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-c628a95a] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-c628a95a]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-c628a95a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-c628a95a] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-c628a95a] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-c628a95a] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-c628a95a] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-c628a95a] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-c628a95a]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-c628a95a] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26839,7 +26983,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-250b7746] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-250b7746] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-250b7746] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-250b7746] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-250b7746] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-250b7746] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-250b7746]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-250b7746] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-250b7746] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-250b7746] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-250b7746] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-250b7746] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-250b7746] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-250b7746] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-250b7746]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-250b7746] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-250b7746] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-250b7746] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-250b7746] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-250b7746] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-250b7746] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr .Allocate__Stock[data-v-250b7746] {\n  position: relative;\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr .Allocate__Stock .Icon[data-v-250b7746] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-250b7746] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-250b7746] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-250b7746] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-250b7746] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-250b7746] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-250b7746] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-250b7746]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-250b7746] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-250b7746] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-250b7746] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-250b7746] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-250b7746] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-250b7746] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-250b7746] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-250b7746]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-250b7746] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-250b7746] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-250b7746] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-250b7746] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-250b7746] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-250b7746] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-250b7746]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr .Allocate__Stock[data-v-250b7746] {\n  position: relative;\n  display: flex;\n  align-items: center;\n  gap: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr .Allocate__Stock .Icon[data-v-250b7746] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -26863,7 +27007,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-91a5db62] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-91a5db62] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-91a5db62] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-91a5db62] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-91a5db62] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-91a5db62] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-91a5db62]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-91a5db62] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-91a5db62] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-91a5db62] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-91a5db62] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-91a5db62] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-91a5db62] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-91a5db62] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-91a5db62]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-91a5db62] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-91a5db62] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-91a5db62] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-91a5db62] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-91a5db62] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-91a5db62] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-91a5db62] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".Main__Wrapper[data-v-91a5db62] {\n  width: 100%;\n  display: flex;\n  flex-direction: column;\n}\n.Main__Wrapper .NavBar__Container[data-v-91a5db62] {\n  background-color: #fff;\n  display: flex;\n  align-items: center;\n  width: 100%;\n  padding: 10px;\n}\n.Main__Wrapper .NavBar__Container .Title[data-v-91a5db62] {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  padding: 0 10px;\n  border-right: 1px solid gray;\n  margin-right: 25px;\n}\n.Main__Wrapper .NavBar__Container .Title .Icon[data-v-91a5db62] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar[data-v-91a5db62] {\n  display: flex;\n  align-items: center;\n  background-color: rgb(212, 212, 212);\n  border-radius: 5px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-91a5db62] {\n  background: none;\n  border: 0px;\n  padding: 10px 20px;\n  width: 200px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Input[data-v-91a5db62]:focus {\n  outline: none;\n  border: 0px;\n}\n.Main__Wrapper .NavBar__Container .Search__Bar .Search__Icon[data-v-91a5db62] {\n  padding: 5px 20px;\n  height: 30px;\n  color: rgb(115, 115, 115);\n}\n.Main__Wrapper .Contents__Container[data-v-91a5db62] {\n  margin: 20px;\n  background-color: #fff;\n  border-radius: 3px;\n  display: flex;\n  flex-direction: column;\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);\n}\n.Main__Wrapper .Contents__Container .Heading[data-v-91a5db62] {\n  position: relative;\n  display: flex;\n  justify-content: space-between;\n  padding: 20px;\n  border-bottom: 1px solid rgb(163, 163, 163);\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side[data-v-91a5db62] {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-weight: 700;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Left__Side .Icon[data-v-91a5db62] {\n  height: 20px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side[data-v-91a5db62] {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-91a5db62] {\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n  font-size: 15px;\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Add__Category[data-v-91a5db62]:hover {\n  color: rgb(82, 82, 82);\n}\n.Main__Wrapper .Contents__Container .Heading .Right__Side .Icon[data-v-91a5db62] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  padding: 5px 20px;\n  border: 1px solid rgb(115, 115, 115);\n  border-radius: 3px;\n  color: rgb(115, 115, 115);\n  cursor: pointer;\n}\n.Main__Wrapper .Contents__Container .Table__Container[data-v-91a5db62] {\n  padding: 20px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table[data-v-91a5db62] {\n  width: 100%;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head[data-v-91a5db62] {\n  font-weight: 800;\n  color: rgb(38, 38, 38);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Head .Tr[data-v-91a5db62] {\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-91a5db62] {\n  border-top: 1px solid rgb(229, 229, 229);\n  height: 40px;\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr[data-v-91a5db62]:hover {\n  background-color: rgb(236, 236, 236);\n}\n.Main__Wrapper .Contents__Container .Table__Container .Table .Table__Body .Tr td .Icon[data-v-91a5db62] {\n  height: 30px;\n  -o-object-fit: contain;\n     object-fit: contain;\n  cursor: pointer;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -74058,6 +74202,72 @@ function render(_ctx, _cache) {
       "stroke-linecap": "round",
       "stroke-linejoin": "round",
       d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+    })
+  ]))
+}
+
+/***/ }),
+
+/***/ "./node_modules/@heroicons/vue/outline/esm/SortAscendingIcon.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@heroicons/vue/outline/esm/SortAscendingIcon.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+function render(_ctx, _cache) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    "stroke-width": "2",
+    stroke: "currentColor",
+    "aria-hidden": "true"
+  }, [
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("path", {
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      d: "M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+    })
+  ]))
+}
+
+/***/ }),
+
+/***/ "./node_modules/@heroicons/vue/outline/esm/SortDescendingIcon.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/@heroicons/vue/outline/esm/SortDescendingIcon.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+function render(_ctx, _cache) {
+  return ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    "stroke-width": "2",
+    stroke: "currentColor",
+    "aria-hidden": "true"
+  }, [
+    (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("path", {
+      "stroke-linecap": "round",
+      "stroke-linejoin": "round",
+      d: "M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"
     })
   ]))
 }
