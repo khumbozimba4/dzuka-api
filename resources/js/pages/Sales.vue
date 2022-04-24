@@ -5,18 +5,43 @@
                 <ShoppingBagIcon class="Icon" />
                 <p>Sales</p>
             </div>
-            <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
-                <SearchIcon class="Search__Icon" />
-            </div>
             <div class="Options"></div>
         </div>
 
         <div class="Contents__Container">
             <div class="Heading">
-                <div class="Left__Side">
+                <div class="Left__Side" @click="filterOpen = !filterOpen">
                     <AdjustmentsIcon class="Icon" />
                     Filters
+                    <ul class="Filters__Container" v-if="filterOpen">
+                        <div class="Filters__Heading">
+                            <h5>Filter By</h5>
+                            <XCircleIcon class="Close__Icon" />
+                        </div>
+                        <li>
+                            <p>Date</p>
+
+                            <SortDescendingIcon
+                                class="Icon"
+                                @click="sortSalesDate(1)"
+                            />
+                            <SortAscendingIcon
+                                class="Icon"
+                                @click="sortSalesDate(2)"
+                            />
+                        </li>
+                        <li>
+                            <p>Total sales</p>
+                            <SortDescendingIcon
+                                class="Icon"
+                                @click="sortSalesAmount(1)"
+                            />
+                            <SortAscendingIcon
+                                class="Icon"
+                                @click="sortSalesAmount(2)"
+                            />
+                        </li>
+                    </ul>
                 </div>
                 <div class="Right__Side">
                     <div class="Add__Category" @click="isOpen = !isOpen">
@@ -38,7 +63,7 @@
                             <td>Date</td>
                             <td>Customer</td>
                             <td>Customer Contact</td>
-                            <td>Products</td>
+                            <td>Product(s)</td>
                             <td>Total Price</td>
                             <td>View Sale</td>
                         </tr>
@@ -76,12 +101,18 @@ import {
     PrinterIcon,
     ArrowNarrowRightIcon,
     ShoppingBagIcon,
+    SortAscendingIcon,
+    SortDescendingIcon,
 } from "@heroicons/vue/outline";
+import { XCircleIcon } from "@heroicons/vue/solid";
 import AddSale from "../components/AddSale.vue";
 import axios from "axios";
 export default {
     components: {
         AddSale,
+        SortAscendingIcon,
+        XCircleIcon,
+        SortDescendingIcon,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
@@ -96,6 +127,7 @@ export default {
             sales: [],
             errorMessage: "",
             totalAmount: 0,
+            filterOpen: false,
         };
     },
     created() {
@@ -121,6 +153,60 @@ export default {
                     customer_contact: sale.customer_contact,
                 },
             });
+        },
+        sortSalesAmount(value) {
+            if (value == 1) {
+                axios
+                    .get("api/sales/sort/amount/desc")
+                    .then((res) => {
+                        this.sales = res.data;
+                    })
+                    .then(() => {
+                        this.filterOpen = false;
+                    })
+                    .catch((err) => {
+                        this.errorMessage = err.message;
+                    });
+            } else if (value == 2) {
+                axios
+                    .get("api/sales/sort/amount/asc")
+                    .then((res) => {
+                        this.sales = res.data;
+                    })
+                    .then(() => {
+                        this.filterOpen = false;
+                    })
+                    .catch((err) => {
+                        this.errorMessage = err.message;
+                    });
+            }
+        },
+        sortSalesDate(value) {
+            if (value == 1) {
+                axios
+                    .get("api/sales/sort/date/desc")
+                    .then((res) => {
+                        this.sales = res.data;
+                    })
+                    .then(() => {
+                        this.filterOpen = false;
+                    })
+                    .catch((err) => {
+                        this.errorMessage = err.message;
+                    });
+            } else if (value == 2) {
+                axios
+                    .get("api/sales/sort/date/asc")
+                    .then((res) => {
+                        this.sales = res.data;
+                    })
+                    .then(() => {
+                        this.filterOpen = false;
+                    })
+                    .catch((err) => {
+                        this.errorMessage = err.message;
+                    });
+            }
         },
     },
 };
@@ -189,6 +275,7 @@ export default {
             padding: 20px;
             border-bottom: 1px solid rgb(163 163 163);
             .Left__Side {
+                position: relative;
                 display: flex;
                 gap: 10px;
                 align-items: center;
@@ -199,6 +286,50 @@ export default {
                     height: 20px;
                     object-fit: contain;
                     cursor: pointer;
+                }
+                .Filters__Container {
+                    position: absolute;
+                    width: 300px;
+                    background: #fff;
+                    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+                        0 4px 6px -4px rgb(0 0 0 / 0.1);
+                    top: 30px;
+                    left: 20px;
+                    border-top: 1px solid rgb(163, 163, 163);
+
+                    .Filters__Heading {
+                        display: flex;
+                        width: 100%;
+                        justify-content: space-between;
+                        padding: 15px 20px 5px 20px;
+
+                        .Close__Icon {
+                            height: 20px;
+                            object-fit: contain;
+                        }
+                    }
+
+                    li {
+                        padding: 10px 20px;
+                        color: rgb(53, 53, 53);
+                        display: grid;
+                        grid-template-columns: 60% 20% 20%;
+                        border-top: 1px solid lightgrey;
+                        &:hover {
+                            background-color: rgb(236, 236, 236);
+                        }
+
+                        .Icon {
+                            height: 20px;
+                            object-fit: contain;
+                            transition: all 0.2s ease-in-out;
+
+                            &:hover {
+                                color: rgb(31, 31, 31);
+                                transform: scale(1.2);
+                            }
+                        }
+                    }
                 }
             }
             .Right__Side {
@@ -244,6 +375,9 @@ export default {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+                        &:hover {
+                            background-color: rgb(236, 236, 236);
+                        }
                         td {
                             .Icon {
                                 height: 30px;

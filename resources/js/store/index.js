@@ -1,11 +1,11 @@
 import axios from "axios";
 import { createStore } from "vuex";
-axios.defaults.baseURL = "api";
+import router from "../router";
 
 const store = createStore({
     state() {
         return {
-            mobile: "yes",
+            mobile: null,
             mobileNav: false,
             windowWidth: null,
             user: null,
@@ -13,7 +13,7 @@ const store = createStore({
             errorMessage: null,
             error: false,
             isLogged: false,
-            loginModal: false,
+            isLoading: false,
             registerModal: false,
         };
     },
@@ -21,10 +21,10 @@ const store = createStore({
     getters: {
         mobile: (state) => state.mobile,
         mobileNav: (state) => state.mobileNav,
-        loginModal: (state) => state.loginModal,
         errorMessage: (state) => state.errorMessage,
         error: (state) => state.error,
         isLogged: (state) => state.isLogged,
+        isLoading: (state) => state.isLoading,
         user: (state) => state.user,
         userInfo: (state) => state.userInfo,
         registerModal: (state) => state.registerModal,
@@ -55,17 +55,19 @@ const store = createStore({
             this.isLoading = true;
             commit("setIsLoading", this.isLoading);
             axios
-                .post("/login", credentials)
+                .post("api/login", credentials)
                 .then(({ data }) => {
                     commit("setUserData", data);
                     if (data) {
                         this.isLogged = !this.isLogged;
-                        this.loginModal = false;
+
                         commit("setIsLogged", this.isLogged);
-                        commit("setLoginModal", this.loginModal);
                         this.isLoading = false;
                         commit("setIsLoading", this.isLoading);
                     }
+                })
+                .then(() => {
+                    router.push("/dashboard");
                 })
                 .catch((err) => {
                     this.isLoading = false;
@@ -73,18 +75,17 @@ const store = createStore({
                     this.error = true;
                     this.errorMessage = err.message;
                     commit("setError", this.error);
-                    commit("setErrorMessage", this.errorMessage);
+                    commit("setErrorMessage", "Incorrect email or password");
                 });
         },
         register({ commit }, credentials) {
             axios
-                .post("/register", credentials)
+                .post("api/register", credentials)
                 .then(({ data }) => {
                     commit("setUserData", data);
                     if (data) {
                         this.isLogged = !this.isLogged;
                         this.registerModal = !this.registerModal;
-                        this.loginModal = !this.loginModal;
                         commit("setIsLogged", this.isLogged);
                         commit("setRegisterModal", this.registerModal);
                         commit("setLoginModal", this.loginModal);
@@ -105,7 +106,6 @@ const store = createStore({
     mutations: {
         setMobile: (state, mobile) => (state.mobile = mobile),
         setIsLoading: (state, isLoading) => (state.isLoading = isLoading),
-        setLoginModal: (state, loginModal) => (state.loginModal = loginModal),
         setRegisterModal: (state, registerModal) =>
             (state.registerModal = registerModal),
         setMobileNav: (state, mobileNav) => (state.mobileNav = mobileNav),

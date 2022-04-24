@@ -18,17 +18,47 @@ class SaleController extends Controller
     public function index()
     {
         return Sale::with('products')->orderBy('date', 'desc')->get();
+        
     }
+
+    // SORT BY SALES MADE TODAY
+
     public function today()
     {
         return Sale::whereDate('date', Carbon::today())->with('products')->orderBy('created_at', 'desc')->get();
     }
+
+    // SORT BY SALE DATE
+
+    public function dateDesc()
+    {
+        return Sale::orderBy('date', 'desc')->with('products')->get();
+    }
+    public function dateAsc()
+    {
+        return Sale::orderBy('date', 'asc')->with('products')->get();
+    }
+
+    // SORT BY SALE AMOUNT
+
+    public function amountDesc()
+    {
+        return Sale::orderBy('sale_amount', 'desc')->with('products')->get();
+    }
+    public function amountAsc()
+    {
+        return Sale::orderBy('sale_amount', 'asc')->with('products')->get();
+    }
+
+    // STORE
 
     public function store(Request $request)
     {
         $this->validate($request,[
             "date"=>"required",
             "customer_contact"=>"required",
+            "customer_name"=>"required",
+            "description"=>"required",
         ]);
 
         $sale=new Sale();

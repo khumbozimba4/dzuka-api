@@ -29,7 +29,6 @@ class ProductController extends Controller
             "product_name"=>"required",
             "price"=>"required",
             "measurement"=>"required",
-
             "category_id"=>"required",
             "description"=>"required",
         ]);

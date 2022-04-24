@@ -31,8 +31,10 @@
             </div>
 
             <button>Add</button>
+            <div v-if="errorMessage" class="text-red-400">
+                {{ errorMessage }}
+            </div>
         </form>
-        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 

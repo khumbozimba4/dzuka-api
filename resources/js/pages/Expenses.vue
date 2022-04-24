@@ -5,10 +5,7 @@
                 <CreditCardIcon class="Icon" />
                 <p>Expenses</p>
             </div>
-            <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
-                <SearchIcon class="Search__Icon" />
-            </div>
+
             <div class="Options"></div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -58,6 +55,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="p-4" v-if="expenses.length == 0">
+                    No expenses incurred yet
+                </div>
             </div>
         </div>
     </div>
@@ -230,6 +230,9 @@ export default {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+                        &:hover {
+                            background-color: rgb(236, 236, 236);
+                        }
                         td {
                             .Icon {
                                 height: 30px;

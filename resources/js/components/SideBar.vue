@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="Dzuka__Logo">DZUKA SALES</div>
         <div class="Nav__Options">
-            <router-link to="/">
+            <router-link to="/dashboard">
                 <div
                     :class="[
                         activeRoute == dashboard

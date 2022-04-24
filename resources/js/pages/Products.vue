@@ -234,6 +234,9 @@ export default {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+                        &:hover {
+                            background-color: rgb(236, 236, 236);
+                        }
                         td {
                             .Icon {
                                 height: 30px;

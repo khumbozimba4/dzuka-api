@@ -27,8 +27,8 @@
                     <thead class="Table__Head">
                         <tr class="Tr">
                             <td>Product name</td>
+                            <td>Last Allocated</td>
                             <td>Previous stock</td>
-                            <td>Recently added stock</td>
                             <td>Recently sold</td>
                             <td>Available stock</td>
                             <td>Allocate stock</td>
@@ -41,8 +41,8 @@
                             :key="product.id"
                         >
                             <td>{{ product.product_name }}</td>
-                            <td>{{ product.previous_stock }}</td>
                             <td>{{ product.recently_allocated }}</td>
+                            <td>{{ product.previous_stock }}</td>
                             <td>{{ product.recently_subtracted }}</td>
                             <td>{{ product.stock }}</td>
                             <td class="Allocate__Stock">
@@ -245,6 +245,9 @@ export default {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
 
+                        &:hover {
+                            background-color: rgb(236, 236, 236);
+                        }
                         .Allocate__Stock {
                             position: relative;
                             display: flex;
