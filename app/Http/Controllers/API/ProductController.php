@@ -13,22 +13,24 @@ class ProductController extends Controller
     {
         return Product::orderBy('created_at', 'desc')->get();
     }
-    public function zero()
-    {
-        return Product::where('stock',"=",0)->orderBy('created_at', 'desc')->get();
-    }
 
     public function search($name)
     {
         return Product::where('product_name','like','%'.$name.'%')->with('category')->get();
     }
+
+    public function zero()
+    {
+        return Product::where('stock',"=",0)->orderBy('created_at', 'desc')->get();
+    }
+
+
   
     public function store(Request $request)
     {
         $this->validate($request,[
             "product_name"=>"required",
             "price"=>"required",
-            "measurement"=>"required",
             "category_id"=>"required",
             "description"=>"required",
         ]);
@@ -36,7 +38,6 @@ class ProductController extends Controller
         $product=new Product();
         $product->product_name=$request->product_name;
         $product->price=$request->price;
-        $product->measurement=$request->measurement;
         $product->description=$request->description;
         $product->category_id=$request->category_id;
         $product->save();

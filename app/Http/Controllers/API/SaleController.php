@@ -21,6 +21,12 @@ class SaleController extends Controller
         
     }
 
+    public function search($name)
+    {
+        return Sale::where('customer_name','like','%'.$name.'%')->with("products")->get();
+    }
+
+
     // SORT BY SALES MADE TODAY
 
     public function today()

@@ -5,8 +5,18 @@
                 <ShoppingBagIcon class="Icon" />
                 <p>Sales</p>
             </div>
+            <div class="Search__Bar">
+                <input
+                    type="text"
+                    class="Input"
+                    placeholder="Search sales by customer"
+                    v-model="search"
+                />
+                <SearchIcon class="Search__Icon" />
+            </div>
             <div class="Options"></div>
         </div>
+        <SaleSearch v-if="search" :search="search" />
 
         <div class="Contents__Container">
             <div class="Heading">
@@ -64,7 +74,7 @@
                             <td>Customer</td>
                             <td>Customer Contact</td>
                             <td>Product(s)</td>
-                            <td>Total Price</td>
+                            <td>Total Price (MKW)</td>
                             <td>View Sale</td>
                         </tr>
                     </thead>
@@ -77,7 +87,7 @@
                             <td>{{ sale.customer_name }}</td>
                             <td>{{ sale.customer_contact }}</td>
                             <td>{{ sale.products.length }}</td>
-                            <td>K{{ sale.sale_amount }}</td>
+                            <td>{{ sale.sale_amount }}</td>
                             <td>
                                 <ArrowNarrowRightIcon
                                     class="Icon"
@@ -106,10 +116,12 @@ import {
 } from "@heroicons/vue/outline";
 import { XCircleIcon } from "@heroicons/vue/solid";
 import AddSale from "../components/AddSale.vue";
+import SaleSearch from "../components/SaleSearch.vue";
 import axios from "axios";
 export default {
     components: {
         AddSale,
+        SaleSearch,
         SortAscendingIcon,
         XCircleIcon,
         SortDescendingIcon,
@@ -128,6 +140,7 @@ export default {
             errorMessage: "",
             totalAmount: 0,
             filterOpen: false,
+            search: "",
         };
     },
     created() {
@@ -246,7 +259,7 @@ export default {
                 background: none;
                 border: 0px;
                 padding: 10px 20px;
-                width: 200px;
+                width: 250px;
 
                 &:focus {
                     outline: none;

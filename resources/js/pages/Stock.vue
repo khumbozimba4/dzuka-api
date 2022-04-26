@@ -6,11 +6,70 @@
                 <p>Stock Control</p>
             </div>
             <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
+                <input
+                    type="text"
+                    class="Input"
+                    placeholder="Search product"
+                    v-model="search"
+                />
                 <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
+
+        <!-- CONTAINER FOR SEARCH RESULTS -->
+        <div class="Contents__Container" v-if="search">
+            <div class="Heading2">
+                <h1>Search Results</h1>
+                <h3 v-if="searchedProducts.length == 0">
+                    Oops! we cant find that user for you😢
+                </h3>
+            </div>
+            <div class="Table__Container" v-if="searchedProducts.length !== 0">
+                <table class="Table">
+                    <thead class="Table__Head">
+                        <tr class="Tr">
+                            <td>Product name</td>
+                            <td>Last Allocated</td>
+                            <td>Previous stock</td>
+                            <td>Recently sold</td>
+                            <td>Available stock</td>
+                            <td>Edit stock</td>
+                        </tr>
+                    </thead>
+                    <tbody class="Table__Body">
+                        <tr
+                            class="Tr"
+                            v-for="(product, index) in searchedProducts"
+                            :key="product.id"
+                        >
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.recently_allocated }}</td>
+                            <td>{{ product.previous_stock }}</td>
+                            <td>{{ product.recently_subtracted }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td class="Allocate__Stock">
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditSearch(index)"
+                                />
+                                <EditStock
+                                    v-if="
+                                        isOpenSearch &&
+                                        products[index] === clickedProduct
+                                    "
+                                    :productID="product.id"
+                                    :currentStock="product.stock"
+                                    @getProducts="getProducts"
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MAIN TABLE CONTAINER -->
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -18,7 +77,6 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category">Add Category</div>
                     <PrinterIcon class="Icon" />
                 </div>
             </div>
@@ -31,7 +89,7 @@
                             <td>Previous stock</td>
                             <td>Recently sold</td>
                             <td>Available stock</td>
-                            <td>Allocate stock</td>
+                            <td>Edit stock</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -71,13 +129,10 @@
 <script>
 import {
     CollectionIcon,
-    ColorSwatchIcon,
     AdjustmentsIcon,
-    ShoppingBagIcon,
-    ChartPieIcon,
-    UsersIcon,
     SearchIcon,
     PrinterIcon,
+    MinusIcon,
     ArrowNarrowRightIcon,
     PencilIcon,
 } from "@heroicons/vue/outline";
@@ -87,8 +142,8 @@ export default {
     components: {
         EditStock,
         SearchIcon,
+        MinusIcon,
         CollectionIcon,
-        AdjustmentsIcon,
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
@@ -102,6 +157,9 @@ export default {
             allocateIsOpen: false,
             isOpen: false,
             clickedProduct: null,
+            search: "",
+            searchedProducts: [],
+            isOpenSearch: false,
         };
     },
     created() {
@@ -121,6 +179,22 @@ export default {
         toggleEdit(index) {
             this.clickedProduct = this.products[index];
             this.isOpen = !this.isOpen;
+        },
+        toggleEditSearch(index) {
+            this.clickedProduct = this.products[index];
+            this.isOpenSearch = !this.isOpenSearch;
+        },
+    },
+    watch: {
+        search(value) {
+            axios
+                .get(`api/products/search/${value}`)
+                .then((res) => {
+                    this.searchedProducts = res.data;
+                })
+                .catch((err) => {
+                    this.errMessage = err.message;
+                });
         },
     },
 };
@@ -182,6 +256,10 @@ export default {
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
             0 4px 6px -4px rgb(0 0 0 / 0.1);
+        .Heading2 {
+            padding: 20px;
+            border-bottom: 1px solid rgb(163 163 163);
+        }
         .Heading {
             position: relative;
             display: flex;
