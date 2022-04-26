@@ -103,7 +103,7 @@
                         <div class="Input__Wrap">
                             <label for="quantity">Quantity</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="quantity"
                                 v-model="quantity"
                                 required

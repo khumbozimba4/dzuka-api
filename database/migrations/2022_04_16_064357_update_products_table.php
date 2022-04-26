@@ -14,7 +14,6 @@ class UpdateProductsTable extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->float('measurement');
             $table->float('price');
             $table->float('previous_stock')->default(0);
             $table->float('stock')->default(0);
@@ -32,7 +31,6 @@ class UpdateProductsTable extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('measurement');
             $table->dropColumn('price');
             $table->dropColumn('description');
             $table->dropColumn('previous_stock');

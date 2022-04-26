@@ -5,11 +5,20 @@
                 <CreditCardIcon class="Icon" />
                 <p>Expenses</p>
             </div>
+            <div class="Search__Bar">
+                <input
+                    type="text"
+                    class="Input"
+                    placeholder="Search sales by customer"
+                    v-model="search"
+                />
+                <SearchIcon class="Search__Icon" />
+            </div>
 
             <div class="Options"></div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
-
+        <ExpenseSearch :search="search" v-if="search" />
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -35,7 +44,7 @@
                             <td>ExpenseID</td>
                             <td>Date</td>
                             <td>Expense on</td>
-                            <td>Amount</td>
+                            <td>Amount (MKW)</td>
                             <td>Description</td>
                         </tr>
                     </thead>
@@ -74,10 +83,12 @@ import {
     CreditCardIcon,
 } from "@heroicons/vue/outline";
 import AddExpense from "../components/AddExpense.vue";
+import ExpenseSearch from "../components/ExpenseSearch.vue";
 import axios from "axios";
 export default {
     components: {
         AddExpense,
+        ExpenseSearch,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
@@ -92,6 +103,7 @@ export default {
             expenses: [],
             isOpen: false,
             errorMessage: null,
+            search: "",
         };
     },
     created() {

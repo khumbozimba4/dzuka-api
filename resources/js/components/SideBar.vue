@@ -1,6 +1,6 @@
 <template>
     <div class="Main__Wrapper">
-        <div class="Dzuka__Logo">DZUKA SALES</div>
+        <div class="Dzuka__Logo">PaMsika</div>
         <div class="Nav__Options">
             <router-link to="/dashboard">
                 <div
@@ -107,8 +107,8 @@ export default {
     .Dzuka__Logo {
         padding: 25px;
         color: #fff;
-        font-weight: 800;
-        font-size: 20px;
+        font-weight: 900;
+        font-size: 30px;
         cursor: pointer;
     }
     .Nav__Options {

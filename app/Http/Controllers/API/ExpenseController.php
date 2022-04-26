@@ -18,6 +18,11 @@ class ExpenseController extends Controller
         return Expense::orderBy('created_at', 'desc')->get();
     }
 
+    public function search($name)
+    {
+        return Expense::where('expense_on','like','%'.$name.'%')->get();
+    }
+
 
     public function store(Request $request)
     {

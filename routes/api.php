@@ -27,9 +27,12 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/search/{name}', [UserController::class, 'index']);
     
     Route::get('/categories',[CategoriesController::class,'index']);
+    Route::get('/categories/search/{name}',[CategoriesController::class,'search']);
     Route::get('/categories/{category}/products',[CategoriesController::class,'show']);
     Route::post('/categories/store',[CategoriesController::class,'store']);
 
@@ -40,6 +43,7 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::patch('/products/{id}/inventory/subtract',[ProductController::class,'subtract']);
 
     Route::get('/sales',[SaleController::class,'index']);
+    Route::get('/sales/search/{name}',[SaleController::class,'search']);
     Route::get('/sales/today',[SaleController::class,'today']);
     Route::get('/sales/sort/amount/desc',[SaleController::class,'amountDesc']);
     Route::get('/sales/sort/amount/asc',[SaleController::class,'amountAsc']);
@@ -50,6 +54,7 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::patch('/sales/{sale}/update',[SaleController::class,'update']);
 
     Route::get('/expenses',[ExpenseController::class,'index']);
+    Route::get('/expenses/search/{name}',[ExpenseController::class,'search']);
     Route::get('/expenses/today',[ExpenseController::class,'today']);
     Route::post('/expenses/store',[ExpenseController::class,'store']);
 

@@ -15,6 +15,11 @@ class CategoriesController extends Controller
         
     }
 
+    public function search($name)
+    {
+        return Category::where('category_name','like','%'.$name.'%')->with('products')->get();
+    }
+
     public function store(Request $request)
     {
         $this->validate($request,[

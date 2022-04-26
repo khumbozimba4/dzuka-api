@@ -48,7 +48,7 @@
                             <td>Customer</td>
                             <td>Customer Contact</td>
                             <td>Products/Services</td>
-                            <td>Total Price</td>
+                            <td>Total Price (MKW)</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -64,7 +64,7 @@
                             <td>{{ sale.customer_name }}</td>
                             <td>{{ sale.customer_contact }}</td>
                             <td>{{ sale.products.length }}</td>
-                            <td>K{{ sale.sale_amount }}</td>
+                            <td>{{ sale.sale_amount }}</td>
                         </tr>
                         <div v-if="salesToday.length === 0">
                             No sales made yet!
@@ -201,7 +201,7 @@ export default {
         display: flex;
         padding: 20px;
         margin: 20px;
-        justify-content: space-between;
+        gap: 100px;
     }
     .Contents__Container {
         margin: 20px;

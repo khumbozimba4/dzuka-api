@@ -21,6 +21,7 @@ export default {
 <style lang="scss" scoped>
 .Main__Wrap {
     position: relative;
+    width: 180px;
     padding: 20px;
     background-color: #fff;
     border-radius: 5px;

@@ -6,11 +6,18 @@
                 <p>Users</p>
             </div>
             <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search users" />
+                <input
+                    type="text"
+                    class="Input"
+                    placeholder="Search by Name / Email"
+                    v-model="search"
+                />
                 <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
+
+        <UserSearch v-if="search" :search="search" />
 
         <div class="Contents__Container">
             <div class="Heading">
@@ -50,9 +57,11 @@
 <script>
 import { SearchIcon, UserCircleIcon } from "@heroicons/vue/outline";
 import { mapActions } from "vuex";
+import UserSearch from "../components/UserSearch.vue";
 import axios from "axios";
 export default {
     components: {
+        UserSearch,
         SearchIcon,
         UserCircleIcon,
     },
@@ -63,6 +72,7 @@ export default {
             errorMessage: "",
             totalAmount: 0,
             users: [],
+            search: "",
         };
     },
     created() {

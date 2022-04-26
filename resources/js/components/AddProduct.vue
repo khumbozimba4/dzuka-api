@@ -7,10 +7,6 @@
                 <input name="name" v-model="name" />
             </div>
             <div class="Input__Container">
-                <label for="measurement">Measurement (Kg,g,l)</label>
-                <input name="measurement" type="number" v-model="measurement" />
-            </div>
-            <div class="Input__Container">
                 <label for="price">Price (MWK)</label>
                 <input name="price" type="number" v-model="price" />
             </div>
@@ -41,7 +37,6 @@ export default {
         return {
             description: "",
             name: "",
-            measurement: "",
             price: null,
             errorMessage: null,
         };
@@ -53,7 +48,6 @@ export default {
                 .post("api/products/store", {
                     product_name: this.name,
                     description: this.description,
-                    measurement: this.measurement,
                     price: this.price,
                     category_id: this.category_id,
                 })

@@ -3,14 +3,20 @@
         <div class="NavBar__Container">
             <div class="Title">
                 <CollectionIcon class="Icon" />
-                <p>Products</p>
+                <p>Product Categories</p>
             </div>
             <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
+                <input
+                    type="text"
+                    class="Input"
+                    placeholder="Search Categories"
+                    v-model="search"
+                />
                 <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
+        <CategorySearch v-if="search" :search="search" />
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -31,7 +37,7 @@
                         <tr class="Tr">
                             <td>#</td>
                             <td>Product Category</td>
-                            <td>Available products</td>
+                            <td>Registered Products</td>
                             <td>View</td>
                         </tr>
                     </thead>
@@ -69,10 +75,12 @@ import {
     ArrowNarrowRightIcon,
 } from "@heroicons/vue/outline";
 import AddCategory from "../components/AddCategory.vue";
+import CategorySearch from "../components/CategorySearch.vue";
 import axios from "axios";
 export default {
     components: {
         AddCategory,
+        CategorySearch,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
@@ -83,6 +91,7 @@ export default {
         return {
             isOpen: false,
             categories: [],
+            search: "",
         };
     },
     created() {
