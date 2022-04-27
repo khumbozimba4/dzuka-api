@@ -38,9 +38,14 @@ class CategoriesController extends Controller
     {
         return $category->products;
     }
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
-        //
+        $category = Category::find($id);
+        $category -> update([
+            "category_name" => $request->category_name,
+            "description" => $request->description
+        ]);
+        return $category;
     }
 
 

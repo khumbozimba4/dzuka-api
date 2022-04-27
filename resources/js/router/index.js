@@ -10,6 +10,7 @@ import About from "../pages/About.vue";
 import Users from "../pages/Users.vue";
 import Expenses from "../pages/Expenses.vue";
 import Login from "../pages/Login.vue";
+import Transactions from "../pages/Transactions.vue";
 const routes = [
     {
         path: "/",
@@ -98,6 +99,14 @@ const routes = [
         component: About,
         meta: {
             title: "About",
+        },
+    },
+    {
+        path: "/transactions",
+        name: "transactions",
+        component: Transactions,
+        meta: {
+            title: "Transactions",
         },
     },
 ];

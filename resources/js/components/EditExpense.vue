@@ -1,9 +1,9 @@
 <template>
     <div class="Main__Wrap">
-        <form @submit.prevent="editSale">
-            <input type="text" v-model="name" />
-            <input type="text" v-model="contact" />
-            <input type="date" v-model="date" />
+        <form @submit.prevent="editExpense">
+            <input type="text" v-model="on" />
+            <input type="text" v-model="date" />
+            <input type="date" v-model="amount" />
             <textarea
                 id="w3review"
                 name="description"
@@ -18,39 +18,40 @@
 
 <script>
 export default {
-    props: ["sale"],
-    emits: ["getSales", "closeModal"],
+    props: ["expense"],
+    emits: ["getExpenses", "closeModal"],
     created() {
-        this.getCategory();
+        this.getExpense();
     },
     data() {
         return {
-            name: "",
-            contact: "",
+            on: "",
+            amount: "",
             date: null,
             description: "",
+            errMsg: null,
         };
     },
     methods: {
-        getCategory() {
-            this.name = this.sale.customer_name;
-            this.description = this.sale.description;
-            this.contact = this.sale.customer_contact;
-            this.date = this.sale.date;
+        getExpense() {
+            this.on = this.expense.expense_on;
+            this.description = this.expense.description;
+            this.amount = this.expense.amount;
+            this.date = this.expense.date;
         },
-        editSale() {
+        editExpense() {
             axios
-                .patch(`api/sales/${this.sale.id}/update`, {
-                    customer_name: this.name,
+                .patch(`api/expenses/${this.expense.id}/update`, {
+                    amount: this.amount,
                     description: this.description,
-                    customer_contact: this.contact,
+                    expense_on: this.on,
                     date: this.date,
                 })
                 .then(() => {
                     this.$emit("closeModal");
                 })
                 .then(() => {
-                    this.$emit("getSales");
+                    this.$emit("getExpenses");
                 })
                 .catch((err) => {
                     this.errMsg = err.message;

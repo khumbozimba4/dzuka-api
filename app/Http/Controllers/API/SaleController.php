@@ -94,7 +94,15 @@ class SaleController extends Controller
     }
     public function update(Request $request,  $sale)
     {
-      
+        $sale = Sale::find($sale);
+       
+        $sale->update([
+            "customer_name"=>$request->customer_name,
+            "customer_contact"=>$request->customer_contact,
+            "date"=>$request->date,
+            "description"=>$request->description,
+        ]);
+        return $sale;
     }
 
    

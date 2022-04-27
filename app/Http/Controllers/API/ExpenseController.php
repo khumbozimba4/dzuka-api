@@ -42,38 +42,18 @@ class ExpenseController extends Controller
         return $expense;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Expense  $expense
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Expense $expense)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Expense  $expense
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Expense $expense)
+    public function update(Request $request, $expense)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Expense  $expense
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Expense $expense)
-    {
-        //
+        $expense = Expense::find($expense);
+       
+        $expense->update([
+            "expense_on"=>$request->expense_on,
+            "date"=>$request->date,
+            "amount"=>$request->amount,  
+            "description"=>$request->description,  
+        ]);
+        return $expense;
     }
 
     /**

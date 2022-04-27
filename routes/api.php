@@ -6,6 +6,7 @@ use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\ProductSaleController;
 use App\Http\Controllers\API\SaleController;
+use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,12 +30,14 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/search/{name}', [UserController::class, 'index']);
+    Route::get('/users/search/{name}', [UserController::class, 'search']);
+    Route::patch('/users/{id}/update', [UserController::class, 'update']);
     
     Route::get('/categories',[CategoriesController::class,'index']);
     Route::get('/categories/search/{name}',[CategoriesController::class,'search']);
     Route::get('/categories/{category}/products',[CategoriesController::class,'show']);
     Route::post('/categories/store',[CategoriesController::class,'store']);
+    Route::patch('/categories/{id}/update',[CategoriesController::class,'update']);
 
     Route::get('/products',[ProductController::class,'index']);
     Route::get('/products/search/{name}',[ProductController::class,'search']);
@@ -57,7 +60,10 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::get('/expenses/search/{name}',[ExpenseController::class,'search']);
     Route::get('/expenses/today',[ExpenseController::class,'today']);
     Route::post('/expenses/store',[ExpenseController::class,'store']);
+    Route::patch('/expenses/{id}/update',[ExpenseController::class,'update']);
 
+    Route::get('/transactions',[TransactionController::class,'index']);
+    Route::get('/transactions/store',[TransactionController::class,'store']);
 
     Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);
     Route::get('/sales/{sale}/products',[ProductSaleController::class,'index']);

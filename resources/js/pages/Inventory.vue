@@ -38,6 +38,7 @@
                             <td>#</td>
                             <td>Product Category</td>
                             <td>Registered Products</td>
+                            <td>Edit</td>
                             <td>View</td>
                         </tr>
                     </thead>
@@ -52,6 +53,20 @@
                             </td>
                             <td>{{ category.category_name }}</td>
                             <td>{{ category.products.length }}</td>
+                            <td>
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditCategory(category)"
+                                />
+                                <EditCategory
+                                    :category="category"
+                                    @getCategories="getCategories"
+                                    v-if="
+                                        editCategoryOpen &&
+                                        selected == categories[index]
+                                    "
+                                />
+                            </td>
                             <td>
                                 <ArrowNarrowRightIcon
                                     class="Icon"
@@ -73,15 +88,19 @@ import {
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
+    PencilIcon,
 } from "@heroicons/vue/outline";
 import AddCategory from "../components/AddCategory.vue";
 import CategorySearch from "../components/CategorySearch.vue";
+import EditCategory from "../components/EditCategory.vue";
 import axios from "axios";
 export default {
     components: {
         AddCategory,
         CategorySearch,
+        EditCategory,
         SearchIcon,
+        PencilIcon,
         CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
@@ -92,6 +111,8 @@ export default {
             isOpen: false,
             categories: [],
             search: "",
+            editCategoryOpen: null,
+            selected: [],
         };
     },
     created() {
@@ -119,6 +140,10 @@ export default {
                     category_id: category.id,
                 },
             });
+        },
+        toggleEditCategory(category) {
+            this.selected = category;
+            this.editCategoryOpen = !this.editCategoryOpen;
         },
     },
 };
@@ -246,10 +271,15 @@ export default {
                             background-color: rgb(236, 236, 236);
                         }
                         td {
+                            position: relative;
                             .Icon {
                                 height: 30px;
                                 object-fit: contain;
                                 cursor: pointer;
+                                color: rgb(23, 34, 49);
+                                &:hover {
+                                    color: rgb(2, 2, 3);
+                                }
                             }
                         }
                     }
