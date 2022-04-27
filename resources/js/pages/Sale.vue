@@ -14,12 +14,21 @@
             <div class="Heading">
                 <div class="Left__Side">
                     <p><strong>Customer</strong> : {{ customer_name }}</p>
-                    <p><strong>Total Amount</strong> : K{{ totalAmount }}</p>
+                    <p><strong>Total Amount</strong> : K{{ amount }}</p>
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category" @click="isOpen = !isOpen">
+                    <div
+                        class="Add__Category"
+                        @click="addProductsOpen = !addProductsOpen"
+                    >
                         Add Products
                     </div>
+                    <AddSaleProducts
+                        v-if="addProductsOpen"
+                        :sale_Id="sale_id"
+                        @getProducts="getProducts"
+                        @closeAddProducts="addProductsOpen = !addProductsOpen"
+                    />
                 </div>
             </div>
 
@@ -60,16 +69,20 @@
 
 <script>
 import axios from "axios";
+import AddSaleProducts from "../components/AddSaleProducts.vue";
 export default {
+    components: {
+        AddSaleProducts,
+    },
     data() {
         return {
             products: [],
-            isOpen: false,
             sale_id: null,
             customer_name: null,
             customer_contact: null,
-            totalAmount: 0,
             errorMessage: null,
+            addProductsOpen: false,
+            amount: null,
         };
     },
     created() {
@@ -80,22 +93,20 @@ export default {
             this.sale_id = this.$route.params.sale_id;
             this.customer_name = this.$route.params.customer_name;
             this.customer_contact = this.$route.params.customer_contact;
+            this.amount = this.$route.params.amount;
             axios
                 .get(`api/sales/${this.sale_id}/products`)
                 .then((res) => [(this.products = res.data)])
-                .then(() => {
-                    this.getAmount();
-                })
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
         },
-        getAmount() {
-            for (let i = 0; i < this.products.length; i++) {
-                this.totalAmount +=
-                    this.products[i].price * this.products[i].pivot.quantity;
-            }
-        },
+        // getAmount() {
+        //     for (let i = 0; i < this.products.length; i++) {
+        //         this.totalAmount +=
+        //             this.products[i].price * this.products[i].pivot.quantity;
+        //     }
+        // },
     },
 };
 </script>
@@ -175,6 +186,7 @@ export default {
                 }
             }
             .Right__Side {
+                position: relative;
                 display: flex;
                 align-items: center;
                 gap: 10px;

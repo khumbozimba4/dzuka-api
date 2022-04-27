@@ -1,9 +1,7 @@
 <template>
     <div class="Main__Wrap">
-        <form @submit.prevent="editSale">
+        <form @submit.prevent="editCategory">
             <input type="text" v-model="name" />
-            <input type="text" v-model="contact" />
-            <input type="date" v-model="date" />
             <textarea
                 id="w3review"
                 name="description"
@@ -18,39 +16,33 @@
 
 <script>
 export default {
-    props: ["sale"],
-    emits: ["getSales", "closeModal"],
+    props: ["category"],
+    emits: ["getCategories", "closeModal"],
     created() {
         this.getCategory();
     },
     data() {
         return {
             name: "",
-            contact: "",
-            date: null,
             description: "",
         };
     },
     methods: {
         getCategory() {
-            this.name = this.sale.customer_name;
-            this.description = this.sale.description;
-            this.contact = this.sale.customer_contact;
-            this.date = this.sale.date;
+            this.name = this.category.category_name;
+            this.description = this.category.description;
         },
-        editSale() {
+        editCategory() {
             axios
-                .patch(`api/sales/${this.sale.id}/update`, {
-                    customer_name: this.name,
+                .patch(`api/categories/${this.category.id}/update`, {
+                    category_name: this.name,
                     description: this.description,
-                    customer_contact: this.contact,
-                    date: this.date,
                 })
                 .then(() => {
                     this.$emit("closeModal");
                 })
                 .then(() => {
-                    this.$emit("getSales");
+                    this.$emit("getCategories");
                 })
                 .catch((err) => {
                     this.errMsg = err.message;

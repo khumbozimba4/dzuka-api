@@ -2,120 +2,122 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <UserCircleIcon class="Icon" />
-                <p>Users</p>
+                <CreditCardIcon class="Icon" />
+                <p>Transactions</p>
             </div>
             <div class="Search__Bar">
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search by Name / Email"
+                    placeholder="Search sales by customer"
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon" />
             </div>
+
             <div class="Options"></div>
         </div>
-
-        <UserSearch v-if="search" :search="search" />
+        <div v-if="errorMessage">{{ errorMessage }}</div>
 
         <div class="Contents__Container">
             <div class="Heading">
+                <div class="Left__Side">
+                    <AdjustmentsIcon class="Icon" />
+                    Filters
+                </div>
                 <div class="Right__Side">
-                    <div class="Add__Category" @click="changeRegisterModal">
-                        Create User
-                    </div>
+                    <PrinterIcon class="Icon" />
                 </div>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>UserID</td>
-                            <td>Username</td>
-                            <td>Email</td>
-                            <td>Role</td>
-                            <td>Edit user</td>
+                            <td>ID</td>
+                            <td>Date</td>
+                            <td>User</td>
+                            <td>Transaction Name</td>
+                            <td>Description</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="(user, index) in users"
-                            :key="user.id"
+                            v-for="transaction in transactions"
+                            :key="transaction.id"
                         >
                             <td>
-                                <strong>{{ user.id }}</strong>
+                                <strong>{{ transaction.id }}</strong>
                             </td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
-                            <td>
-                                <PencilIcon
-                                    class="Icon"
-                                    @click="toggleEditUser(user)"
-                                />
-                                <EditUser
-                                    :user="user"
-                                    @getUsers="getUsers"
-                                    v-if="
-                                        editUserOpen && selected == users[index]
-                                    "
-                                />
-                            </td>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.user }}</td>
+                            <td>{{ transaction.transaction_name }}</td>
+
+                            <td>{{ transaction.description }}</td>
                         </tr>
                     </tbody>
                 </table>
+                <div class="p-4" v-if="Transactions.length == 0">
+                    No expenses incurred yet
+                </div>
             </div>
         </div>
-        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
-import { SearchIcon, UserCircleIcon, PencilIcon } from "@heroicons/vue/outline";
-import { mapActions } from "vuex";
-import UserSearch from "../components/UserSearch.vue";
-import EditUser from "../components/EditUser.vue";
+import {
+    CollectionIcon,
+    AdjustmentsIcon,
+    SearchIcon,
+    PrinterIcon,
+    ArrowNarrowRightIcon,
+    ShoppingBagIcon,
+    CreditCardIcon,
+    PencilIcon,
+} from "@heroicons/vue/outline";
+import AddExpense from "../components/AddExpense.vue";
+import ExpenseSearch from "../components/ExpenseSearch.vue";
+import EditExpense from "../components/EditExpense.vue";
 import axios from "axios";
 export default {
     components: {
-        UserSearch,
+        AddExpense,
+        ExpenseSearch,
+        EditExpense,
         SearchIcon,
-        UserCircleIcon,
         PencilIcon,
-        EditUser,
+        CollectionIcon,
+        AdjustmentsIcon,
+        PrinterIcon,
+        ArrowNarrowRightIcon,
+        PrinterIcon,
+        CreditCardIcon,
+        ShoppingBagIcon,
     },
     data() {
         return {
+            transactions: [],
             isOpen: false,
-            sales: [],
-            errorMessage: "",
-            totalAmount: 0,
-            users: [],
+            errorMessage: null,
             search: "",
-            editUserOpen: false,
+            editExpenseOpen: false,
             selected: null,
         };
     },
     created() {
-        this.getUsers();
+        this.getTransactions();
     },
     methods: {
-        ...mapActions(["changeRegisterModal"]),
-        getUsers() {
+        getTransactions() {
             axios
-                .get("api/users")
+                .get("api/transactions")
                 .then((res) => {
-                    this.users = res.data;
+                    this.transactions = res.data;
                 })
                 .catch((err) => {
-                    console.log(err);
+                    this.errorMessage = err.message;
                 });
-        },
-        toggleEditUser(user) {
-            this.selected = user;
-            this.editUserOpen = !this.editUserOpen;
         },
     },
 };

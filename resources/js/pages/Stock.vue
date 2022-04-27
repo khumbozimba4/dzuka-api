@@ -32,7 +32,7 @@
                             <td>Product name</td>
                             <td>Last Allocated</td>
                             <td>Previous stock</td>
-                            <td>Recently sold</td>
+                            <td>Recently Sold/Removed</td>
                             <td>Available stock</td>
                             <td>Edit stock</td>
                         </tr>

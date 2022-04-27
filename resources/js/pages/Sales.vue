@@ -75,11 +75,16 @@
                             <td>Customer Contact</td>
                             <td>Product(s)</td>
                             <td>Total Price (MKW)</td>
+                            <td>Edit</td>
                             <td>View Sale</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr" v-for="sale in sales" :key="sale.id">
+                        <tr
+                            class="Tr"
+                            v-for="(sale, index) in sales"
+                            :key="sale.id"
+                        >
                             <td>
                                 <strong>{{ sale.id }}</strong>
                             </td>
@@ -89,6 +94,19 @@
                             <td>{{ sale.products.length }}</td>
                             <td>{{ sale.sale_amount }}</td>
                             <td>
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditSale(sale)"
+                                />
+                                <EditSale
+                                    :sale="sale"
+                                    @getSales="getSales"
+                                    v-if="
+                                        editSaleOpen && selected == sales[index]
+                                    "
+                                />
+                            </td>
+                            <td>
                                 <ArrowNarrowRightIcon
                                     class="Icon"
                                     @click="gotoSale(sale)"
@@ -97,6 +115,13 @@
                         </tr>
                     </tbody>
                 </table>
+                <VueTailwindPagination
+                    :current="currentPage"
+                    :total="total"
+                    :per-page="perPage"
+                    @page-change="pageChange($event)"
+                >
+                </VueTailwindPagination>
             </div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -113,21 +138,28 @@ import {
     ShoppingBagIcon,
     SortAscendingIcon,
     SortDescendingIcon,
+    PencilIcon,
 } from "@heroicons/vue/outline";
 import { XCircleIcon } from "@heroicons/vue/solid";
 import AddSale from "../components/AddSale.vue";
+import EditSale from "../components/EditSale.vue";
 import SaleSearch from "../components/SaleSearch.vue";
 import axios from "axios";
+import "@ocrv/vue-tailwind-pagination/styles";
+import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
 export default {
     components: {
         AddSale,
+        EditSale,
         SaleSearch,
+        VueTailwindPagination,
         SortAscendingIcon,
         XCircleIcon,
         SortDescendingIcon,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
+        PencilIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
@@ -141,17 +173,29 @@ export default {
             totalAmount: 0,
             filterOpen: false,
             search: "",
+            editSaleOpen: false,
+            selected: null,
+            currentPage: 1,
+            total: null,
+            perPage: 2,
         };
     },
     created() {
         this.getSales();
     },
     methods: {
+        pageChange(pageNumber) {
+            this.currentPage = pageNumber;
+            this.getSales();
+        },
         getSales() {
             axios
                 .get("api/sales")
                 .then((res) => {
                     this.sales = res.data;
+                })
+                .then(() => {
+                    this.total = this.sales.length;
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;
@@ -164,6 +208,7 @@ export default {
                     sale_id: sale.id,
                     customer_name: sale.customer_name,
                     customer_contact: sale.customer_contact,
+                    amount: sale.sale_amount,
                 },
             });
         },
@@ -220,6 +265,10 @@ export default {
                         this.errorMessage = err.message;
                     });
             }
+        },
+        toggleEditSale(sale) {
+            this.selected = sale;
+            this.editSaleOpen = !this.editSaleOpen;
         },
     },
 };
@@ -392,10 +441,15 @@ export default {
                             background-color: rgb(236, 236, 236);
                         }
                         td {
+                            position: relative;
                             .Icon {
-                                height: 30px;
+                                width: 25px;
                                 object-fit: contain;
                                 cursor: pointer;
+                                color: rgb(23, 34, 49);
+                                &:hover {
+                                    color: rgb(2, 2, 3);
+                                }
                             }
                         }
                     }

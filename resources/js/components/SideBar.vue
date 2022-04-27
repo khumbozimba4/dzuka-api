@@ -38,6 +38,12 @@
                     <p class="Title">Expenses</p>
                 </div></router-link
             >
+            <router-link to="/transactions">
+                <div class="Nav__Option">
+                    <CreditCardIcon class="Icon" />
+                    <p class="Title">Transactions</p>
+                </div></router-link
+            >
             <router-link to="/users">
                 <div class="Nav__Option">
                     <UsersIcon class="Icon" />

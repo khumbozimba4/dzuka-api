@@ -9,8 +9,18 @@
             </p>
         </div>
         <div class="Select__Boxes">
-            <button @click="option = 1" class="Box1">Add</button>
-            <button @click="option = 2" class="Box2">Subtract</button>
+            <button
+                @click="option = 1"
+                :class="[option == 1 ? activeClass : inActive]"
+            >
+                Add
+            </button>
+            <button
+                @click="option = 2"
+                :class="[option == 2 ? activeClass : inActive]"
+            >
+                Subtract
+            </button>
         </div>
         <form @submit.prevent="addToStock" v-if="option == 1">
             <div class="Input__Container">
@@ -47,6 +57,8 @@ export default {
             errorMessage: "",
             stock: null,
             option: 1,
+            activeClass: "Button__Active",
+            inActive: "Button__inActive",
         };
     },
     methods: {
@@ -67,12 +79,13 @@ export default {
                 });
         },
         subtractFromStock() {
-            this.stock = this.input_stock - this.currentStock;
+            this.stock = this.currentStock - this.input_stock;
 
             axios
-                .patch(`api/products/${this.productID}/update`, {
+                .patch(`api/products/${this.productID}/inventory/subtract`, {
                     stock: this.stock,
                     previous_stock: this.currentStock,
+                    recently_subtracted: this.input_stock,
                 })
                 .then(() => {
                     this.$emit("getProducts");
@@ -100,18 +113,20 @@ export default {
     .Select__Boxes {
         display: flex;
         width: 100%;
-        padding: 10px 0;
-        .Box1 {
+        margin: 5px 0;
+        border: 1px solid lightgray;
+
+        .Button__Active {
             padding: 10px 20px;
-            background-color: rgb(68, 207, 75);
             color: #fff;
             flex: 0.5;
+            background-color: rgb(85, 120, 175);
         }
-        .Box2 {
+        .Button__inActive {
             padding: 10px 20px;
-            background-color: rgb(189, 67, 67);
-            color: #fff;
+            color: #000;
             flex: 0.5;
+            background-color: #fff;
         }
     }
 

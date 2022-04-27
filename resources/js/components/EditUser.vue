@@ -1,56 +1,52 @@
 <template>
     <div class="Main__Wrap">
-        <form @submit.prevent="editSale">
+        <form @submit.prevent="editUser">
             <input type="text" v-model="name" />
-            <input type="text" v-model="contact" />
-            <input type="date" v-model="date" />
-            <textarea
-                id="w3review"
-                name="description"
-                v-model="description"
-                rows="4"
-                cols="30"
-            ></textarea>
+            <input type="text" v-model="email" />
+            <label for="role">Change Role</label>
+            <select id="role" name="role" v-model="role">
+                <option value="admin">Admin</option>
+                <option value="operations">Operations</option>
+                <option value="finance">Finance</option>
+            </select>
             <button type="submit">Save</button>
         </form>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
-    props: ["sale"],
-    emits: ["getSales", "closeModal"],
+    props: ["user"],
+    emits: ["getUsers", "closeModal"],
     created() {
-        this.getCategory();
+        this.getUser();
     },
     data() {
         return {
             name: "",
-            contact: "",
-            date: null,
-            description: "",
+            email: "",
+            role: "",
         };
     },
     methods: {
-        getCategory() {
-            this.name = this.sale.customer_name;
-            this.description = this.sale.description;
-            this.contact = this.sale.customer_contact;
-            this.date = this.sale.date;
+        getUser() {
+            this.name = this.user.name;
+            this.email = this.user.email;
+            this.role = this.user.role;
         },
-        editSale() {
+        editUser() {
             axios
-                .patch(`api/sales/${this.sale.id}/update`, {
-                    customer_name: this.name,
-                    description: this.description,
-                    customer_contact: this.contact,
-                    date: this.date,
+                .patch(`api/users/${this.user.id}/update`, {
+                    name: this.name,
+                    email: this.email,
+                    role: this.role,
                 })
                 .then(() => {
                     this.$emit("closeModal");
                 })
                 .then(() => {
-                    this.$emit("getSales");
+                    this.$emit("getUsers");
                 })
                 .catch((err) => {
                     this.errMsg = err.message;
@@ -68,6 +64,7 @@ export default {
     background-color: #fff;
     padding: 20px;
     z-index: 99;
+    width: 300px;
     form {
         display: flex;
         flex-direction: column;

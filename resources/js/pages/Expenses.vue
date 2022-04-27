@@ -46,12 +46,13 @@
                             <td>Expense on</td>
                             <td>Amount (MKW)</td>
                             <td>Description</td>
+                            <td>Edit</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="expense in expenses"
+                            v-for="(expense, index) in expenses"
                             :key="expense.id"
                         >
                             <td>
@@ -61,6 +62,20 @@
                             <td>{{ expense.expense_on }}</td>
                             <td>{{ expense.amount }}</td>
                             <td>{{ expense.description }}</td>
+                            <td>
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditExpense(expense)"
+                                />
+                                <EditExpense
+                                    :expense="expense"
+                                    @getExpenses="getExpenses"
+                                    v-if="
+                                        editExpenseOpen &&
+                                        selected == expenses[index]
+                                    "
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -81,15 +96,19 @@ import {
     ArrowNarrowRightIcon,
     ShoppingBagIcon,
     CreditCardIcon,
+    PencilIcon,
 } from "@heroicons/vue/outline";
 import AddExpense from "../components/AddExpense.vue";
 import ExpenseSearch from "../components/ExpenseSearch.vue";
+import EditExpense from "../components/EditExpense.vue";
 import axios from "axios";
 export default {
     components: {
         AddExpense,
         ExpenseSearch,
+        EditExpense,
         SearchIcon,
+        PencilIcon,
         CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
@@ -104,6 +123,8 @@ export default {
             isOpen: false,
             errorMessage: null,
             search: "",
+            editExpenseOpen: false,
+            selected: null,
         };
     },
     created() {
@@ -119,6 +140,10 @@ export default {
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
+        },
+        toggleEditExpense(expense) {
+            this.selected = expense;
+            this.editExpenseOpen = !this.editExpenseOpen;
         },
     },
 };
@@ -246,10 +271,15 @@ export default {
                             background-color: rgb(236, 236, 236);
                         }
                         td {
+                            position: relative;
                             .Icon {
-                                height: 30px;
+                                width: 25px;
                                 object-fit: contain;
                                 cursor: pointer;
+                                color: rgb(23, 34, 49);
+                                &:hover {
+                                    color: rgb(2, 2, 3);
+                                }
                             }
                         }
                     }
