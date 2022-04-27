@@ -59,7 +59,7 @@ export default {
 <style lang="scss" scoped>
 .Main__Wrap {
     position: absolute;
-    top: 20px;
+    top: 35px;
     right: 100px;
     background-color: #fff;
     padding: 20px;

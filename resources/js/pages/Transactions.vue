@@ -9,7 +9,7 @@
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search sales by customer"
+                    placeholder="Search transaction"
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon" />
@@ -17,6 +17,8 @@
 
             <div class="Options"></div>
         </div>
+        <TransactionSearch v-if="search" :search="search" />
+
         <div v-if="errorMessage">{{ errorMessage }}</div>
 
         <div class="Contents__Container">
@@ -49,16 +51,18 @@
                             <td>
                                 <strong>{{ transaction.id }}</strong>
                             </td>
-                            <td>{{ transaction.date }}</td>
-                            <td>{{ transaction.user }}</td>
+                            <td>
+                                {{ getDate(transaction.created_at) }}
+                            </td>
+                            <td>{{ transaction.user.name }}</td>
                             <td>{{ transaction.transaction_name }}</td>
 
                             <td>{{ transaction.description }}</td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="p-4" v-if="Transactions.length == 0">
-                    No expenses incurred yet
+                <div class="p-4" v-if="transactions.length == 0">
+                    No transactions recorded yet
                 </div>
             </div>
         </div>
@@ -76,15 +80,12 @@ import {
     CreditCardIcon,
     PencilIcon,
 } from "@heroicons/vue/outline";
-import AddExpense from "../components/AddExpense.vue";
-import ExpenseSearch from "../components/ExpenseSearch.vue";
-import EditExpense from "../components/EditExpense.vue";
+import TransactionSearch from "../components/TransactionSearch.vue";
+import moment from "moment";
 import axios from "axios";
 export default {
     components: {
-        AddExpense,
-        ExpenseSearch,
-        EditExpense,
+        TransactionSearch,
         SearchIcon,
         PencilIcon,
         CollectionIcon,
@@ -109,6 +110,9 @@ export default {
         this.getTransactions();
     },
     methods: {
+        getDate(date) {
+            return moment(date).format("MMM Do YY");
+        },
         getTransactions() {
             axios
                 .get("api/transactions")
@@ -156,8 +160,8 @@ export default {
             .Input {
                 background: none;
                 border: 0px;
-                padding: 10px 20px;
-                width: 200px;
+                padding: 10px 10px;
+                width: 180px;
 
                 &:focus {
                     outline: none;
@@ -165,7 +169,7 @@ export default {
                 }
             }
             .Search__Icon {
-                padding: 5px 20px;
+                padding: 5px 10px;
                 height: 30px;
                 color: rgb(115 115 115);
             }

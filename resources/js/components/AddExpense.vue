@@ -40,6 +40,7 @@
 
 <script>
 import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
     emits: ["getExpenses", "closeAdd"],
     data() {
@@ -49,7 +50,11 @@ export default {
             amount: null,
             description: "",
             errorMessage: null,
+            addedExpense: null,
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     methods: {
         addExpense() {
@@ -60,11 +65,21 @@ export default {
                     amount: this.amount,
                     description: this.description,
                 })
+                .then((res) => {
+                    this.addedExpense = res.data;
+                })
                 .then(() => {
                     this.$emit("closeAdd");
                 })
                 .then(() => {
                     this.$emit("getExpenses");
+                })
+                .then(() => {
+                    axios.post("api/transactions/store", {
+                        user_id: this.userInfo.id,
+                        transaction_name: "Record Expenses",
+                        description: `Added expense Id: ${this.addedExpense.id} Name: ${this.addedExpense.expense_on}`,
+                    });
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;
@@ -77,8 +92,10 @@ export default {
 <style lang="scss" scoped>
 .Main__Wrap {
     position: absolute;
+    z-index: 99;
     border-top: 1px solid gray;
     background: #fff;
+    width: 400px;
     top: 50px;
     right: 200px;
     border-radius: 5px;

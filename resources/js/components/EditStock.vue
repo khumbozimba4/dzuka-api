@@ -48,6 +48,7 @@
 
 <script>
 import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
     props: ["currentStock", "productID"],
     emits: ["getProducts"],
@@ -61,6 +62,9 @@ export default {
             inActive: "Button__inActive",
         };
     },
+    computed: {
+        ...mapGetters(["userInfo"]),
+    },
     methods: {
         addToStock() {
             this.stock = this.input_stock + this.currentStock;
@@ -73,6 +77,13 @@ export default {
                 })
                 .then(() => {
                     this.$emit("getProducts");
+                })
+                .then(() => {
+                    axios.post("api/transactions/store", {
+                        user_id: this.userInfo.id,
+                        transaction_name: "Add Stock",
+                        description: `Added  ${this.input_stock} Items to Product Id: ${this.productID}`,
+                    });
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;
@@ -89,6 +100,13 @@ export default {
                 })
                 .then(() => {
                     this.$emit("getProducts");
+                })
+                .then(() => {
+                    axios.post("api/transactions/store", {
+                        user_id: this.userInfo.id,
+                        transaction_name: "Remove Stock",
+                        description: `Removed  ${this.input_stock} Items from Product Id: ${this.productID}`,
+                    });
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;

@@ -54,7 +54,13 @@
                 <div v-for="(item, index) in selected" :key="item.id">
                     <form
                         @submit.prevent="
-                            addProduct(item.id, index, item.stock, item.price)
+                            addProduct(
+                                item.id,
+                                index,
+                                item.stock,
+                                item.price,
+                                item.product_name
+                            )
                         "
                     >
                         <p>
@@ -94,6 +100,8 @@
 import { XCircleIcon } from "@heroicons/vue/solid";
 import { CheckCircleIcon, SearchIcon } from "@heroicons/vue/outline";
 import axios from "axios";
+import { mapGetters } from "vuex";
+
 export default {
     components: {
         XCircleIcon,
@@ -112,8 +120,11 @@ export default {
             quantity: null,
         };
     },
+    computed: {
+        ...mapGetters(["userInfo"]),
+    },
     methods: {
-        addProduct(id, index, stock, price) {
+        addProduct(id, index, stock, price, productName) {
             if (this.quantity !== "") {
                 axios
                     .post(`api/sales/product/${this.sale_Id}/store`, {
@@ -136,6 +147,13 @@ export default {
                     })
                     .then(() => {
                         this.quantity = "";
+                    })
+                    .then(() => {
+                        axios.post("api/transactions/store", {
+                            user_id: this.userInfo.id,
+                            transaction_name: "Add Product to Sale",
+                            description: `Added Product: ${productName} to Sale Id: ${this.sale_Id}`,
+                        });
                     })
                     .catch((err) => {
                         this.errMessage = err.message;

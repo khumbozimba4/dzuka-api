@@ -63,7 +63,9 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::patch('/expenses/{id}/update',[ExpenseController::class,'update']);
 
     Route::get('/transactions',[TransactionController::class,'index']);
-    Route::get('/transactions/store',[TransactionController::class,'store']);
+    Route::get('/transactions/search/{name}',[TransactionController::class,'search']);
+    Route::get('/transactions/today',[TransactionController::class,'today']);
+    Route::post('/transactions/store',[TransactionController::class,'store']);
 
     Route::post('/sales/product/{product}/store',[ProductSaleController::class,'store']);
     Route::get('/sales/{sale}/products',[ProductSaleController::class,'index']);

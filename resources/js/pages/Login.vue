@@ -107,20 +107,22 @@ export default {
         display: flex;
         justify-content: center;
         border-radius: 8px;
-        width: 70%;
+        width: 50%;
         height: 80%;
         background-color: rgba(30, 41, 59, 0.8);
 
         .Main__Content {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 30px;
+
             .Logo__Content {
                 display: flex;
                 flex-direction: column;
                 img {
                     width: 300px;
                     object-fit: contain;
+                    padding: 40px 0;
                 }
             }
             .form-wrap {
@@ -157,11 +159,8 @@ export default {
                     h2 {
                         text-align: center;
                         font-size: 32px;
-                        color: #fff;
+                        color: rgba(30, 41, 59, 0.9);
                         margin-bottom: 40px;
-                        @media (min-width: 900px) {
-                            font-size: 40px;
-                        }
                     }
 
                     .inputs {

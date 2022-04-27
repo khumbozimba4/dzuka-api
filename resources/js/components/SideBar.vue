@@ -52,7 +52,7 @@
             </router-link>
         </div>
         <div class="Sign__Out">
-            <LogoutIcon class="Icon" />
+            <LogoutIcon class="Icon" @click="logout" />
         </div>
     </div>
 </template>
@@ -68,6 +68,7 @@ import {
     CreditCardIcon,
     LogoutIcon,
 } from "@heroicons/vue/outline";
+import { mapActions } from "vuex";
 export default {
     components: {
         CollectionIcon,
@@ -91,6 +92,7 @@ export default {
         this.getActiveRoute();
     },
     methods: {
+        ...mapActions(["logout"]),
         getActiveRoute() {
             this.activeRoute = this.$route.path;
             console.log(this.activeRoute);

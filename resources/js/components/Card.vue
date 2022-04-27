@@ -2,7 +2,7 @@
     <div class="Main__Wrap">
         <div class="Image__Wrap">
             <img :src="'/images/' + src + '.png'" alt="" />
-            <div class="Card__Note">{{ cardNote }}</div>
+            <div :class="color">{{ cardNote }}</div>
         </div>
         <p>{{ title }}</p>
     </div>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-    props: ["src", "cardNote", "title"],
+    props: ["src", "cardNote", "title", "color"],
     components: {},
     data() {
         return {};
@@ -42,7 +42,27 @@ export default {
             top: -10px;
             right: -30px;
             padding: 15px;
-            background-color: #000;
+            background-color: rgb(148, 47, 47);
+            border-radius: 9999px;
+            color: #fff;
+            font-weight: 900;
+        }
+        .Card__Note__Purple {
+            position: absolute;
+            top: -10px;
+            right: -30px;
+            padding: 15px;
+            background-color: rgb(30 41 59);
+            border-radius: 9999px;
+            color: #fff;
+            font-weight: 900;
+        }
+        .Card__Note__Green {
+            position: absolute;
+            top: -10px;
+            right: -30px;
+            padding: 15px;
+            background-color: rgb(32, 177, 19);
             border-radius: 9999px;
             color: #fff;
             font-weight: 900;

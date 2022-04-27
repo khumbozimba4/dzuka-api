@@ -16,7 +16,7 @@ class ProductController extends Controller
 
     public function search($name)
     {
-        return Product::where('product_name','like','%'.$name.'%')->with('category')->get();
+        return Product::where('product_name','like','%'.$name.'%')->with('category','sales')->get();
     }
 
     public function zero()

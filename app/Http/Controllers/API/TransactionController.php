@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -15,7 +16,17 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return Transaction::with('users')->get();
+        return Transaction::with('user')->orderBy('created_at', 'desc')->get();
+    }
+
+    public function search($name)
+    {
+        return Transaction::where('user_id','like','%'.$name.'%')->orWhere('transaction_name','like','%'.$name.'%')->with('user')->get();
+    }
+
+    public function today()
+    {
+        return Transaction::whereDate('created_at', Carbon::today())->with('user')->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)

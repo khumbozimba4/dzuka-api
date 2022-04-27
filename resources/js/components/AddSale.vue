@@ -93,7 +93,13 @@
                 <div v-for="(item, index) in selected" :key="item.id">
                     <form
                         @submit.prevent="
-                            addProduct(item.id, index, item.stock, item.price)
+                            addProduct(
+                                item.id,
+                                index,
+                                item.stock,
+                                item.price,
+                                item.product_name
+                            )
                         "
                     >
                         <p>
@@ -133,6 +139,7 @@
 import { XCircleIcon } from "@heroicons/vue/solid";
 import { CheckCircleIcon, SearchIcon } from "@heroicons/vue/outline";
 import axios from "axios";
+import { mapGetters } from "vuex";
 export default {
     components: {
         XCircleIcon,
@@ -156,6 +163,9 @@ export default {
             quantity: null,
         };
     },
+    computed: {
+        ...mapGetters(["userInfo"]),
+    },
     methods: {
         addSale() {
             axios
@@ -175,11 +185,18 @@ export default {
                 .then(() => {
                     this.$emit("getSales");
                 })
+                .then(() => {
+                    axios.post("api/transactions/store", {
+                        user_id: this.userInfo.id,
+                        transaction_name: "Add Sale",
+                        description: `Added sale Id: ${this.addedSale.id} of Customer: ${this.addedSale.customer_name}`,
+                    });
+                })
                 .catch((err) => {
                     this.errMessage = err.message;
                 });
         },
-        addProduct(id, index, stock, price) {
+        addProduct(id, index, stock, price, productName) {
             if (this.quantity !== "") {
                 axios
                     .post(`api/sales/product/${this.addedSale.id}/store`, {
@@ -202,6 +219,13 @@ export default {
                     })
                     .then(() => {
                         this.quantity = "";
+                    })
+                    .then(() => {
+                        axios.post("api/transactions/store", {
+                            user_id: this.userInfo.id,
+                            transaction_name: "Add Product Sale",
+                            description: `Added Product Id: ${productName} to Sale Id: ${this.addedSale.id}`,
+                        });
                     })
                     .catch((err) => {
                         this.errMessage = err.message;
@@ -254,6 +278,7 @@ export default {
     position: absolute;
     border-top: 1px solid gray;
     background: #fff;
+    z-index: 99;
     top: 50px;
     right: 200px;
     border-radius: 5px;

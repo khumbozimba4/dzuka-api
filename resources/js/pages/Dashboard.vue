@@ -6,23 +6,42 @@
                 <p>Dashboard</p>
             </div>
             <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product" />
+                <input
+                    type="text"
+                    class="Input"
+                    placeholder="Search product"
+                    v-model="search"
+                />
                 <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
+        <ProductSearch
+            v-if="search"
+            :search="search"
+            @closeSearch="closeSearch"
+        />
         <div class="Cards__Wrap">
             <Card
                 :cardNote="salesToday.length"
                 src="checkoutcart"
                 title="Total sales today"
+                color="Card__Note__Green"
             />
             <Card
                 :cardNote="outOfStock.length"
                 src="outofstock"
                 title="Out of stock"
+                color="Card__Note"
+                @click="gotoStock"
             />
-            <Card cardNote="25" src="shoppinglist" title="Transactions today" />
+            <Card
+                :cardNote="transactions.length"
+                src="shoppinglist"
+                title="Transactions today"
+                color="Card__Note__Purple"
+                @click="gotoTransactions"
+            />
         </div>
 
         <div class="Contents__Container">
@@ -34,8 +53,6 @@
                     </h1>
                 </div>
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
-                    Filters
                     <PrinterIcon class="Icon" />
                 </div>
             </div>
@@ -87,10 +104,12 @@ import {
     ColorSwatchIcon,
 } from "@heroicons/vue/outline";
 import Card from "../components/Card.vue";
+import ProductSearch from "../components/ProductSearch.vue";
 import moment from "moment";
 export default {
     components: {
         Card,
+        ProductSearch,
         SearchIcon,
         ColorSwatchIcon,
         CollectionIcon,
@@ -106,12 +125,15 @@ export default {
             outOfStock: [],
             salesToday: [],
             date: null,
+            transactions: [],
+            search: "",
         };
     },
     created() {
         this.getProducts();
         this.getSalesToday();
         this.getDate();
+        this.getTransactionsToday();
     },
     methods: {
         getProducts() {
@@ -137,6 +159,16 @@ export default {
                     console.log(err.message);
                 });
         },
+        getTransactionsToday() {
+            axios
+                .get("api/transactions/today")
+                .then((res) => {
+                    this.transactions = res.data;
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                });
+        },
         getOutOfStock() {
             this.outOfStock = this.products.filter(
                 (product) => product.stock == 0.0
@@ -144,6 +176,15 @@ export default {
         },
         getDate() {
             this.date = moment(new Date()).format("MMM Do YY");
+        },
+        closeSearch() {
+            this.search = "";
+        },
+        gotoTransactions() {
+            this.$router.push("/transactions");
+        },
+        gotoStock() {
+            this.$router.push("/stock");
         },
     },
 };
@@ -183,7 +224,7 @@ export default {
                 background: none;
                 border: 0px;
                 padding: 10px 20px;
-                width: 200px;
+                width: 150px;
 
                 &:focus {
                     outline: none;
@@ -191,7 +232,7 @@ export default {
                 }
             }
             .Search__Icon {
-                padding: 5px 20px;
+                padding: 5px 10px;
                 height: 30px;
                 color: rgb(115 115 115);
             }

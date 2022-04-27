@@ -1,36 +1,38 @@
 <template>
     <div class="Contents__Container">
         <div class="Heading">
-            <div>
-                <h1><SearchIcon class="Icon" />Search Results</h1>
-                <XCircleIcon @click="closeSearch" class="Icon" />
-            </div>
-            <h3 v-if="products?.length == 0">No Results!</h3>
+            <h1>Search Results</h1>
+            <h3 v-if="transactions.length == 0">
+                Oops we cant find that transaction for you😢
+            </h3>
         </div>
-        <div class="Table__Container" v-if="products?.length !== 0">
+        <div class="Table__Container" v-if="transactions.length !== 0">
             <table class="Table">
                 <thead class="Table__Head">
                     <tr class="Tr">
-                        <td>#</td>
-                        <td>Product name</td>
-                        <td>Available Stock</td>
-                        <td>Price (MWK)</td>
-                        <td>Total Sales</td>
+                        <td>ID</td>
+                        <td>Date</td>
+                        <td>User</td>
+                        <td>Transaction Name</td>
+                        <td>Description</td>
                     </tr>
                 </thead>
                 <tbody class="Table__Body">
                     <tr
                         class="Tr"
-                        v-for="(product, index) in products"
-                        :key="product.id"
+                        v-for="transaction in transactions"
+                        :key="transaction.id"
                     >
                         <td>
-                            <strong>{{ index + 1 }}</strong>
+                            <strong>{{ transaction.id }}</strong>
                         </td>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ product.stock }}</td>
-                        <td>{{ product.price }}</td>
-                        <td>{{ product.sales.length }}</td>
+                        <td>
+                            {{ getDate(transaction.created_at) }}
+                        </td>
+                        <td>{{ transaction.user.name }}</td>
+                        <td>{{ transaction.transaction_name }}</td>
+
+                        <td>{{ transaction.description }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -39,37 +41,36 @@
 </template>
 
 <script>
+import { ArrowNarrowRightIcon } from "@heroicons/vue/outline";
 import axios from "axios";
-import { XCircleIcon, SearchIcon } from "@heroicons/vue/solid";
+import moment from "moment";
 export default {
     props: ["search"],
-    emits: ["closeSearch"],
     components: {
-        XCircleIcon,
-        SearchIcon,
+        ArrowNarrowRightIcon,
     },
     data() {
         return {
             errMsg: null,
-            products: [],
+            transactions: [],
         };
     },
-    created() {
-        this.searchProduct();
-    },
+
     methods: {
-        searchProduct() {
+        getDate(date) {
+            return moment(date).format("MMM Do YY");
+        },
+    },
+    watch: {
+        search(value) {
             axios
-                .get(`api/products/search/${this.search}`)
+                .get(`api/transactions/search/${value}`)
                 .then((res) => {
-                    this.products = res.data;
+                    this.transactions = res.data;
                 })
                 .catch((err) => {
                     this.errMsg = err.message;
                 });
-        },
-        closeSearch() {
-            this.$emit("closeSearch");
         },
     },
 };
@@ -86,38 +87,11 @@ export default {
         0 4px 6px -4px rgb(0 0 0 / 0.1);
     .Heading {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         padding: 20px;
-        div {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            h1 {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-weight: 600;
-                font-size: 40px;
-                color: gray;
-
-                .Icon {
-                    height: 50px;
-                    object-fit: contain;
-                    color: lightgray;
-                }
-            }
-            .Icon {
-                height: 20px;
-                object-fit: contain;
-                cursor: pointer;
-            }
-        }
-
-        h3 {
-            font-weight: 500;
-            font-size: 20px;
-            color: rgb(124, 124, 124);
-            margin-left: 10px;
-        }
+        border-bottom: 1px solid rgb(163 163 163);
     }
     .Table__Container {
         padding: 20px;
