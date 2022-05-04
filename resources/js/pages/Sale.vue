@@ -70,6 +70,7 @@
 <script>
 import axios from "axios";
 import AddSaleProducts from "../components/AddSaleProducts.vue";
+import { mapActions } from "vuex";
 export default {
     components: {
         AddSaleProducts,
@@ -89,7 +90,9 @@ export default {
         this.getProducts();
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getProducts() {
+            this.changeLoading();
             this.sale_id = this.$route.params.sale_id;
             this.customer_name = this.$route.params.customer_name;
             this.customer_contact = this.$route.params.customer_contact;
@@ -97,7 +100,11 @@ export default {
             axios
                 .get(`api/sales/${this.sale_id}/products`)
                 .then((res) => [(this.products = res.data)])
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

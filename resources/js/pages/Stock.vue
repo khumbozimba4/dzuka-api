@@ -107,6 +107,12 @@
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEdit(index)"
+                                    v-if="!isOpen"
+                                />
+                                <XIcon
+                                    class="Icon"
+                                    @click="isOpen = false"
+                                    v-if="isOpen"
                                 />
                                 <EditStock
                                     v-if="
@@ -135,9 +141,11 @@ import {
     MinusIcon,
     ArrowNarrowRightIcon,
     PencilIcon,
+    XIcon,
 } from "@heroicons/vue/outline";
 import EditStock from "../components/EditStock.vue";
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     components: {
         EditStock,
@@ -149,6 +157,7 @@ export default {
         ArrowNarrowRightIcon,
         PrinterIcon,
         PencilIcon,
+        XIcon,
     },
     data() {
         return {
@@ -166,11 +175,16 @@ export default {
         this.getProducts();
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getProducts() {
+            this.changeLoading();
             axios
                 .get("api/products")
                 .then((res) => {
                     this.products = res.data;
+                })
+                .then(() => {
+                    this.changeLoading();
                 })
                 .catch((err) => {
                     this.errorMessage = err.message;

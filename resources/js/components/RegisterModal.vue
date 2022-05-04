@@ -71,6 +71,7 @@ export default {
         LockClosedIcon,
         MailIcon,
     },
+    emits: ["getUsers"],
     data() {
         return {
             email: null,
@@ -90,6 +91,9 @@ export default {
                     role: this.role,
                     password: this.password,
                     password_confirmation: this.password_confirmation,
+                })
+                .then(() => {
+                    this.$emit("getUsers");
                 })
                 .catch((err) => {
                     console.log(err);

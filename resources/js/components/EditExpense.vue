@@ -3,7 +3,7 @@
         <form @submit.prevent="editExpense">
             <input type="text" v-model="on" />
             <input type="text" v-model="date" />
-            <input type="date" v-model="amount" />
+            <input type="number" v-model="amount" />
             <textarea
                 id="w3review"
                 name="description"
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
     props: ["expense"],
     emits: ["getExpenses", "closeModal"],
@@ -33,6 +34,7 @@ export default {
         };
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getExpense() {
             this.on = this.expense.expense_on;
             this.description = this.expense.description;
@@ -40,6 +42,7 @@ export default {
             this.date = this.expense.date;
         },
         editExpense() {
+            this.changeLoading();
             axios
                 .patch(`api/expenses/${this.expense.id}/update`, {
                     amount: this.amount,
@@ -53,7 +56,11 @@ export default {
                 .then(() => {
                     this.$emit("getExpenses");
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errMsg = err.message;
                 });
         },

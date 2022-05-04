@@ -48,7 +48,7 @@
 
 <script>
 import axios from "axios";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     props: ["currentStock", "productID"],
     emits: ["getProducts"],
@@ -66,9 +66,10 @@ export default {
         ...mapGetters(["userInfo"]),
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         addToStock() {
             this.stock = this.input_stock + this.currentStock;
-
+            this.changeLoading();
             axios
                 .patch(`api/products/${this.productID}/update`, {
                     stock: this.stock,
@@ -85,12 +86,17 @@ export default {
                         description: `Added  ${this.input_stock} Items to Product Id: ${this.productID}`,
                     });
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },
         subtractFromStock() {
             this.stock = this.currentStock - this.input_stock;
+            this.changeLoading();
 
             axios
                 .patch(`api/products/${this.productID}/inventory/subtract`, {
@@ -108,7 +114,11 @@ export default {
                         description: `Removed  ${this.input_stock} Items from Product Id: ${this.productID}`,
                     });
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },
@@ -122,7 +132,7 @@ export default {
     border-top: 1px solid gray;
     background: #fff;
     top: 30px;
-    right: 200px;
+    right: 80px;
     border-radius: 5px;
     padding: 20px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),

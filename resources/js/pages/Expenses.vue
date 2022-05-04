@@ -102,6 +102,7 @@ import AddExpense from "../components/AddExpense.vue";
 import ExpenseSearch from "../components/ExpenseSearch.vue";
 import EditExpense from "../components/EditExpense.vue";
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     components: {
         AddExpense,
@@ -131,13 +132,19 @@ export default {
         this.getExpenses();
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getExpenses() {
+            this.changeLoading();
             axios
                 .get("api/expenses")
                 .then((res) => {
                     this.expenses = res.data;
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

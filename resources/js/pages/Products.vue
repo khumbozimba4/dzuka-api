@@ -73,6 +73,7 @@ import {
 } from "@heroicons/vue/outline";
 import AddProduct from "../components/AddProduct.vue";
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     components: {
         AddProduct,
@@ -96,7 +97,9 @@ export default {
         this.getProducts();
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getProducts() {
+            this.changeLoading();
             this.categoryName = this.$route.params.categoryName;
             this.category_id = this.$route.params.category_id;
 
@@ -105,7 +108,11 @@ export default {
                 .then((response) => {
                     this.products = response.data;
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

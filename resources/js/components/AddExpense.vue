@@ -40,7 +40,7 @@
 
 <script>
 import axios from "axios";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     emits: ["getExpenses", "closeAdd"],
     data() {
@@ -57,7 +57,9 @@ export default {
         ...mapGetters(["userInfo"]),
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         addExpense() {
+            this.changeLoading();
             axios
                 .post("api/expenses/store", {
                     date: this.date,
@@ -81,7 +83,11 @@ export default {
                         description: `Added expense Id: ${this.addedExpense.id} Name: ${this.addedExpense.expense_on}`,
                     });
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

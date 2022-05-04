@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
     props: ["category"],
     emits: ["getCategories", "closeModal"],
@@ -28,11 +29,13 @@ export default {
         };
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getCategory() {
             this.name = this.category.category_name;
             this.description = this.category.description;
         },
         editCategory() {
+            this.changeLoading();
             axios
                 .patch(`api/categories/${this.category.id}/update`, {
                     category_name: this.name,
@@ -44,7 +47,11 @@ export default {
                 .then(() => {
                     this.$emit("getCategories");
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errMsg = err.message;
                 });
         },
