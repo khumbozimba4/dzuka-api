@@ -94,6 +94,7 @@ import AddCategory from "../components/AddCategory.vue";
 import CategorySearch from "../components/CategorySearch.vue";
 import EditCategory from "../components/EditCategory.vue";
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     components: {
         AddCategory,
@@ -119,7 +120,9 @@ export default {
         this.getCategories();
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getCategories() {
+            this.changeLoading();
             axios
                 .get("api/categories")
                 .then((response) => {
@@ -128,7 +131,11 @@ export default {
                 .then(() => {
                     this.isOpen = false;
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     console.log("error", err);
                 });
         },

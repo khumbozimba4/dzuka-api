@@ -30,6 +30,7 @@
 
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     emits: ["getProducts", "closeModal"],
     props: ["category_id"],
@@ -43,7 +44,9 @@ export default {
     },
     computed: {},
     methods: {
+        ...mapActions(["changeLoading"]),
         addProduct() {
+            this.changeLoading();
             axios
                 .post("api/products/store", {
                     product_name: this.name,
@@ -57,7 +60,11 @@ export default {
                 .then(() => {
                     this.$emit("getProducts");
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

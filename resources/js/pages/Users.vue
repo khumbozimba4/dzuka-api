@@ -102,14 +102,20 @@ export default {
         this.getUsers();
     },
     methods: {
-        ...mapActions(["changeRegisterModal"]),
+        ...mapActions(["changeRegisterModal", "changeLoading"]),
         getUsers() {
+            this.changeLoading();
+
             axios
                 .get("api/users")
                 .then((res) => {
                     this.users = res.data;
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     console.log(err);
                 });
         },

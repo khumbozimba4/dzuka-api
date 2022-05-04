@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
     props: ["sale"],
     emits: ["getSales", "closeModal"],
@@ -32,6 +33,8 @@ export default {
         };
     },
     methods: {
+        ...mapActions(["changeLoading"]),
+
         getCategory() {
             this.name = this.sale.customer_name;
             this.description = this.sale.description;
@@ -39,6 +42,7 @@ export default {
             this.date = this.sale.date;
         },
         editSale() {
+            this.changeLoading();
             axios
                 .patch(`api/sales/${this.sale.id}/update`, {
                     customer_name: this.name,
@@ -51,6 +55,9 @@ export default {
                 })
                 .then(() => {
                     this.$emit("getSales");
+                })
+                .then(() => {
+                    this.changeLoading();
                 })
                 .catch((err) => {
                     this.errMsg = err.message;

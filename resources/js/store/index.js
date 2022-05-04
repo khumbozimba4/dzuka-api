@@ -43,6 +43,10 @@ const store = createStore({
                 commit("setMobileNav", this.mobileNav);
             }
         },
+        changeLoading({ commit }) {
+            this.isLoading = !this.isLoading;
+            commit("setIsLoading", this.isLoading);
+        },
         changeLoginModal({ commit }) {
             this.loginModal = !this.loginModal;
             commit("setLoginModal", this.loginModal);
@@ -79,11 +83,15 @@ const store = createStore({
                 });
         },
         register({ commit }, credentials) {
+            this.isLoading = true;
+            commit("setIsLoading", this.isLoading);
             axios
                 .post("api/register", credentials)
                 .then(({ data }) => {
                     commit("setUserData", data);
                     if (data) {
+                        this.isLoading = false;
+                        commit("setIsLoading", this.isLoading);
                         this.isLogged = !this.isLogged;
                         this.registerModal = !this.registerModal;
                         commit("setIsLogged", this.isLogged);
@@ -92,6 +100,8 @@ const store = createStore({
                     }
                 })
                 .catch((err) => {
+                    this.isLoading = false;
+                    commit("setIsLoading", this.isLoading);
                     this.error = true;
                     this.errorMessage = err.message;
                     commit("setError", this.error);

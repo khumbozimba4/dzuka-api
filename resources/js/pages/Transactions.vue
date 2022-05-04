@@ -83,6 +83,7 @@ import {
 import TransactionSearch from "../components/TransactionSearch.vue";
 import moment from "moment";
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     components: {
         TransactionSearch,
@@ -110,16 +111,22 @@ export default {
         this.getTransactions();
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getDate(date) {
             return moment(date).format("MMM Do YY");
         },
         getTransactions() {
+            this.changeLoading();
             axios
                 .get("api/transactions")
                 .then((res) => {
                     this.transactions = res.data;
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

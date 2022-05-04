@@ -24,6 +24,7 @@
 
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     emits: ["getCategories"],
     data() {
@@ -33,7 +34,9 @@ export default {
         };
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         addCategory() {
+            this.changeLoading();
             axios
                 .post("api/categories/store", {
                     category_name: this.name,
@@ -42,7 +45,11 @@ export default {
                 .then(() => {
                     this.$emit("getCategories");
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     console.log(err);
                 });
         },

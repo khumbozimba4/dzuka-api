@@ -100,7 +100,7 @@
 import { XCircleIcon } from "@heroicons/vue/solid";
 import { CheckCircleIcon, SearchIcon } from "@heroicons/vue/outline";
 import axios from "axios";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
     components: {
@@ -124,8 +124,11 @@ export default {
         ...mapGetters(["userInfo"]),
     },
     methods: {
+        ...mapActions(["changeLoading"]),
+
         addProduct(id, index, stock, price, productName) {
             if (this.quantity !== "") {
+                this.changeLoading();
                 axios
                     .post(`api/sales/product/${this.sale_Id}/store`, {
                         quantity: this.quantity,
@@ -155,7 +158,11 @@ export default {
                             description: `Added Product: ${productName} to Sale Id: ${this.sale_Id}`,
                         });
                     })
+                    .then(() => {
+                        this.changeLoading();
+                    })
                     .catch((err) => {
+                        this.changeLoading();
                         this.errMessage = err.message;
                     });
             } else {

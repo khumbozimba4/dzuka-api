@@ -115,13 +115,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <VueTailwindPagination
-                    :current="currentPage"
-                    :total="total"
-                    :per-page="perPage"
-                    @page-change="pageChange($event)"
-                >
-                </VueTailwindPagination>
             </div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -147,6 +140,7 @@ import SaleSearch from "../components/SaleSearch.vue";
 import axios from "axios";
 import "@ocrv/vue-tailwind-pagination/styles";
 import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
+import { mapActions } from "vuex";
 export default {
     components: {
         AddSale,
@@ -175,29 +169,25 @@ export default {
             search: "",
             editSaleOpen: false,
             selected: null,
-            currentPage: 1,
-            total: null,
-            perPage: 2,
         };
     },
     created() {
         this.getSales();
     },
     methods: {
-        pageChange(pageNumber) {
-            this.currentPage = pageNumber;
-            this.getSales();
-        },
+        ...mapActions(["changeLoading"]),
         getSales() {
+            this.changeLoading();
             axios
                 .get("api/sales")
                 .then((res) => {
                     this.sales = res.data;
                 })
                 .then(() => {
-                    this.total = this.sales.length;
+                    this.changeLoading();
                 })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errorMessage = err.message;
                 });
         },

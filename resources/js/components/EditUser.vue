@@ -16,6 +16,7 @@
 
 <script>
 import axios from "axios";
+import { mapActions } from "vuex";
 export default {
     props: ["user"],
     emits: ["getUsers", "closeModal"],
@@ -30,12 +31,14 @@ export default {
         };
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getUser() {
             this.name = this.user.name;
             this.email = this.user.email;
             this.role = this.user.role;
         },
         editUser() {
+            this.changeLoading();
             axios
                 .patch(`api/users/${this.user.id}/update`, {
                     name: this.name,
@@ -48,7 +51,11 @@ export default {
                 .then(() => {
                     this.$emit("getUsers");
                 })
+                .then(() => {
+                    this.changeLoading();
+                })
                 .catch((err) => {
+                    this.changeLoading();
                     this.errMsg = err.message;
                 });
         },
