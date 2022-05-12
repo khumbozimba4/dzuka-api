@@ -1,5 +1,10 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
                 <CreditCardIcon class="Icon" />
@@ -26,7 +31,11 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category" @click="isOpen = !isOpen">
+                    <div
+                        class="Add__Category"
+                        @click="isOpen = !isOpen"
+                        v-if="userInfo.role !== finance"
+                    >
                         Record Expense
                     </div>
                     <PrinterIcon class="Icon" />
@@ -46,7 +55,7 @@
                             <td>Expense on</td>
                             <td>Amount (MKW)</td>
                             <td>Description</td>
-                            <td>Edit</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -62,10 +71,15 @@
                             <td>{{ expense.expense_on }}</td>
                             <td>{{ expense.amount }}</td>
                             <td>{{ expense.description }}</td>
-                            <td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditExpense(expense)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteExpense(expense.id)"
+                                    :style="deleteIcon"
                                 />
                                 <EditExpense
                                     :expense="expense"
@@ -97,17 +111,20 @@ import {
     ShoppingBagIcon,
     CreditCardIcon,
     PencilIcon,
+    TrashIcon,
 } from "@heroicons/vue/outline";
 import AddExpense from "../components/AddExpense.vue";
 import ExpenseSearch from "../components/ExpenseSearch.vue";
 import EditExpense from "../components/EditExpense.vue";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         AddExpense,
         ExpenseSearch,
         EditExpense,
+        ConfirmDelete,
         SearchIcon,
         PencilIcon,
         CollectionIcon,
@@ -117,6 +134,7 @@ export default {
         PrinterIcon,
         CreditCardIcon,
         ShoppingBagIcon,
+        TrashIcon,
     },
     data() {
         return {
@@ -126,13 +144,25 @@ export default {
             search: "",
             editExpenseOpen: false,
             selected: null,
+            deleteIcon: "Icon_Delete",
+            confirmDelete: false,
+            deletedItem: null,
+            finance: "",
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getExpenses();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
+        setFinanceVariable() {
+            this.finance = "finance";
+            console.log(this.userInfo.role);
+        },
         getExpenses() {
             this.changeLoading();
             axios
@@ -151,6 +181,30 @@ export default {
         toggleEditExpense(expense) {
             this.selected = expense;
             this.editExpenseOpen = !this.editExpenseOpen;
+        },
+        toggleDeleteExpense(id) {
+            this.deletedItem = id;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/expenses/${this.deletedItem}/destroy`)
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    this.getExpenses();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
         },
     },
 };
@@ -277,6 +331,10 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
                             position: relative;
                             .Icon {
@@ -286,6 +344,12 @@ export default {
                                 color: rgb(23, 34, 49);
                                 &:hover {
                                     color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
                                 }
                             }
                         }

@@ -1,5 +1,10 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
                 <ShoppingBagIcon class="Icon" />
@@ -54,7 +59,11 @@
                     </ul>
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category" @click="isOpen = !isOpen">
+                    <div
+                        class="Add__Category"
+                        @click="isOpen = !isOpen"
+                        v-if="userInfo.role !== finance"
+                    >
                         Create Sale
                     </div>
                     <PrinterIcon class="Icon" />
@@ -75,7 +84,7 @@
                             <td>Customer Contact</td>
                             <td>Product(s)</td>
                             <td>Total Price (MKW)</td>
-                            <td>Edit</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
                             <td>View Sale</td>
                         </tr>
                     </thead>
@@ -93,10 +102,14 @@
                             <td>{{ sale.customer_contact }}</td>
                             <td>{{ sale.products.length }}</td>
                             <td>{{ sale.sale_amount }}</td>
-                            <td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditSale(sale)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteSale(sale.id)"
                                 />
                                 <EditSale
                                     :sale="sale"
@@ -132,21 +145,25 @@ import {
     SortAscendingIcon,
     SortDescendingIcon,
     PencilIcon,
+    TrashIcon,
 } from "@heroicons/vue/outline";
 import { XCircleIcon } from "@heroicons/vue/solid";
 import AddSale from "../components/AddSale.vue";
 import EditSale from "../components/EditSale.vue";
 import SaleSearch from "../components/SaleSearch.vue";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 import "@ocrv/vue-tailwind-pagination/styles";
 import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         AddSale,
         EditSale,
         SaleSearch,
+        ConfirmDelete,
         VueTailwindPagination,
+        TrashIcon,
         SortAscendingIcon,
         XCircleIcon,
         SortDescendingIcon,
@@ -169,13 +186,23 @@ export default {
             search: "",
             editSaleOpen: false,
             selected: null,
+            deletedItem: null,
+            confirmDelete: false,
+            finance: "",
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getSales();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
+        setFinanceVariable() {
+            this.finance = "finance";
+        },
         getSales() {
             this.changeLoading();
             axios
@@ -259,6 +286,30 @@ export default {
         toggleEditSale(sale) {
             this.selected = sale;
             this.editSaleOpen = !this.editSaleOpen;
+        },
+        toggleDeleteSale(id) {
+            this.deletedItem = id;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/sales/${this.deletedItem}/destroy`)
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    this.getSales();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
         },
     },
 };
@@ -430,6 +481,10 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
                             position: relative;
                             .Icon {
@@ -439,6 +494,12 @@ export default {
                                 color: rgb(23, 34, 49);
                                 &:hover {
                                     color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
                                 }
                             }
                         }

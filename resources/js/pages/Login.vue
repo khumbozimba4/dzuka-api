@@ -39,9 +39,9 @@
                                 {{ errorMessage }}
                             </div>
                             <!-- Forgot your password -->
-                            <router-link class="forgot-password" to="#">
+                            <!-- <router-link class="forgot-password" to="#">
                                 Forgot your password?
-                            </router-link>
+                            </router-link> -->
                             <!-- Sign in -->
                             <div>
                                 <button class="button">Sign in</button>
