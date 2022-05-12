@@ -15,6 +15,7 @@ const store = createStore({
             isLogged: false,
             isLoading: false,
             registerModal: false,
+            userAdded: false,
         };
     },
 
@@ -28,6 +29,7 @@ const store = createStore({
         user: (state) => state.user,
         userInfo: (state) => state.userInfo,
         registerModal: (state) => state.registerModal,
+        userAdded: (state) => state.userAdded,
     },
 
     actions: {
@@ -93,8 +95,10 @@ const store = createStore({
                         this.isLoading = false;
                         commit("setIsLoading", this.isLoading);
                         this.isLogged = !this.isLogged;
+                        this.userAdded = !this.userAdded;
                         this.registerModal = !this.registerModal;
                         commit("setIsLogged", this.isLogged);
+                        commit("setUserAdded", this.userAdded);
                         commit("setRegisterModal", this.registerModal);
                         commit("setLoginModal", this.loginModal);
                     }
@@ -116,6 +120,7 @@ const store = createStore({
     mutations: {
         setMobile: (state, mobile) => (state.mobile = mobile),
         setIsLoading: (state, isLoading) => (state.isLoading = isLoading),
+        setUserAdded: (state, userAdded) => (state.userAdded = userAdded),
         setRegisterModal: (state, registerModal) =>
             (state.registerModal = registerModal),
         setMobileNav: (state, mobileNav) => (state.mobileNav = mobileNav),
@@ -126,7 +131,6 @@ const store = createStore({
         setUserData(state, userData) {
             state.user = userData;
             state.userInfo = userData.user;
-            state.name = userData.user.name;
             localStorage.setItem("user", JSON.stringify(userData));
             axios.defaults.headers.common.Authorization = `Bearer ${userData.token}`;
         },

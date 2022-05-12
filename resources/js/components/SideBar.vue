@@ -17,7 +17,7 @@
             <router-link to="/inventory">
                 <div class="Nav__Option">
                     <CollectionIcon class="Icon" />
-                    <p class="Title">Products</p>
+                    <p class="Title">Categories/Products</p>
                 </div>
             </router-link>
             <router-link to="/stock">
@@ -44,12 +44,14 @@
                     <p class="Title">Transactions</p>
                 </div></router-link
             >
-            <router-link to="/users">
-                <div class="Nav__Option">
-                    <UsersIcon class="Icon" />
-                    <p class="Title">Users</p>
-                </div>
-            </router-link>
+            <div v-if="userInfo.role == admin">
+                <router-link to="/users">
+                    <div class="Nav__Option">
+                        <UsersIcon class="Icon" />
+                        <p class="Title">Users</p>
+                    </div>
+                </router-link>
+            </div>
         </div>
         <div class="Sign__Out">
             <LogoutIcon class="Icon" @click="logout" />
@@ -68,7 +70,7 @@ import {
     CreditCardIcon,
     LogoutIcon,
 } from "@heroicons/vue/outline";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         CollectionIcon,
@@ -86,16 +88,23 @@ export default {
             Nav__Option: "Nav__Option",
             Nav__Option__Active: "Nav__Option",
             dashboard: "/",
+            admin: "",
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getActiveRoute();
+        this.setAdminVariable();
     },
     methods: {
         ...mapActions(["logout"]),
         getActiveRoute() {
             this.activeRoute = this.$route.path;
-            console.log(this.activeRoute);
+        },
+        setAdminVariable() {
+            this.admin = "admin";
         },
     },
 };

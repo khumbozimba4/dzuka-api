@@ -1,32 +1,40 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
                 <p><strong>SaleID</strong></p>
             </div>
 
             <div class="Options">
-                <strong>{{ sale_id }}</strong>
+                <strong>{{ sale?.id }}</strong>
             </div>
         </div>
 
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <p><strong>Customer</strong> : {{ customer_name }}</p>
-                    <p><strong>Total Amount</strong> : K{{ amount }}</p>
+                    <p><strong>Customer</strong> : {{ sale?.customer_name }}</p>
+                    <p>
+                        <strong>Total Amount</strong> : K{{ sale?.sale_amount }}
+                    </p>
                 </div>
                 <div class="Right__Side">
                     <div
                         class="Add__Category"
                         @click="addProductsOpen = !addProductsOpen"
+                        v-if="userInfo.role !== finance"
                     >
                         Add Products
                     </div>
                     <AddSaleProducts
                         v-if="addProductsOpen"
                         :sale_Id="sale_id"
-                        @getProducts="getProducts"
+                        @getProducts="getSale"
                         @closeAddProducts="addProductsOpen = !addProductsOpen"
                     />
                 </div>
@@ -41,6 +49,7 @@
                             <td>Price</td>
                             <td>Quantity</td>
                             <td>Total Price</td>
+                            <!-- <td v-if="userInfo.role !== finance">Delete</td> -->
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -58,6 +67,12 @@
                             <td>
                                 K{{ product.price * product.pivot.quantity }}
                             </td>
+                            <!-- <td class="Icons" v-if="userInfo.role !== finance">
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteProduct(product)"
+                                />
+                            </td> -->
                         </tr>
                     </tbody>
                 </table>
@@ -70,36 +85,50 @@
 <script>
 import axios from "axios";
 import AddSaleProducts from "../components/AddSaleProducts.vue";
-import { mapActions } from "vuex";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
+import { TrashIcon } from "@heroicons/vue/outline";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         AddSaleProducts,
+        ConfirmDelete,
+        TrashIcon,
     },
     data() {
         return {
             products: [],
             sale_id: null,
-            customer_name: null,
-            customer_contact: null,
+            sale: null,
             errorMessage: null,
             addProductsOpen: false,
-            amount: null,
+            confirmDelete: false,
+            deletedItem: null,
+            finance: "",
         };
     },
+    computed: {
+        ...mapGetters(["userInfo"]),
+    },
     created() {
-        this.getProducts();
+        this.getSale();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        getProducts() {
+        setFinanceVariable() {
+            this.finance = "finance";
+        },
+        getSale() {
             this.changeLoading();
             this.sale_id = this.$route.params.sale_id;
-            this.customer_name = this.$route.params.customer_name;
-            this.customer_contact = this.$route.params.customer_contact;
-            this.amount = this.$route.params.amount;
             axios
-                .get(`api/sales/${this.sale_id}/products`)
-                .then((res) => [(this.products = res.data)])
+                .get(`api/sales/${this.sale_id}/show`)
+                .then((res) => {
+                    this.sale = res.data;
+                })
+                .then(() => {
+                    this.getProducts();
+                })
                 .then(() => {
                     this.changeLoading();
                 })
@@ -108,12 +137,47 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
-        // getAmount() {
-        //     for (let i = 0; i < this.products.length; i++) {
-        //         this.totalAmount +=
-        //             this.products[i].price * this.products[i].pivot.quantity;
-        //     }
-        // },
+        getProducts() {
+            axios
+                .get(`api/sales/${this.sale_id}/products`)
+                .then((res) => {
+                    this.products = res.data;
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleDeleteProduct(product) {
+            this.deletedItem = product;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/sales/product/${this.sale_id}/destroy`, {
+                    product_id: this.deletedItem.id,
+                })
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    axios.patch(`api/sales/${this.sale_id}/amount/update`, {
+                        amount: 0 - this.deletedItem.pivot.total_price,
+                    });
+                })
+                .then(() => {
+                    this.getSale();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
+        },
     },
 };
 </script>
@@ -236,11 +300,25 @@ export default {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
                             .Icon {
-                                height: 30px;
+                                width: 25px;
                                 object-fit: contain;
                                 cursor: pointer;
+                                color: rgb(23, 34, 49);
+                                &:hover {
+                                    color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
+                                }
                             }
                         }
                     }

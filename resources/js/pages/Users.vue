@@ -1,5 +1,10 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
                 <UserCircleIcon class="Icon" />
@@ -35,7 +40,7 @@
                             <td>Username</td>
                             <td>Email</td>
                             <td>Role</td>
-                            <td>Edit user</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -50,10 +55,14 @@
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.role }}</td>
-                            <td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditUser(user)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteUser(user.id)"
                                 />
                                 <EditUser
                                     :user="user"
@@ -73,17 +82,25 @@
 </template>
 
 <script>
-import { SearchIcon, UserCircleIcon, PencilIcon } from "@heroicons/vue/outline";
-import { mapActions } from "vuex";
+import {
+    SearchIcon,
+    UserCircleIcon,
+    PencilIcon,
+    TrashIcon,
+} from "@heroicons/vue/outline";
+import { mapActions, mapGetters } from "vuex";
 import UserSearch from "../components/UserSearch.vue";
 import EditUser from "../components/EditUser.vue";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 export default {
     components: {
         UserSearch,
+        ConfirmDelete,
         SearchIcon,
         UserCircleIcon,
         PencilIcon,
+        TrashIcon,
         EditUser,
     },
     data() {
@@ -96,13 +113,30 @@ export default {
             search: "",
             editUserOpen: false,
             selected: null,
+            confirmDelete: false,
+            deletedItem: null,
+            finance: "",
         };
     },
     created() {
         this.getUsers();
+        this.setFinanceVariable();
+    },
+    computed: {
+        ...mapGetters(["userAdded", "userInfo"]),
+    },
+    watch: {
+        userAdded(value) {
+            if (value == true) {
+                this.getUsers();
+            }
+        },
     },
     methods: {
         ...mapActions(["changeRegisterModal", "changeLoading"]),
+        setFinanceVariable() {
+            this.finance = "finance";
+        },
         getUsers() {
             this.changeLoading();
 
@@ -122,6 +156,30 @@ export default {
         toggleEditUser(user) {
             this.selected = user;
             this.editUserOpen = !this.editUserOpen;
+        },
+        toggleDeleteUser(id) {
+            this.deletedItem = id;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/users/${this.deletedItem}/destroy`)
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    this.getUsers();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
         },
     },
 };
@@ -248,6 +306,10 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
                             position: relative;
                             .Icon {
@@ -257,6 +319,12 @@ export default {
                                 color: rgb(23, 34, 49);
                                 &:hover {
                                     color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
                                 }
                             }
                         }

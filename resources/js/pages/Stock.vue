@@ -34,7 +34,7 @@
                             <td>Previous stock</td>
                             <td>Recently Sold/Removed</td>
                             <td>Available stock</td>
-                            <td>Edit stock</td>
+                            <td v-if="userInfo.role !== finance">Edit stock</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -48,7 +48,10 @@
                             <td>{{ product.previous_stock }}</td>
                             <td>{{ product.recently_subtracted }}</td>
                             <td>{{ product.stock }}</td>
-                            <td class="Allocate__Stock">
+                            <td
+                                class="Allocate__Stock"
+                                v-if="userInfo.role !== finance"
+                            >
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditSearch(index)"
@@ -89,7 +92,7 @@
                             <td>Previous stock</td>
                             <td>Recently sold</td>
                             <td>Available stock</td>
-                            <td>Edit stock</td>
+                            <td v-if="userInfo.role !== finance">Edit stock</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -103,7 +106,10 @@
                             <td>{{ product.previous_stock }}</td>
                             <td>{{ product.recently_subtracted }}</td>
                             <td>{{ product.stock }}</td>
-                            <td class="Allocate__Stock">
+                            <td
+                                class="Allocate__Stock"
+                                v-if="userInfo.role !== finance"
+                            >
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEdit(index)"
@@ -145,7 +151,7 @@ import {
 } from "@heroicons/vue/outline";
 import EditStock from "../components/EditStock.vue";
 import axios from "axios";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         EditStock,
@@ -169,13 +175,21 @@ export default {
             search: "",
             searchedProducts: [],
             isOpenSearch: false,
+            finance: "",
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getProducts();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
+        setFinanceVariable() {
+            this.finance = "finance";
+        },
         getProducts() {
             this.changeLoading();
             axios
