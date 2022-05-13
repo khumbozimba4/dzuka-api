@@ -83,7 +83,7 @@ import {
 import TransactionSearch from "../components/TransactionSearch.vue";
 import moment from "moment";
 import axios from "axios";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         TransactionSearch,
@@ -106,6 +106,9 @@ export default {
             editExpenseOpen: false,
             selected: null,
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getTransactions();
