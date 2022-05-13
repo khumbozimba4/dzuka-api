@@ -21,6 +21,14 @@ class SaleController extends Controller
         
     }
 
+    public function show($id)
+    {
+        $sale = Sale::find($id);
+        return $sale;
+        
+    }
+
+
     public function search($name)
     {
         return Sale::where('customer_name','like','%'.$name.'%')->with("products")->get();
@@ -76,12 +84,6 @@ class SaleController extends Controller
         return $sale;
     }
 
-
-    public function show(Sale $sale)
-    {
-        //
-    }
-
    
     public function amount(Request $request, $sale)
     {
@@ -106,8 +108,11 @@ class SaleController extends Controller
     }
 
    
-    public function destroy(Sale $sale)
+    public function destroy($sale)
     {
-        //
+        $sale = Sale::find($sale);
+       
+        $sale->delete();
+        return;
     }
 }

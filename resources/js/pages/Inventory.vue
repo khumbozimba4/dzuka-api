@@ -1,5 +1,10 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
                 <CollectionIcon class="Icon" />
@@ -24,7 +29,11 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category" @click="isOpen = !isOpen">
+                    <div
+                        class="Add__Category"
+                        @click="isOpen = !isOpen"
+                        v-if="userInfo.role !== finance"
+                    >
                         Add Category
                     </div>
                     <PrinterIcon class="Icon" />
@@ -38,7 +47,7 @@
                             <td>#</td>
                             <td>Product Category</td>
                             <td>Registered Products</td>
-                            <td>Edit</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
                             <td>View</td>
                         </tr>
                     </thead>
@@ -53,10 +62,14 @@
                             </td>
                             <td>{{ category.category_name }}</td>
                             <td>{{ category.products.length }}</td>
-                            <td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditCategory(category)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteCategory(category.id)"
                                 />
                                 <EditCategory
                                     :category="category"
@@ -89,18 +102,22 @@ import {
     PrinterIcon,
     ArrowNarrowRightIcon,
     PencilIcon,
+    TrashIcon,
 } from "@heroicons/vue/outline";
 import AddCategory from "../components/AddCategory.vue";
 import CategorySearch from "../components/CategorySearch.vue";
 import EditCategory from "../components/EditCategory.vue";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         AddCategory,
         CategorySearch,
         EditCategory,
+        ConfirmDelete,
         SearchIcon,
+        TrashIcon,
         PencilIcon,
         CollectionIcon,
         AdjustmentsIcon,
@@ -114,13 +131,23 @@ export default {
             search: "",
             editCategoryOpen: null,
             selected: [],
+            confirmDelete: false,
+            deletedItem: null,
+            finance: "",
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getCategories();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
+        setFinanceVariable() {
+            this.finance = "finance";
+        },
         getCategories() {
             this.changeLoading();
             axios
@@ -151,6 +178,30 @@ export default {
         toggleEditCategory(category) {
             this.selected = category;
             this.editCategoryOpen = !this.editCategoryOpen;
+        },
+        toggleDeleteCategory(id) {
+            this.deletedItem = id;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/categories/${this.deletedItem}/destroy`)
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    this.getCategories();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
         },
     },
 };
@@ -277,15 +328,25 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
                             position: relative;
                             .Icon {
-                                height: 30px;
+                                width: 25px;
                                 object-fit: contain;
                                 cursor: pointer;
                                 color: rgb(23, 34, 49);
                                 &:hover {
                                     color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
                                 }
                             }
                         }

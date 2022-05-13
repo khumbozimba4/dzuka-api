@@ -31,8 +31,10 @@ class ProductSaleController extends Controller
     }
    
 
-    public function destroy(Sale $sale)
+    public function destroy(Request $request, $sale)
     {
-        //
+        $sale = Sale::find($sale);
+        $sale->products()->detach($request->product_id);
+        return $sale;
     }
 }

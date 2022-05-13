@@ -1,5 +1,10 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
                 <CollectionIcon class="Icon" />
@@ -19,7 +24,11 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div class="Add__Category" @click="isOpen = !isOpen">
+                    <div
+                        class="Add__Category"
+                        @click="isOpen = !isOpen"
+                        v-if="userInfo.role !== finance"
+                    >
                         Add Product
                     </div>
                     <PrinterIcon class="Icon" />
@@ -40,6 +49,7 @@
                             <td>Product name</td>
                             <td>Total Stock</td>
                             <td>Price (MWK)</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -54,6 +64,12 @@
                             <td>{{ product.product_name }}</td>
                             <td>{{ product.stock }}</td>
                             <td>{{ product.price }}</td>
+                            <td v-if="userInfo.role !== finance">
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteProduct(product.id)"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -70,19 +86,23 @@ import {
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
+    TrashIcon,
 } from "@heroicons/vue/outline";
 import AddProduct from "../components/AddProduct.vue";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         AddProduct,
+        ConfirmDelete,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
+        TrashIcon,
     },
     data() {
         return {
@@ -91,13 +111,23 @@ export default {
             categoryName: "",
             category_id: null,
             errorMessage: null,
+            confirmDelete: false,
+            deletedItem: null,
+            finance: "",
         };
+    },
+    computed: {
+        ...mapGetters(["userInfo"]),
     },
     created() {
         this.getProducts();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
+        setFinanceVariable() {
+            this.finance = "finance";
+        },
         getProducts() {
             this.changeLoading();
             this.categoryName = this.$route.params.categoryName;
@@ -118,6 +148,30 @@ export default {
         },
         closeModal() {
             this.isOpen = false;
+        },
+        toggleDeleteProduct(id) {
+            this.deletedItem = id;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/products/${this.deletedItem}/destroy`)
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    this.getProducts();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
+                    this.errorMessage = err.message;
+                });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
         },
     },
 };
@@ -244,11 +298,26 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
+                            position: relative;
                             .Icon {
-                                height: 30px;
+                                width: 25px;
                                 object-fit: contain;
                                 cursor: pointer;
+                                color: rgb(23, 34, 49);
+                                &:hover {
+                                    color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
+                                }
                             }
                         }
                     }
