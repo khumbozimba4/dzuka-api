@@ -3,54 +3,38 @@
         <div class="modal-content">
             <div class="form-wrap">
                 <!-- Form -->
-                <form class="register" @submit.prevent="register">
-                    <h2>Create Account</h2>
+                <form class="register" @submit.prevent="updateUser">
+                    <h2>My Profile</h2>
                     <div class="inputs">
                         <!-- Name -->
                         <div class="input">
-                            <input placeholder="Username" v-model="name" />
+                            <input
+                                :placeholder="userInfo.name"
+                                v-model="name"
+                                name="name"
+                                required
+                            />
                             <UserIcon class="icon" />
                         </div>
                         <!-- Email -->
                         <div class="input">
-                            <input placeholder="Email" v-model="email" />
+                            <input
+                                :placeholder="userInfo.email"
+                                v-model="email"
+                                required
+                            />
+
                             <MailIcon class="icon" />
                         </div>
                         <!-- Role -->
-                        <div class="Input__Select">
-                            <label for="role">Select Role</label>
-                            <select id="role" name="role" v-model="role">
-                                <option value="admin">Admin</option>
-                                <option value="operations">Operations</option>
-                                <option value="finance">Finance</option>
-                            </select>
-                        </div>
+
                         <!-- Password -->
-                        <div class="input">
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                v-model="password"
-                            />
-                            <LockClosedIcon class="icon" />
-                        </div>
-                        <!-- Password Confirmed -->
-                        <div class="input">
-                            <input
-                                type="password"
-                                placeholder="Confirm Password"
-                                v-model="password_confirmation"
-                            />
-                            <LockClosedIcon class="icon" />
-                        </div>
-                        <!-- Error -->
-                        <div class="error" v-show="error">
-                            {{ errorMessage }}
-                        </div>
+                        <div><strong>Role:</strong> {{ userInfo.role }}</div>
                         <!-- Sign Up -->
                         <div>
                             <button class="button" type="submit">
-                                Sign Up
+                                <p v-if="!saving">Save</p>
+                                <p v-if="saving">Saving...</p>
                             </button>
                         </div>
                     </div>
@@ -64,6 +48,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { LockClosedIcon, MailIcon, UserIcon } from "@heroicons/vue/outline";
+import axios from "axios";
 export default {
     props: ["modalMessage"],
     components: {
@@ -74,37 +59,49 @@ export default {
     emits: ["getUsers"],
     data() {
         return {
-            email: null,
-            password: null,
-            password_confirmation: null,
-            name: null,
-            role: null,
+            email: "",
+            name: "",
+            error: null,
+            updatedUser: null,
+            saving: false,
         };
     },
     methods: {
-        ...mapActions(["changeRegisterModal"]),
-        register() {
-            this.$store
-                .dispatch("register", {
+        ...mapActions(["updateUserInfo"]),
+        updateUser() {
+            this.saving = true;
+            axios
+                .patch(`api/users/${this.userInfo.id}/update`, {
                     name: this.name,
                     email: this.email,
-                    role: this.role,
-                    password: this.password,
-                    password_confirmation: this.password_confirmation,
+                    role: this.userInfo.role,
+                })
+                .then((res) => {
+                    this.updatedUser = res.data;
                 })
                 .then(() => {
-                    this.$emit("getUsers");
+                    this.saving = false;
                 })
+                .then(() => {
+                    this.updateUserInfo();
+                })
+                .catch((err) => {
+                    this.error = err.massage;
+                });
+        },
+        updateUserInfo() {
+            this.$store
+                .dispatch("updateUserInfo", this.updatedUser)
                 .catch((err) => {
                     console.log(err);
                 });
         },
         closeModal() {
-            this.$store.commit("setRegisterModal", false);
+            this.$store.commit("setUserProfileModal", false);
         },
     },
     computed: {
-        ...mapGetters(["registerModal", "errorMessage", "error"]),
+        ...mapGetters(["userInfo"]),
     },
 };
 </script>
@@ -114,10 +111,12 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 101;
+    z-index: 999;
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
     background-color: rgba(0, 0, 0, 0.5);
 
     .modal-content {
@@ -181,11 +180,16 @@ export default {
                         justify-content: center;
                         align-items: center;
                         margin-bottom: 8px;
+                        border: 1px solid rgb(141, 141, 141);
+                        border-radius: 3px;
+                        background: none;
+                        color: #000;
 
                         input {
                             width: 100%;
                             border: none;
-                            background-color: #f2f7f6;
+                            color: #000;
+
                             padding: 4px 4px 4px 30px;
                             height: 50px;
 
@@ -201,9 +205,6 @@ export default {
                         }
                     }
                     .Input__Select {
-                        display: flex;
-                        gap: 20px;
-                        align-items: center;
                         padding: 10px 0;
 
                         select {

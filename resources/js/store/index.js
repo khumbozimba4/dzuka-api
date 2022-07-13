@@ -16,6 +16,7 @@ const store = createStore({
             isLoading: false,
             registerModal: false,
             userAdded: false,
+            userProfileModal: false,
         };
     },
 
@@ -30,6 +31,7 @@ const store = createStore({
         userInfo: (state) => state.userInfo,
         registerModal: (state) => state.registerModal,
         userAdded: (state) => state.userAdded,
+        userProfileModal: (state) => state.userProfileModal,
     },
 
     actions: {
@@ -115,12 +117,17 @@ const store = createStore({
         logout({ commit }) {
             commit("clearUserData");
         },
+        updateUserInfo({ commit }, data) {
+            commit("setUserData", data);
+        },
     },
 
     mutations: {
         setMobile: (state, mobile) => (state.mobile = mobile),
         setIsLoading: (state, isLoading) => (state.isLoading = isLoading),
         setUserAdded: (state, userAdded) => (state.userAdded = userAdded),
+        setUserProfileModal: (state, userProfileModal) =>
+            (state.userProfileModal = userProfileModal),
         setRegisterModal: (state, registerModal) =>
             (state.registerModal = registerModal),
         setMobileNav: (state, mobileNav) => (state.mobileNav = mobileNav),

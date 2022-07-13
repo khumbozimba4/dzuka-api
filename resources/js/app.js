@@ -3,7 +3,7 @@ import Alpine from "alpinejs";
 import { createApp } from "vue";
 import store from "./store";
 import router from "./router";
-import App from "./components/App.vue";
+import App from "./App.vue";
 
 const app = createApp({});
 app.component("App", App);

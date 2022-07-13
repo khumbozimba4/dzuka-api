@@ -1,13 +1,18 @@
 <template>
     <div class="Main__Wrapper">
         <div class="Dzuka__Logo">PaMsika</div>
+        <div class="User__Profile" @click="openUserProfileModal">
+            <UserCircleIcon class="User__Icon" />
+            <p>{{ userInfo.name }}</p>
+        </div>
+
         <div class="Nav__Options">
             <router-link to="/dashboard">
                 <div
                     :class="[
-                        activeRoute == dashboard
-                            ? Nav__Option__Active
-                            : Nav__Option,
+                        activeRoute == 'dashboard'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
                     ]"
                 >
                     <ColorSwatchIcon class="Icon" />
@@ -15,38 +20,74 @@
                 </div></router-link
             >
             <router-link to="/inventory">
-                <div class="Nav__Option">
+                <div
+                    :class="[
+                        activeRoute == 'inventory'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
+                    ]"
+                >
                     <CollectionIcon class="Icon" />
                     <p class="Title">Categories/Products</p>
                 </div>
             </router-link>
             <router-link to="/stock">
-                <div class="Nav__Option">
+                <div
+                    :class="[
+                        activeRoute == 'stock'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
+                    ]"
+                >
                     <AdjustmentsIcon class="Icon" />
                     <p class="Title">Stock Control</p>
                 </div>
             </router-link>
             <router-link to="/sales">
-                <div class="Nav__Option">
+                <div
+                    :class="[
+                        activeRoute == 'sales'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
+                    ]"
+                >
                     <ShoppingBagIcon class="Icon" />
                     <p class="Title">Sales</p>
                 </div>
             </router-link>
             <router-link to="/expenses">
-                <div class="Nav__Option">
+                <div
+                    :class="[
+                        activeRoute == 'expenses'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
+                    ]"
+                >
                     <CreditCardIcon class="Icon" />
                     <p class="Title">Expenses</p>
                 </div></router-link
             >
             <router-link to="/transactions">
-                <div class="Nav__Option">
+                <div
+                    :class="[
+                        activeRoute == 'transactions'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
+                    ]"
+                >
                     <CreditCardIcon class="Icon" />
                     <p class="Title">Transactions</p>
                 </div></router-link
             >
             <div v-if="userInfo.role == admin">
                 <router-link to="/users">
-                    <div class="Nav__Option">
+                    <div
+                        :class="[
+                            activeRoute == 'users'
+                                ? 'Nav__Link__Active'
+                                : 'Nav__Link',
+                        ]"
+                    >
                         <UsersIcon class="Icon" />
                         <p class="Title">Users</p>
                     </div>
@@ -67,10 +108,12 @@ import {
     ShoppingBagIcon,
     ChartPieIcon,
     UsersIcon,
+    UserCircleIcon,
     CreditCardIcon,
     LogoutIcon,
 } from "@heroicons/vue/outline";
 import { mapActions, mapGetters } from "vuex";
+
 export default {
     components: {
         CollectionIcon,
@@ -79,20 +122,18 @@ export default {
         ShoppingBagIcon,
         ChartPieIcon,
         UsersIcon,
+        UserCircleIcon,
         LogoutIcon,
         CreditCardIcon,
     },
     data() {
-        return {
-            activeRoute: null,
-            Nav__Option: "Nav__Option",
-            Nav__Option__Active: "Nav__Option",
-            dashboard: "/",
-            admin: "",
-        };
+        return {};
     },
     computed: {
-        ...mapGetters(["userInfo"]),
+        ...mapGetters(["userInfo", "user"]),
+        activeRoute() {
+            return this.$route.name;
+        },
     },
     created() {
         this.getActiveRoute();
@@ -105,6 +146,9 @@ export default {
         },
         setAdminVariable() {
             this.admin = "admin";
+        },
+        openUserProfileModal() {
+            this.$store.commit("setUserProfileModal", true);
         },
     },
 };
@@ -122,18 +166,34 @@ export default {
     flex-direction: column;
 
     .Dzuka__Logo {
-        padding: 25px;
+        padding: 25px 25px 5px 25px;
         color: #fff;
         font-weight: 900;
         font-size: 30px;
         cursor: pointer;
+    }
+    .User__Profile {
+        display: flex;
+        gap: 15px;
+        width: 60%;
+        color: rgb(196, 196, 196);
+        padding: 7px;
+        border: 1px solid gray;
+        border-radius: 3px;
+        margin-left: 35px;
+        cursor: pointer;
+        .User__Icon {
+            width: 25px;
+            object-fit: contain;
+            color: #fff;
+        }
     }
     .Nav__Options {
         display: flex;
         flex-direction: column;
         margin-top: 10px;
 
-        .Nav__Option {
+        .Nav__Link {
             display: flex;
             gap: 10px;
             align-items: center;
@@ -157,7 +217,7 @@ export default {
                 }
             }
         }
-        .Nav__Option__Active {
+        .Nav__Link__Active {
             display: flex;
             gap: 10px;
             align-items: center;

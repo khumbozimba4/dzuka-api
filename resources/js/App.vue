@@ -6,19 +6,22 @@
         </div>
         <RegisterModal v-if="$store.state.registerModal" />
         <Loading v-if="$store.state.isLoading" />
+        <UserProfile v-if="$store.state.userProfileModal" />
     </div>
 </template>
 
 <script>
-import SideBar from "./SideBar.vue";
-import RegisterModal from "./RegisterModal.vue";
-import Loading from "./Loading.vue";
-import { mapActions, mapGetters } from "vuex";
+import SideBar from "./components/SideBar.vue";
+import RegisterModal from "./components/RegisterModal.vue";
+import Loading from "./components/Loading.vue";
+import UserProfile from "./components/UserProfile.vue";
+import { mapGetters } from "vuex";
 export default {
     components: {
         SideBar,
         RegisterModal,
         Loading,
+        UserProfile,
     },
     created() {
         this.checkUser();
