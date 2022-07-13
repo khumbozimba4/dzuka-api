@@ -65,6 +65,7 @@ const store = createStore({
             axios
                 .post("api/login", credentials)
                 .then(({ data }) => {
+                    console.log(data);
                     commit("setUserData", data);
                     if (data) {
                         this.isLogged = !this.isLogged;
@@ -118,7 +119,8 @@ const store = createStore({
             commit("clearUserData");
         },
         updateUserInfo({ commit }, data) {
-            commit("setUserData", data);
+            console.log(data);
+            commit("setUpdatedUserInfo", data);
         },
     },
 
@@ -140,6 +142,9 @@ const store = createStore({
             state.userInfo = userData.user;
             localStorage.setItem("user", JSON.stringify(userData));
             axios.defaults.headers.common.Authorization = `Bearer ${userData.token}`;
+        },
+        setUpdatedUserInfo(state, data) {
+            state.userInfo = data.user;
         },
         clearUserData() {
             localStorage.removeItem("user");

@@ -23836,7 +23836,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     updateUserInfo: function updateUserInfo() {
-      this.$store.dispatch("updateUserInfo", this.updatedUser)["catch"](function (err) {
+      this.$store.dispatch("updateUserInfo", {
+        user: this.updatedUser
+      })["catch"](function (err) {
         console.log(err);
       });
     },
@@ -29820,6 +29822,7 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.createStore)({
       commit("setIsLoading", this.isLoading);
       axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/login", credentials).then(function (_ref6) {
         var data = _ref6.data;
+        console.log(data);
         commit("setUserData", data);
 
         if (data) {
@@ -29875,7 +29878,8 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.createStore)({
     },
     updateUserInfo: function updateUserInfo(_ref10, data) {
       var commit = _ref10.commit;
-      commit("setUserData", data);
+      console.log(data);
+      commit("setUpdatedUserInfo", data);
     }
   },
   mutations: {
@@ -29911,6 +29915,9 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.createStore)({
       state.userInfo = userData.user;
       localStorage.setItem("user", JSON.stringify(userData));
       (axios__WEBPACK_IMPORTED_MODULE_0___default().defaults.headers.common.Authorization) = "Bearer ".concat(userData.token);
+    },
+    setUpdatedUserInfo: function setUpdatedUserInfo(state, data) {
+      state.userInfo = data.user;
     },
     clearUserData: function clearUserData() {
       localStorage.removeItem("user");

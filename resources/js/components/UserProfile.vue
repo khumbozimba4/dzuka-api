@@ -91,7 +91,9 @@ export default {
         },
         updateUserInfo() {
             this.$store
-                .dispatch("updateUserInfo", this.updatedUser)
+                .dispatch("updateUserInfo", {
+                    user: this.updatedUser,
+                })
                 .catch((err) => {
                     console.log(err);
                 });
