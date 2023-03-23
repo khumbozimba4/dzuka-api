@@ -17,6 +17,7 @@ const store = createStore({
             registerModal: false,
             userAdded: false,
             userProfileModal: false,
+            histories: [],
         };
     },
 
@@ -32,6 +33,7 @@ const store = createStore({
         registerModal: (state) => state.registerModal,
         userAdded: (state) => state.userAdded,
         userProfileModal: (state) => state.userProfileModal,
+        histories: (state) => state.histories,
     },
 
     actions: {
@@ -65,7 +67,6 @@ const store = createStore({
             axios
                 .post("api/login", credentials)
                 .then(({ data }) => {
-                    console.log(data);
                     commit("setUserData", data);
                     if (data) {
                         this.isLogged = !this.isLogged;
@@ -93,17 +94,15 @@ const store = createStore({
             axios
                 .post("api/register", credentials)
                 .then(({ data }) => {
-                    commit("setUserData", data);
+
                     if (data) {
                         this.isLoading = false;
                         commit("setIsLoading", this.isLoading);
-                        this.isLogged = !this.isLogged;
                         this.userAdded = !this.userAdded;
                         this.registerModal = !this.registerModal;
-                        commit("setIsLogged", this.isLogged);
                         commit("setUserAdded", this.userAdded);
                         commit("setRegisterModal", this.registerModal);
-                        commit("setLoginModal", this.loginModal);
+
                     }
                 })
                 .catch((err) => {
@@ -119,13 +118,13 @@ const store = createStore({
             commit("clearUserData");
         },
         updateUserInfo({ commit }, data) {
-            console.log(data);
             commit("setUpdatedUserInfo", data);
         },
     },
 
     mutations: {
         setMobile: (state, mobile) => (state.mobile = mobile),
+        setHistories: (state, histories) => (state.histories = histories),
         setIsLoading: (state, isLoading) => (state.isLoading = isLoading),
         setUserAdded: (state, userAdded) => (state.userAdded = userAdded),
         setUserProfileModal: (state, userProfileModal) =>

@@ -17,61 +17,6 @@
             <div class="Options"></div>
         </div>
 
-        <!-- CONTAINER FOR SEARCH RESULTS -->
-        <div class="Contents__Container" v-if="search">
-            <div class="Heading2">
-                <h1>Search Results</h1>
-                <h3 v-if="searchedProducts.length == 0">
-                    Oops! we cant find that user for you😢
-                </h3>
-            </div>
-            <div class="Table__Container" v-if="searchedProducts.length !== 0">
-                <table class="Table">
-                    <thead class="Table__Head">
-                        <tr class="Tr">
-                            <td>Product name</td>
-                            <td>Last Allocated</td>
-                            <td>Previous stock</td>
-                            <td>Recently Sold/Removed</td>
-                            <td>Available stock</td>
-                            <td v-if="userInfo.role !== finance">Edit stock</td>
-                        </tr>
-                    </thead>
-                    <tbody class="Table__Body">
-                        <tr
-                            class="Tr"
-                            v-for="(product, index) in searchedProducts"
-                            :key="product.id"
-                        >
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.recently_allocated }}</td>
-                            <td>{{ product.previous_stock }}</td>
-                            <td>{{ product.recently_subtracted }}</td>
-                            <td>{{ product.stock }}</td>
-                            <td
-                                class="Allocate__Stock"
-                                v-if="userInfo.role !== finance"
-                            >
-                                <PencilIcon
-                                    class="Icon"
-                                    @click="toggleEditSearch(index)"
-                                />
-                                <EditStock
-                                    v-if="
-                                        isOpenSearch &&
-                                        products[index] === clickedProduct
-                                    "
-                                    :productID="product.id"
-                                    :currentStock="product.stock"
-                                    @getProducts="getProducts"
-                                />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
         <!-- MAIN TABLE CONTAINER -->
         <div class="Contents__Container">
             <div class="Heading">
@@ -87,47 +32,49 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
+                            <td>#</td>
                             <td>Product name</td>
-                            <td>Last Allocated</td>
-                            <td>Previous stock</td>
-                            <td>Recently sold</td>
-                            <td>Available stock</td>
-                            <td v-if="userInfo.role !== finance">Edit stock</td>
+                            <td>Action</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
+                        <tr v-if="!products.length">
+                            No products available!
+                        </tr>
                         <tr
                             class="Tr"
                             v-for="(product, index) in products"
                             :key="product.id"
                         >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
                             <td>{{ product.product_name }}</td>
-                            <td>{{ product.recently_allocated }}</td>
-                            <td>{{ product.previous_stock }}</td>
-                            <td>{{ product.recently_subtracted }}</td>
-                            <td>{{ product.stock }}</td>
+
                             <td
                                 class="Allocate__Stock"
-                                v-if="userInfo.role !== finance"
                             >
-                                <PencilIcon
-                                    class="Icon"
+                                <button
                                     @click="toggleEdit(index)"
-                                    v-if="!isOpen"
-                                />
-                                <XIcon
-                                    class="Icon"
-                                    @click="isOpen = false"
-                                    v-if="isOpen"
-                                />
+                                    class="submit_button"
+                                >
+                                    Submit Audited Stock
+                                </button>
+
+                                <button
+                                    @click="toggleStockHistory(product)"
+                                    class="history_button"
+                                >
+                                    History
+                                </button>
                                 <EditStock
                                     v-if="
                                         isOpen &&
                                         products[index] === clickedProduct
                                     "
-                                    :productID="product.id"
-                                    :currentStock="product.stock"
+                                    :product="product"
                                     @getProducts="getProducts"
+                                    @close="isOpen = false"
                                 />
                             </td>
                         </tr>
@@ -159,7 +106,6 @@ export default {
         MinusIcon,
         CollectionIcon,
         AdjustmentsIcon,
-        PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
         PencilIcon,
@@ -211,6 +157,16 @@ export default {
         toggleEditSearch(index) {
             this.clickedProduct = this.products[index];
             this.isOpenSearch = !this.isOpenSearch;
+        },
+        toggleStockHistory(product) {
+            this.$store.commit("setHistories", product.histories);
+            this.$router.push({
+                name: "history",
+                params: {
+                    product_id: product.id,
+                    product_name: product.product_name,
+                },
+            });
         },
     },
     watch: {
@@ -277,6 +233,7 @@ export default {
         }
     }
     .Contents__Container {
+        position: relative;
         margin: 20px;
         background-color: #fff;
         border-radius: 3px;
@@ -289,7 +246,6 @@ export default {
             border-bottom: 1px solid rgb(163 163 163);
         }
         .Heading {
-            position: relative;
             display: flex;
             justify-content: space-between;
             padding: 20px;
@@ -354,15 +310,32 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        td {
+                        }
                         .Allocate__Stock {
-                            position: relative;
+                            margin: 10px;
                             display: flex;
-                            align-items: center;
-                            gap: 20px;
-                            .Icon {
-                                height: 20px;
-                                object-fit: contain;
-                                cursor: pointer;
+
+                            .history_button {
+                                background: purple;
+                                color: #fff;
+                                font-weight: bold;
+                                text-align: center;
+                                padding: 10px;
+                                margin-top: 5px;
+                                text-transform: capitalize;
+                                border-radius: 3px;
+                            }
+                            .submit_button {
+                                margin-right: 20px;
+                                background: green;
+                                color: #fff;
+                                font-weight: bold;
+                                text-align: center;
+                                padding: 10px;
+                                margin-top: 5px;
+                                text-transform: capitalize;
+                                border-radius: 3px;
                             }
                         }
                     }

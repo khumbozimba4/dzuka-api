@@ -23,17 +23,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
-
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
+    Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/search/{name}', [UserController::class, 'search']);
     Route::patch('/users/{id}/update', [UserController::class, 'update']);
     Route::delete('/users/{id}/destroy', [UserController::class, 'destroy']);
-    
+
     Route::get('/categories',[CategoriesController::class,'index']);
     Route::get('/categories/search/{name}',[CategoriesController::class,'search']);
     Route::get('/categories/{category}/products',[CategoriesController::class,'show']);
@@ -42,6 +41,7 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::delete('/categories/{id}/destroy',[CategoriesController::class,'destroy']);
 
     Route::get('/products',[ProductController::class,'index']);
+    Route::get('/{product}/show',[ProductController::class,'show']);
     Route::get('/products/search/{name}',[ProductController::class,'search']);
     Route::post('/products/store',[ProductController::class,'store']);
     Route::patch('/products/{id}/update',[ProductController::class,'update']);

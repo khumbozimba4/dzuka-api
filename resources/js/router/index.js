@@ -11,6 +11,7 @@ import Users from "../pages/Users.vue";
 import Expenses from "../pages/Expenses.vue";
 import Login from "../pages/Login.vue";
 import Transactions from "../pages/Transactions.vue";
+import History from "../pages/History.vue";
 const routes = [
     {
         path: "/",
@@ -42,6 +43,14 @@ const routes = [
         component: Products,
         meta: {
             title: "Products",
+        },
+    },
+    {
+        path: "/product/history",
+        name: "history",
+        component: History,
+        meta: {
+            title: "Product History",
         },
     },
     {

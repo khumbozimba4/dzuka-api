@@ -4,19 +4,25 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductStockHistory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
- 
+
     public function index()
     {
-        return Product::orderBy('created_at', 'desc')->get();
+        return Product::with('histories.product')->orderBy('created_at', 'desc')->get();
     }
 
     public function search($name)
     {
         return Product::where('product_name','like','%'.$name.'%')->with('category','sales')->get();
+    }
+
+    public function show($product)
+    {
+        return Product::where('id','=',$product)->with('histories')->first();
     }
 
     public function zero()
@@ -25,7 +31,7 @@ class ProductController extends Controller
     }
 
 
-  
+
     public function store(Request $request)
     {
         $this->validate($request,[
@@ -44,32 +50,22 @@ class ProductController extends Controller
         return $product;
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $product)
     {
-        $product = Product::find($id);
-        $product->update([
-            'stock'=>$request->stock,
-            'recently_allocated'=>$request->recently_allocated,
-            'previous_stock'=>$request->previous_stock
+        $product = Product::find($product);
+
+        ProductStockHistory::create([
+            'product_id' => $product->getKey(),
+            'stock_count'=>$request->get('stock_count'),
+            'previous_stock_count'=> $product->{'stock'},
+            'submitted_by'=>auth()->user()->{'name'}
         ]);
-        return $product;
-    }
-    public function subtract(Request $request, $id)
-    {
-        $product = Product::find($id);
-        $product->update([
-            'stock'=>$request->stock,
-            'recently_subtracted'=>$request->recently_subtracted,
-            'previous_stock'=>$request->previous_stock
-        ]);
-        return $product;
+
+        return $product->update(['stock' => $request->get('stock_count')]);
     }
 
-
-    public function destroy($id)
+    public function destroy(Product $product): void
     {
-        $product = Product::find($id);
-        $product->delete();
-        return;
+       $product->delete();
     }
 }

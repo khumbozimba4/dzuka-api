@@ -35,7 +35,7 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>ID</td>
+                            <td>#</td>
                             <td>Date</td>
                             <td>User</td>
                             <td>Transaction Name</td>
@@ -45,11 +45,11 @@
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="transaction in transactions"
+                            v-for="transaction, index in transactions"
                             :key="transaction.id"
                         >
                             <td>
-                                <strong>{{ transaction.id }}</strong>
+                                <strong>{{ index + 1 }}</strong>
                             </td>
                             <td>
                                 {{ getDate(transaction.created_at) }}
@@ -116,7 +116,7 @@ export default {
     methods: {
         ...mapActions(["changeLoading"]),
         getDate(date) {
-            return moment(date).format("MMM Do YY");
+            return moment(date).format("LL");
         },
         getTransactions() {
             this.changeLoading();
