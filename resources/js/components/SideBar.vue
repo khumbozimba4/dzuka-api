@@ -40,7 +40,7 @@
                     ]"
                 >
                     <AdjustmentsIcon class="Icon" />
-                    <p class="Title">Stock Control</p>
+                    <p class="Title">Stock Management</p>
                 </div>
             </router-link>
             <router-link to="/sales">
@@ -76,7 +76,7 @@
                     ]"
                 >
                     <CreditCardIcon class="Icon" />
-                    <p class="Title">Transactions</p>
+                    <p class="Title">Audit Trail</p>
                 </div></router-link
             >
             <div v-if="userInfo.role == admin">

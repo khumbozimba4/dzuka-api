@@ -1,27 +1,19 @@
 <template>
     <div class="Main__Wrapper">
-        <ConfirmDelete
-            @toggleCancel="toggleCancel"
-            @toggleDelete="toggleDelete"
-            v-if="confirmDelete"
-        />
         <div class="NavBar__Container">
             <div class="Title">
-                <ShoppingBagIcon class="Icon" />
-                <p>Sales</p>
+                <CollectionIcon class="Icon" />
+                <p>
+                    <strong>{{ this.$route.params.product_name }}</strong> |
+                    Stock History
+                </p>
             </div>
             <div class="Search__Bar">
-                <input
-                    type="text"
-                    class="Input"
-                    placeholder="Search sales by customer"
-                    v-model="search"
-                />
+                <input type="text" class="Input" placeholder="Search product" />
                 <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
-        <SaleSearch v-if="search" :search="search" />
 
         <div class="Contents__Container">
             <div class="Heading">
@@ -29,49 +21,36 @@
                     <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
-                <div class="Right__Side">
-                    <PrinterIcon class="Icon" />
-                </div>
             </div>
 
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>#</td>
                             <td>Date</td>
-                            <td>Product</td>
-                            <td>Stock Sold</td>
+                            <td>Stock Counted</td>
+                            <td>Previous Stock Count</td>
+                            <td>Submitted By</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr v-if="!histories.length">
-                            No sales made yet!
+                            No stock audit history for this product!
                         </tr>
                         <tr
                             class="Tr"
-                            v-for="(sale, index) in histories"
-                            :key="sale.id"
+                            v-for="history in histories"
+                            :key="history.id"
                         >
-                            <td>
-                                <strong>{{ index + 1 }}</strong>
-                            </td>
-                            <td>{{ getDate(sale.created_at) }}</td>
-                            <td>{{ sale.product.product_name }}</td>
-                            <td>
-                                {{
-                                    getSalesQuantity(
-                                        sale.previous_stock_count,
-                                        sale.stock_count
-                                    )
-                                }}
-                            </td>
+                            <td>{{ getDate(history.created_at) }}</td>
+                            <td>{{ history.stock_count }}</td>
+                            <td>{{ history.previous_stock_count }}</td>
+                            <td>{{ history.submitted_by }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
@@ -82,84 +61,37 @@ import {
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
-    ShoppingBagIcon,
-    SortAscendingIcon,
-    SortDescendingIcon,
-    PencilIcon,
     TrashIcon,
 } from "@heroicons/vue/outline";
-import { XCircleIcon } from "@heroicons/vue/solid";
-import AddSale from "../components/AddSale.vue";
-import EditSale from "../components/EditSale.vue";
-import SaleSearch from "../components/SaleSearch.vue";
+import AddProduct from "../components/AddProduct.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
-import "@ocrv/vue-tailwind-pagination/styles";
-import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
 import { mapActions, mapGetters } from "vuex";
 import moment from "moment";
 export default {
     components: {
-        AddSale,
-        EditSale,
-        SaleSearch,
+        AddProduct,
         ConfirmDelete,
-        VueTailwindPagination,
-        TrashIcon,
-        SortAscendingIcon,
-        XCircleIcon,
-        SortDescendingIcon,
         SearchIcon,
         CollectionIcon,
         AdjustmentsIcon,
-        PencilIcon,
-        PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
-        ShoppingBagIcon,
+        TrashIcon,
     },
     data() {
         return {
-            products: [],
-            histories: [],
+            errMessage: "",
         };
     },
     computed: {
-        ...mapGetters(["userInfo"]),
+        ...mapGetters(["userInfo", "histories"]),
     },
-    created() {
-        this.getProducts();
-    },
+    created() {},
     methods: {
-        ...mapActions(["changeLoading"]),
-        getProducts() {
-            this.changeLoading();
-            axios
-                .get("api/products")
-                .then((res) => {
-                    this.products = res.data;
-                })
-                .then(() => {
-                    this.getHistories(this.products);
-                })
-                .then(() => {
-                    this.changeLoading();
-                })
-                .catch((err) => {
-                    this.changeLoading();
-                    this.errorMessage = err.message;
-                });
-        },
-        getHistories(products) {
-            products.forEach((product) => {
-                this.histories = [...this.histories, ...product.histories];
-            });
-        },
+        ...mapActions(["changeLoading", "getHistories"]),
         getDate(date) {
             return moment(new Date(date)).format("LL");
-        },
-        getSalesQuantity(previous, stock) {
-            return previous < stock ? 0 : previous - stock;
         },
     },
 };
@@ -199,7 +131,7 @@ export default {
                 background: none;
                 border: 0px;
                 padding: 10px 20px;
-                width: 250px;
+                width: 200px;
 
                 &:focus {
                     outline: none;
@@ -228,7 +160,6 @@ export default {
             padding: 20px;
             border-bottom: 1px solid rgb(163 163 163);
             .Left__Side {
-                position: relative;
                 display: flex;
                 gap: 10px;
                 align-items: center;
@@ -239,51 +170,6 @@ export default {
                     height: 20px;
                     object-fit: contain;
                     cursor: pointer;
-                }
-                .Filters__Container {
-                    position: absolute;
-                    width: 300px;
-                    z-index: 999;
-                    background: #fff;
-                    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-                        0 4px 6px -4px rgb(0 0 0 / 0.1);
-                    top: 30px;
-                    left: 20px;
-                    border-top: 1px solid rgb(163, 163, 163);
-
-                    .Filters__Heading {
-                        display: flex;
-                        width: 100%;
-                        justify-content: space-between;
-                        padding: 15px 20px 5px 20px;
-
-                        .Close__Icon {
-                            height: 20px;
-                            object-fit: contain;
-                        }
-                    }
-
-                    li {
-                        padding: 10px 20px;
-                        color: rgb(53, 53, 53);
-                        display: grid;
-                        grid-template-columns: 60% 20% 20%;
-                        border-top: 1px solid lightgrey;
-                        &:hover {
-                            background-color: rgb(236, 236, 236);
-                        }
-
-                        .Icon {
-                            height: 20px;
-                            object-fit: contain;
-                            transition: all 0.2s ease-in-out;
-
-                            &:hover {
-                                color: rgb(31, 31, 31);
-                                transform: scale(1.2);
-                            }
-                        }
-                    }
                 }
             }
             .Right__Side {

@@ -3,6 +3,7 @@
         <ConfirmDelete
             @toggleCancel="toggleCancel"
             @toggleDelete="toggleDelete"
+            @closeModal="isOpen = false"
             v-if="confirmDelete"
         />
         <div class="NavBar__Container">

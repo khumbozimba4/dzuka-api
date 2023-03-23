@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -23,10 +26,19 @@ class Product extends Model
         'recently_subtracted'
     ];
 
-    public function sales(){
+    public function sales():BelongsToMany
+    {
         return $this->belongsToMany(Sale::class)->withPivot("quantity");
     }
-    public function category(){
+
+    public function category():BelongsTo
+    {
         return $this->belongsTo(Category::class);
     }
+
+    public function histories():HasMany
+    {
+        return $this->hasMany(ProductStockHistory::class);
+     }
+
 }

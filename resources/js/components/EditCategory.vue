@@ -1,5 +1,15 @@
 <template>
     <div class="Main__Wrap">
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            "
+        >
+            <strong style="text-transform: capitalize">Edit</strong>
+            <button @click="close">Close</button>
+        </div>
         <form @submit.prevent="editCategory">
             <input type="text" v-model="name" />
             <textarea
@@ -55,6 +65,9 @@ export default {
                     this.errMsg = err.message;
                 });
         },
+        close() {
+            this.$emit("closeModal");
+        },
     },
 };
 </script>
@@ -62,8 +75,9 @@ export default {
 <style lang="scss" scoped>
 .Main__Wrap {
     position: absolute;
-    top: 20px;
-    right: 100px;
+    margin-top: 10px;
+    width: 35%;
+    right: 10%;
     background-color: #fff;
     padding: 20px;
     z-index: 99;

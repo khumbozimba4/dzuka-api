@@ -67,6 +67,7 @@
                                 <EditUser
                                     :user="user"
                                     @getUsers="getUsers"
+                                    @closeModal="editUserOpen = false"
                                     v-if="
                                         editUserOpen && selected == users[index]
                                     "
@@ -311,7 +312,6 @@ export default {
                             gap: 30px;
                         }
                         td {
-                            position: relative;
                             .Icon {
                                 width: 25px;
                                 object-fit: contain;

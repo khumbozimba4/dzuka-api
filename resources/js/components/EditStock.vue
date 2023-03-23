@@ -1,57 +1,39 @@
 <template>
     <div class="Main__Wrap">
+        <div style="display: flex; justify-content: space-between">
+            <strong style="text-transform: capitalize"
+                >Submit Stock - {{ product.product_name }}</strong
+            >
+            <button @click="close">Close</button>
+        </div>
         <div class="Input__Container">
             <p>
-                Current Value
-                <span
-                    ><strong>{{ this.currentStock }}</strong>
-                </span>
+                Enter counted stock for <strong>{{ getDate() }}</strong> end of
+                business day
             </p>
+            <br />
         </div>
-        <div class="Select__Boxes">
-            <button
-                @click="option = 1"
-                :class="[option == 1 ? activeClass : inActive]"
-            >
-                Add
-            </button>
-            <button
-                @click="option = 2"
-                :class="[option == 2 ? activeClass : inActive]"
-            >
-                Subtract
-            </button>
-        </div>
-        <form @submit.prevent="addToStock" v-if="option == 1">
+
+        <form @submit.prevent="addToStock">
             <div class="Input__Container">
-                <label for="input_stock"
-                    ><strong>Add to stock (Quantity)</strong>
-                </label>
+                <label for="input_stock"><strong>Quantity</strong> </label>
                 <input name="input_stock" v-model="input_stock" type="number" />
             </div>
 
             <button>Save</button>
         </form>
-        <form @submit.prevent="subtractFromStock" v-if="option == 2">
-            <div class="Input__Container">
-                <label for="input_stock"
-                    ><strong>Subtract from stock (Quantity)</strong>
-                </label>
-                <input name="input_stock" v-model="input_stock" type="number" />
-            </div>
 
-            <button>Save</button>
-        </form>
         <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
 import axios from "axios";
+import moment from "moment";
 import { mapActions, mapGetters } from "vuex";
 export default {
-    props: ["currentStock", "productID"],
-    emits: ["getProducts"],
+    props: ["product"],
+    emits: ["getProducts", "close"],
     data() {
         return {
             input_stock: null,
@@ -71,10 +53,9 @@ export default {
             this.stock = this.input_stock + this.currentStock;
             this.changeLoading();
             axios
-                .patch(`api/products/${this.productID}/update`, {
-                    stock: this.stock,
-                    previous_stock: this.currentStock,
-                    recently_allocated: this.input_stock,
+                .patch(`api/products/${this.product.id}/update`, {
+                    stock_count: this.input_stock,
+                    previous_stock_count: this.product.stock,
                 })
                 .then(() => {
                     this.$emit("getProducts");
@@ -83,7 +64,7 @@ export default {
                     axios.post("api/transactions/store", {
                         user_id: this.userInfo.id,
                         transaction_name: "Add Stock",
-                        description: `Added  ${this.input_stock} Items to Product Id: ${this.productID}`,
+                        description: `Submitted  ${this.input_stock} items of stock to ${this.product.product_name}`,
                     });
                 })
                 .then(() => {
@@ -94,33 +75,11 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
-        subtractFromStock() {
-            this.stock = this.currentStock - this.input_stock;
-            this.changeLoading();
-
-            axios
-                .patch(`api/products/${this.productID}/inventory/subtract`, {
-                    stock: this.stock,
-                    previous_stock: this.currentStock,
-                    recently_subtracted: this.input_stock,
-                })
-                .then(() => {
-                    this.$emit("getProducts");
-                })
-                .then(() => {
-                    axios.post("api/transactions/store", {
-                        user_id: this.userInfo.id,
-                        transaction_name: "Remove Stock",
-                        description: `Removed  ${this.input_stock} Items from Product Id: ${this.productID}`,
-                    });
-                })
-                .then(() => {
-                    this.changeLoading();
-                })
-                .catch((err) => {
-                    this.changeLoading();
-                    this.errorMessage = err.message;
-                });
+        getDate() {
+            return moment(new Date()).format("LL");
+        },
+        close() {
+            this.$emit("close");
         },
     },
 };
@@ -128,11 +87,12 @@ export default {
 
 <style lang="scss" scoped>
 .Main__Wrap {
+    width: 50%;
+    right: 25%;
+    margin-top: 20px;
     position: absolute;
     border-top: 1px solid gray;
     background: #fff;
-    top: 30px;
-    right: 80px;
     border-radius: 5px;
     padding: 20px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
@@ -160,10 +120,11 @@ export default {
 
     form {
         .Input__Container {
-            margin-top: 10px;
+            margin-top: 5px;
             display: flex;
             flex-direction: column;
             input {
+                margin-top: 5px;
                 background: none;
                 outline: none;
                 border-bottom: 1px solid gray;

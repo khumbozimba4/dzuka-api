@@ -1,7 +1,14 @@
 <template>
     <div class="Main__Wrap">
         <form @submit.prevent="addProduct">
-            <h1>Add Product</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>
+                    <strong style="text-transform: capitalize"
+                        >Add Product</strong
+                    >
+                </h1>
+                <button @click="close">Close</button>
+            </div>
             <div class="Input__Container">
                 <label for="name">Name</label>
                 <input name="name" v-model="name" />
@@ -68,6 +75,9 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
+        close(){
+            this.$emit("closeModal");
+        }
     },
 };
 </script>

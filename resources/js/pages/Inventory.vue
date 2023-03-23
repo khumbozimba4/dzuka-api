@@ -74,6 +74,7 @@
                                 <EditCategory
                                     :category="category"
                                     @getCategories="getCategories"
+                                    @closeModal="editCategoryOpen = false"
                                     v-if="
                                         editCategoryOpen &&
                                         selected == categories[index]
@@ -333,7 +334,6 @@ export default {
                             gap: 30px;
                         }
                         td {
-                            position: relative;
                             .Icon {
                                 width: 25px;
                                 object-fit: contain;
