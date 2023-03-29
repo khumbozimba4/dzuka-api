@@ -38,7 +38,7 @@
                     </div>
                     <PrinterIcon class="Icon" />
                 </div>
-                <AddCategory @getCategories="getCategories" v-if="isOpen" />
+                <AddCategory @getCategories="getCategories" v-if="isOpen" @closeModal="isOpen = false"/>
             </div>
             <div class="Table__Container">
                 <table class="Table">

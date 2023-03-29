@@ -11,23 +11,26 @@
             </div>
             <div class="Input__Container">
                 <label for="name">Name</label>
-                <input name="name" v-model="name" />
+                <input name="name" v-model="name" required/>
             </div>
             <div class="Input__Container">
                 <label for="price">Price (MWK)</label>
-                <input name="price" type="number" v-model="price" />
+                <input name="price" type="number" v-model="price" required/>
             </div>
             <div class="Input__Container">
-                <label for="description">Description</label>
+                <label for="description">Description (Optional)</label>
                 <textarea
                     id="w3review"
                     name="description"
                     v-model="description"
                     rows="4"
                     cols="30"
-                ></textarea>
+                />
             </div>
-
+            <div class="File_Input">
+                <label for="product_photo">Product Photo</label>
+                <input type="file" id="product_photo" ref="product_photo" class="custom-file-input" @change="previewFiles" accept="image/*">
+            </div>
             <button>Add</button>
 
             <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -47,19 +50,25 @@ export default {
             name: "",
             price: null,
             errorMessage: null,
+            product_photo:'',
         };
     },
-    computed: {},
     methods: {
         ...mapActions(["changeLoading"]),
         addProduct() {
             this.changeLoading();
+            let formData = new FormData();
+            formData.append('product_photo', this.product_photo);
+            formData.append('product_name', this.name);
+            formData.append('description', this.description);
+            formData.append('price', this.price);
+            formData.append('category_id', this.category_id);
+            console.log(formData)
             axios
-                .post("api/products/store", {
-                    product_name: this.name,
-                    description: this.description,
-                    price: this.price,
-                    category_id: this.category_id,
+                .post("api/products/store", formData, {
+                    headers:{
+                        "Content-Type": "multipart/form-data"
+                    }
                 })
                 .then(() => {
                     this.$emit("closeModal");
@@ -77,6 +86,10 @@ export default {
         },
         close(){
             this.$emit("closeModal");
+        },
+        previewFiles(){
+            this.product_photo = this.$refs.product_photo.files[0]
+            console.log(this.product_photo);
         }
     },
 };
@@ -110,6 +123,9 @@ export default {
                 border-bottom: 1px solid gray;
                 color: gray;
             }
+        }
+        .File_Input{
+            display: flex; flex-direction: column; gap: 5px; margin-top: 10px
         }
         button {
             padding: 5px 10px;

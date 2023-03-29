@@ -131,7 +131,6 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
-        PrinterIcon,
         CreditCardIcon,
         ShoppingBagIcon,
         TrashIcon,
@@ -161,7 +160,6 @@ export default {
         ...mapActions(["changeLoading"]),
         setFinanceVariable() {
             this.finance = "finance";
-            console.log(this.userInfo.role);
         },
         getExpenses() {
             this.changeLoading();

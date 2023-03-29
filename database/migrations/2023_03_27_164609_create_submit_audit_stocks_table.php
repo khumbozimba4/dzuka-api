@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSalesTable extends Migration
+class CreateSubmitAuditStocksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateSalesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sales', function (Blueprint $table) {
+        Schema::create('submit_audit_stocks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained();
-            $table->float('amount')->default(0);
-            $table->integer('quantity')->default(0);
+            $table->integer('stock_count');
+            $table->unsignedBigInteger('submitted_by');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateSalesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sales');
+        Schema::dropIfExists('submit_audit_stocks');
     }
 }

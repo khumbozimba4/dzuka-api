@@ -42,15 +42,16 @@
                             <td>Date</td>
                             <td>Product</td>
                             <td>Stock Sold</td>
+                            <td>Total Amount</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!histories.length">
+                        <tr v-if="!sales.length">
                             No sales made yet!
                         </tr>
                         <tr
                             class="Tr"
-                            v-for="(sale, index) in histories"
+                            v-for="(sale, index) in sales"
                             :key="sale.id"
                         >
                             <td>
@@ -58,13 +59,9 @@
                             </td>
                             <td>{{ getDate(sale.created_at) }}</td>
                             <td>{{ sale.product.product_name }}</td>
+                            <td>{{ sale.quantity }}</td>
                             <td>
-                                {{
-                                    getSalesQuantity(
-                                        sale.previous_stock_count,
-                                        sale.stock_count
-                                    )
-                                }}
+                                {{ sale.amount }}
                             </td>
                         </tr>
                     </tbody>
@@ -113,15 +110,13 @@ export default {
         CollectionIcon,
         AdjustmentsIcon,
         PencilIcon,
-        PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
         ShoppingBagIcon,
     },
     data() {
         return {
-            products: [],
-            histories: [],
+            sales: [],
         };
     },
     computed: {
@@ -135,12 +130,9 @@ export default {
         getProducts() {
             this.changeLoading();
             axios
-                .get("api/products")
+                .get("api/sales")
                 .then((res) => {
-                    this.products = res.data;
-                })
-                .then(() => {
-                    this.getHistories(this.products);
+                    this.sales = res.data;
                 })
                 .then(() => {
                     this.changeLoading();
@@ -149,11 +141,6 @@ export default {
                     this.changeLoading();
                     this.errorMessage = err.message;
                 });
-        },
-        getHistories(products) {
-            products.forEach((product) => {
-                this.histories = [...this.histories, ...product.histories];
-            });
         },
         getDate(date) {
             return moment(new Date(date)).format("LL");

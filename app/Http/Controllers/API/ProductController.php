@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\AddInventory;
 use App\Models\Product;
 use App\Models\ProductStockHistory;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -20,52 +22,20 @@ class ProductController extends Controller
         return Product::where('product_name','like','%'.$name.'%')->with('category','sales')->get();
     }
 
-    public function show($product)
+    public function store(Request $request): Product
     {
-        return Product::where('id','=',$product)->with('histories')->first();
-    }
-
-    public function zero()
-    {
-        return Product::where('stock',"=",0)->orderBy('created_at', 'desc')->get();
-    }
-
-
-
-    public function store(Request $request)
-    {
-        $this->validate($request,[
-            "product_name"=>"required",
-            "price"=>"required",
-            "category_id"=>"required",
-            "description"=>"required",
+        return Product::create([
+            'product_name'=>$request->get('product_name'),
+            'description'=>$request->get('description'),
+            'price'=>$request->get('price'),
+            'category_id'=>$request->get('category_id'),
+            'product_photo_path' => $request->file('product_photo')->store('public/images/products')
         ]);
-
-        $product=new Product();
-        $product->product_name=$request->product_name;
-        $product->price=$request->price;
-        $product->description=$request->description;
-        $product->category_id=$request->category_id;
-        $product->save();
-        return $product;
     }
 
-    public function update(Request $request, $product)
+    public function destroy($product): void
     {
         $product = Product::find($product);
-
-        ProductStockHistory::create([
-            'product_id' => $product->getKey(),
-            'stock_count'=>$request->get('stock_count'),
-            'previous_stock_count'=> $product->{'stock'},
-            'submitted_by'=>auth()->user()->{'name'}
-        ]);
-
-        return $product->update(['stock' => $request->get('stock_count')]);
-    }
-
-    public function destroy(Product $product): void
-    {
-       $product->delete();
+        $product->delete();
     }
 }

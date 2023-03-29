@@ -16,8 +16,7 @@ class CreateProductStockHistoriesTable extends Migration
         Schema::create('product_stock_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained();
-            $table->float('stock_count');
-            $table->float('previous_stock_count');
+            $table->integer('stock_count');
             $table->string('submitted_by');
             $table->timestamps();
         });

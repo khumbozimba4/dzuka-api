@@ -12,7 +12,7 @@ class CategoriesController extends Controller
     public function index()
     {
         return Category::with("products")->orderBy('created_at', 'desc')->get();
-        
+
     }
 
     public function search($name)
@@ -24,11 +24,9 @@ class CategoriesController extends Controller
     {
         $this->validate($request,[
             "category_name"=>"required",
-            "description"=>"required",
         ]);
         $category=new Category();
         $category->category_name=$request->category_name;
-        $category->description=$request->description;
         $category->save();
         return $category;
     }
@@ -51,7 +49,7 @@ class CategoriesController extends Controller
 
     public function destroy($id)
     {
-        
+
         $category = Category::find($id);
         $category -> delete();
         return;

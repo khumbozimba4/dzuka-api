@@ -51,9 +51,7 @@
                             </td>
                             <td>{{ product.product_name }}</td>
 
-                            <td
-                                class="Allocate__Stock"
-                            >
+                            <td class="Allocate__Stock">
                                 <button
                                     @click="toggleEdit(index)"
                                     class="submit_button"
@@ -61,12 +59,6 @@
                                     Submit Audited Stock
                                 </button>
 
-                                <button
-                                    @click="toggleStockHistory(product)"
-                                    class="history_button"
-                                >
-                                    History
-                                </button>
                                 <EditStock
                                     v-if="
                                         isOpen &&
@@ -97,11 +89,13 @@ import {
     XIcon,
 } from "@heroicons/vue/outline";
 import EditStock from "../components/EditStock.vue";
+import AddStock from "../components/stock/AddStock.vue";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         EditStock,
+        AddStock,
         SearchIcon,
         MinusIcon,
         CollectionIcon,

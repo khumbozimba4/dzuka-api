@@ -40,7 +40,7 @@
                     ]"
                 >
                     <AdjustmentsIcon class="Icon" />
-                    <p class="Title">Stock Management</p>
+                    <p class="Title">Stock</p>
                 </div>
             </router-link>
             <router-link to="/sales">

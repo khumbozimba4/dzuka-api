@@ -12,7 +12,6 @@ class ProductStockHistory extends Model
 
     protected $fillable=[
         'stock_count',
-        'previous_stock_count',
         'submitted_by',
         'product_id'
     ];

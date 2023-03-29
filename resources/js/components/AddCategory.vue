@@ -1,22 +1,21 @@
 <template>
     <div class="Main__Wrap">
+        <div
+            style="
+                display: flex;
+                justify-content: space-between;
+                padding:15px;
+                ;
+            "
+        >
+            <strong style="text-transform: capitalize">Add Category</strong>
+            <button @click="close">Close</button>
+        </div>
         <form @submit.prevent="addCategory">
-            <h1>Add Category</h1>
             <div class="Input__Container">
                 <label for="name">Name</label>
-                <input name="name" v-model="name" />
+                <input name="name" v-model="name" required/>
             </div>
-            <div class="Input__Container">
-                <label for="description">Description</label>
-                <textarea
-                    id="w3review"
-                    name="description"
-                    v-model="description"
-                    rows="4"
-                    cols="30"
-                ></textarea>
-            </div>
-
             <button>Add</button>
         </form>
     </div>
@@ -26,10 +25,9 @@
 import axios from "axios";
 import { mapActions } from "vuex";
 export default {
-    emits: ["getCategories"],
+    emits: ["getCategories", "closeModal"],
     data() {
         return {
-            description: "",
             name: "",
         };
     },
@@ -40,7 +38,6 @@ export default {
             axios
                 .post("api/categories/store", {
                     category_name: this.name,
-                    description: this.description,
                 })
                 .then(() => {
                     this.$emit("getCategories");
@@ -53,6 +50,9 @@ export default {
                     console.log(err);
                 });
         },
+        close(){
+            this.$emit("closeModal")
+        }
     },
 };
 </script>
@@ -63,6 +63,7 @@ export default {
     border-top: 1px solid gray;
     background: #fff;
     top: 50px;
+    width: 350px;
     right: 200px;
     z-index: 999;
     border-radius: 5px;

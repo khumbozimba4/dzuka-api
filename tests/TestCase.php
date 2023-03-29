@@ -2,9 +2,25 @@
 
 namespace Tests;
 
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\WithFaker;
 
 abstract class TestCase extends BaseTestCase
 {
-    use CreatesApplication;
+    use CreatesApplication, RefreshDatabase, WithFaker;
+    protected $kampingo;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->kampingo = User::factory()->create();
+    }
+
+    protected function login(): self
+    {
+        $this->actingAs($this->kampingo);
+        return $this;
+    }
 }
