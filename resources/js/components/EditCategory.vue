@@ -12,13 +12,6 @@
         </div>
         <form @submit.prevent="editCategory">
             <input type="text" v-model="name" />
-            <textarea
-                id="w3review"
-                name="description"
-                v-model="description"
-                rows="4"
-                cols="30"
-            ></textarea>
             <button type="submit">Save</button>
         </form>
     </div>

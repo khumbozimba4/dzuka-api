@@ -14,7 +14,7 @@
             <input type="text" v-model="name" />
             <input type="text" v-model="email" />
             <label for="role">Change Role</label>
-            <select id="role" name="role" v-model="role">
+            <select id="role" name="role" v-model="role" style="padding:10px">
                 <option value="admin">Admin</option>
                 <option value="operations">Operations</option>
                 <option value="finance">Finance</option>
@@ -80,12 +80,11 @@ export default {
 .Main__Wrap {
     position: absolute;
     margin-top: 10px;
-    width: 35%;
+    width: 500px;
     right: 10%;
     background-color: #fff;
     padding: 20px;
     z-index: 99;
-    width: 300px;
     form {
         display: flex;
         flex-direction: column;

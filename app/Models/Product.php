@@ -17,18 +17,14 @@ class Product extends Model
         'price',
         'description',
         'category_id',
-        'sale_id',
-        'product_id',
-        'quantity',
-        'previous_stock',
+        'product_photo_path',
         'stock',
-        'recently_allocated',
-        'recently_subtracted'
     ];
 
-    public function sales():BelongsToMany
+
+    public function sales():HasMany
     {
-        return $this->belongsToMany(Sale::class)->withPivot("quantity");
+        return $this->hasMany(Sale::class);
     }
 
     public function category():BelongsTo
@@ -40,5 +36,15 @@ class Product extends Model
     {
         return $this->hasMany(ProductStockHistory::class);
      }
+
+     public function addInventories():HasMany
+    {
+        return $this->hasMany(AddInventory::class);
+    }
+
+    public function submitAuditStocks():HasMany
+    {
+        return $this->hasMany(SubmitAuditStock::class);
+    }
 
 }

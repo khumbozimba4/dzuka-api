@@ -6,19 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Sale extends Model
+class SubmitAuditStock extends Model
 {
     use HasFactory;
-
-    protected $fillable=[
-    'date',
-    'description',
-    'sale_id',
-    'product_id',
-    'quantity',
-    'sale_amount',
-    'amount'
-];
+    protected $fillable = [
+        'product_id',
+        'stock_count',
+        'submitted_by'
+    ];
 
     public function product():BelongsTo
     {

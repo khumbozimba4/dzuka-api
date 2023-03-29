@@ -2,22 +2,19 @@
     <div class="Main__Wrap">
         <div style="display: flex; justify-content: space-between">
             <strong style="text-transform: capitalize"
-                >Submit Stock - {{ product.product_name }}</strong
+                >Submit New Stock - {{ product.product_name }}</strong
             >
             <button @click="close">Close</button>
         </div>
         <div class="Input__Container">
-            <p>
-                Enter counted stock for <strong>{{ getDate() }}</strong> end of
-                business day
-            </p>
+            <p>Enter New stock</p>
             <br />
         </div>
 
         <form @submit.prevent="addToStock">
             <div class="Input__Container">
                 <label for="input_stock"><strong>Quantity</strong> </label>
-                <input name="input_stock" v-model="input_stock" type="number" required/>
+                <input name="input_stock" v-model="input_stock" type="number" />
             </div>
 
             <button>Save</button>
@@ -52,9 +49,10 @@ export default {
         addToStock() {
             this.changeLoading();
             axios
-                .post(`api/submit-audit-stock`, {
-                    stock_count: this.input_stock,
-                    product_id: this.product.id,
+                .post("api/addInventory", {
+                    quantity: this.input_stock,
+                    product_id: this.product.stock,
+                    supplier_id: this.userInfo.id,
                 })
                 .then(() => {
                     this.$emit("getProducts");

@@ -23,29 +23,47 @@
                 </div>
             </div>
 
+            <!--            Tabs-->
+
             <div class="Table__Container">
-                <table class="Table">
+                <table class="Table" v-if="active_tab === 1">
                     <thead class="Table__Head">
                         <tr class="Tr">
                             <td>Date</td>
                             <td>Stock Counted</td>
-                            <td>Previous Stock Count</td>
-                            <td>Submitted By</td>
+                            <td>Recorded By</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!histories.length">
-                            No stock audit history for this product!
-                        </tr>
                         <tr
                             class="Tr"
-                            v-for="history in histories"
-                            :key="history.id"
+                            v-for="submit in submitAuditStocks"
+                            :key="submit.id"
                         >
-                            <td>{{ getDate(history.created_at) }}</td>
-                            <td>{{ history.stock_count }}</td>
-                            <td>{{ history.previous_stock_count }}</td>
-                            <td>{{ history.submitted_by }}</td>
+                            <td>{{ '2' }}</td>
+                            <td>{{ submit.stock_count }}</td>
+                            <td>{{ submit.submitted_by }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="Table" v-if="active_tab === 2">
+                    <thead class="Table__Head">
+                        <tr class="Tr">
+                            <td>Date</td>
+                            <td>Quantity Submitted</td>
+                            <td>Supplier</td>
+                        </tr>
+                    </thead>
+                    <tbody class="Table__Body">
+                        <tr
+                            class="Tr"
+                            v-for="add in addInventories"
+                            :key="add.id"
+                        >
+                            <td>{{'2' }}</td>
+                            <td>{{ add.quantity }}</td>
+                            <td>{{ Sam }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -82,16 +100,44 @@ export default {
     data() {
         return {
             errMessage: "",
+            active_tab: 1,
+            addInventories: null,
+            submitAuditStocks: null,
         };
     },
     computed: {
-        ...mapGetters(["userInfo", "histories"]),
+        ...mapGetters(["userInfo"]),
     },
-    created() {},
+    created() {
+        this.getAddInventories();
+        this.getSubmitAuditStock();
+    },
     methods: {
-        ...mapActions(["changeLoading", "getHistories"]),
+        ...mapActions(["changeLoading"]),
         getDate(date) {
             return moment(new Date(date)).format("LL");
+        },
+        getAddInventories() {
+            axios
+                .get("api/add-inventory")
+                .then((res) => {
+                    this.addInventories = res?.data;
+                    console.log(res.data);
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                });
+        },
+        getSubmitAuditStock() {
+            axios
+                .get("api/submit-audit-stock")
+                .then((res) => {
+                    this.submitAuditStocks = res?.data;
+                    console.log(res.data);
+                })
+                .catch((err) => {
+                    console.log(err.message);
+                });
         },
     },
 };
@@ -102,6 +148,22 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
+    .Tabs {
+        border-bottom: 1px solid black;
+        display: flex;
+        .active_tab {
+            background-color: lightseagreen;
+            color: white;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            font-weight: bold;
+            border-left: 1px solid black;
+            cursor: pointer;
+            text-align: center;
+        }
+    }
     .NavBar__Container {
         background-color: #fff;
         display: flex;
