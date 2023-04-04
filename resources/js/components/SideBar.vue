@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="Dzuka__Logo">PaMsika</div>
         <div class="User__Profile" @click="openUserProfileModal">
-            <UserCircleIcon class="User__Icon" />
+            <UserCircleIcon class="User__Icon"/>
             <p>{{ userInfo.name }}</p>
         </div>
 
@@ -15,9 +15,10 @@
                             : 'Nav__Link',
                     ]"
                 >
-                    <ColorSwatchIcon class="Icon" />
+                    <ColorSwatchIcon class="Icon"/>
                     <p class="Title">Dashboard</p>
-                </div></router-link
+                </div>
+            </router-link
             >
             <router-link to="/inventory">
                 <div
@@ -27,7 +28,7 @@
                             : 'Nav__Link',
                     ]"
                 >
-                    <CollectionIcon class="Icon" />
+                    <CollectionIcon class="Icon"/>
                     <p class="Title">Categories/Products</p>
                 </div>
             </router-link>
@@ -39,7 +40,7 @@
                             : 'Nav__Link',
                     ]"
                 >
-                    <AdjustmentsIcon class="Icon" />
+                    <AdjustmentsIcon class="Icon"/>
                     <p class="Title">Stock</p>
                 </div>
             </router-link>
@@ -51,7 +52,7 @@
                             : 'Nav__Link',
                     ]"
                 >
-                    <ShoppingBagIcon class="Icon" />
+                    <ShoppingBagIcon class="Icon"/>
                     <p class="Title">Sales</p>
                 </div>
             </router-link>
@@ -63,9 +64,10 @@
                             : 'Nav__Link',
                     ]"
                 >
-                    <CreditCardIcon class="Icon" />
+                    <CreditCardIcon class="Icon"/>
                     <p class="Title">Expenses</p>
-                </div></router-link
+                </div>
+            </router-link
             >
             <router-link to="/transactions">
                 <div
@@ -75,9 +77,22 @@
                             : 'Nav__Link',
                     ]"
                 >
-                    <CreditCardIcon class="Icon" />
+                    <CreditCardIcon class="Icon"/>
                     <p class="Title">Audit Trail</p>
-                </div></router-link
+                </div>
+            </router-link>
+            <router-link to="/suppliers">
+                <div
+                    :class="[
+                        activeRoute == 'suppliers'
+                            ? 'Nav__Link__Active'
+                            : 'Nav__Link',
+                    ]"
+                >
+                    <CreditCardIcon class="Icon"/>
+                    <p class="Title">Suppliers</p>
+                </div>
+            </router-link
             >
             <div v-if="userInfo.role == admin">
                 <router-link to="/users">
@@ -88,14 +103,14 @@
                                 : 'Nav__Link',
                         ]"
                     >
-                        <UsersIcon class="Icon" />
+                        <UsersIcon class="Icon"/>
                         <p class="Title">Users</p>
                     </div>
                 </router-link>
             </div>
         </div>
         <div class="Sign__Out">
-            <LogoutIcon class="Icon" @click="logout" />
+            <LogoutIcon class="Icon" @click="logout"/>
         </div>
     </div>
 </template>
@@ -112,7 +127,7 @@ import {
     CreditCardIcon,
     LogoutIcon,
 } from "@heroicons/vue/outline";
-import { mapActions, mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
     components: {
@@ -172,6 +187,7 @@ export default {
         font-size: 30px;
         cursor: pointer;
     }
+
     .User__Profile {
         display: flex;
         gap: 15px;
@@ -182,12 +198,14 @@ export default {
         border-radius: 3px;
         margin-left: 35px;
         cursor: pointer;
+
         .User__Icon {
             width: 25px;
             object-fit: contain;
             color: #fff;
         }
     }
+
     .Nav__Options {
         display: flex;
         flex-direction: column;
@@ -209,6 +227,7 @@ export default {
             .Icon {
                 height: 25px;
             }
+
             .Title {
                 color: rgb(203 213 225);
 
@@ -217,6 +236,7 @@ export default {
                 }
             }
         }
+
         .Nav__Link__Active {
             display: flex;
             gap: 10px;
@@ -229,14 +249,17 @@ export default {
             .Icon {
                 height: 25px;
             }
+
             .Title {
                 color: rgb(203 213 225);
+
                 &:hover {
                     color: #fff;
                 }
             }
         }
     }
+
     .Sign__Out {
         position: absolute;
         display: grid;
@@ -245,6 +268,7 @@ export default {
         padding: 30px;
         bottom: 0;
         width: 100%;
+
         .Icon {
             object-fit: contain;
             height: 25px;

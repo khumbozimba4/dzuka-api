@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import Dashboard from "../pages/Dashboard.vue";
 import Stock from "../pages/Stock.vue";
 import Inventory from "../pages/Inventory.vue";
@@ -12,6 +12,8 @@ import Expenses from "../pages/Expenses.vue";
 import Login from "../pages/Login.vue";
 import Transactions from "../pages/Transactions.vue";
 import History from "../pages/History.vue";
+import Suppliers from "../pages/Suppliers";
+
 const routes = [
     {
         path: "/",
@@ -91,6 +93,14 @@ const routes = [
         component: Analytics,
         meta: {
             title: "Analytics",
+        },
+    },
+    {
+        path: "/suppliers",
+        name: "suppliers",
+        component: Suppliers,
+        meta: {
+            title: "Suppliers",
         },
     },
 
