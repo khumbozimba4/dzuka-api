@@ -89,7 +89,7 @@ export default {
     }
 
     form {
-        background: #fff;
+        background: rgb(243 244 246);
         width: 30%;
         justify-items: center;
         display: flex;

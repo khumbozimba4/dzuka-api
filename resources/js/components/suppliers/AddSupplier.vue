@@ -14,12 +14,16 @@
                 <input name="name" v-model="name" required/>
             </div>
             <div class="Input__Container">
-                <label for="phone_number">Phone Number</label>
-                <input name="phone_number" type="number" v-model="phone_number" required/>
-            </div>
-            <div class="Input__Container">
                 <label for="location">Location</label>
                 <input name="location" v-model="location" required/>
+            </div>
+            <div class="Input__Container">
+                <label for="phone_number">Phone Number</label>
+                <input name="phone_number" type="number" v-model="phone_number" maxlength = "13" required/>
+            </div>
+            <div class="Input__Container">
+                <label for="pin">Pin (4 digits)</label>
+                <input name="pin" type="password" v-model="pin" maxlength = "4" required/>
             </div>
             <button>Add</button>
 
@@ -39,17 +43,20 @@ export default {
             name: "",
             location: "",
             phone_number: null,
+            pin: null,
             errorMessage: "",
         };
     },
     methods: {
         ...mapActions(["changeLoading"]),
         addSupplier() {
+            this.changeLoading();
             axios
                 .post("api/suppliers",{
                     name: this.name,
                     location: this.location,
-                    phone_number: this.phone_number
+                    phone_number: this.phone_number,
+                    pin: this.pin
                 })
                 .then(() => {
                     this.$emit("closeModal");
@@ -74,19 +81,24 @@ export default {
 
 <style lang="scss" scoped>
 .Main__Wrap {
+    z-index: 9999;
     position: absolute;
-    border-top: 1px solid gray;
-    background: #fff;
-    z-index: 999;
-    top: 50px;
-    right: 200px;
-    border-radius: 5px;
-    width: 500px;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    display: grid;
+    place-items: center;
 
     form {
+        width: 50%;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+        background: #fff;
         padding: 20px;
+        border-radius: 10px;
+
         h1 {
             font-weight: 800;
         }

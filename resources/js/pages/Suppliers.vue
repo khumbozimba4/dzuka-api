@@ -1,8 +1,8 @@
 <template>
     <div class="Main__Wrapper">
         <ConfirmDelete
-            @toggleCancel="toggleCancel"
-            @toggleDelete="toggleDelete"
+            @toggleCancel="confirmDelete = false"
+            @toggleDelete="deleteSupplier"
             v-if="confirmDelete"
         />
         <div class="NavBar__Container">
@@ -31,14 +31,14 @@
                 <div class="Right__Side">
                     <div
                         class="Add__Category"
-                        @click="isOpen = !isOpen"
+                        @click="addSupplier = !addSupplier"
                         v-if="userInfo.role !== finance"
                     >
                         Add Supplier
                     </div>
                     <PrinterIcon class="Icon"/>
                 </div>
-                <AddCategory @getSuppliers="getSuppliers" v-if="addSupplier" @closeModal="addSupplier = false"/>
+                <AddSupplier @getSuppliers="getSuppliers" v-if="addSupplier" @closeModal="addSupplier = false"/>
             </div>
             <div class="Table__Container">
                 <table class="Table">
@@ -66,13 +66,13 @@
                         <td class="Icons" v-if="userInfo.role !== finance">
                             <PencilIcon
                                 class="Icon"
-                                @click="editSupplier(supplier)"
+                                @click="toggleEditSupplier(supplier)"
                             />
                             <TrashIcon
                                 class="Icon Icon_Delete"
                                 @click="toggleDeleteSupplier(supplier.id)"
                             />
-                            <EditCategory
+                            <EditSupplier
                                 :supplier="supplier"
                                 @getSuppliers="getSuppliers"
                                 @closeModal="editSupplier = false"
@@ -89,10 +89,6 @@
 
 <script>
 import axios from "axios";
-import AddCategory from "../components/AddCategory";
-import CategorySearch from "../components/CategorySearch";
-import EditCategory from "../components/EditCategory";
-import ConfirmDelete from "../components/ConfirmDelete";
 import {
     AdjustmentsIcon,
     ArrowNarrowRightIcon,
@@ -102,14 +98,16 @@ import {
     SearchIcon,
     TrashIcon
 } from "@heroicons/vue/outline";
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
+import AddSupplier from "../components/suppliers/AddSupplier";
+import EditSupplier from "../components/suppliers/EditSupplier";
+import ConfirmDelete from "../components/ConfirmDelete";
 
 export default {
     name: "Suppliers",
     components: {
-        AddCategory,
-        CategorySearch,
-        EditCategory,
+        EditSupplier,
+        AddSupplier,
         ConfirmDelete,
         SearchIcon,
         TrashIcon,
@@ -137,6 +135,7 @@ export default {
         ...mapGetters(["userInfo"]),
     },
     methods: {
+        ...mapActions(["changeLoading"]),
         getSuppliers() {
             axios.get('api/suppliers')
                 .then(({data}) => {
@@ -150,15 +149,19 @@ export default {
             this.deletedItem = id;
             this.confirmDelete = true;
         },
-        toggleDelete() {
+        toggleEditSupplier(id){
+            this.editSupplier = true;
+            this.selected = id;
+        },
+        deleteSupplier() {
             this.changeLoading();
             axios
-                .delete(`api/suppliers/${this.deletedItem}/destroy`)
+                .delete(`api/suppliers/${this.deletedItem}`)
                 .then(() => {
                     this.confirmDelete = false;
                 })
                 .then(() => {
-                    this.getCategories();
+                    this.getSuppliers();
                 })
                 .then(() => {
                     this.changeLoading();
@@ -166,9 +169,6 @@ export default {
                 .catch((err) => {
                     this.errorMessage = err.message;
                 });
-        },
-        toggleCancel() {
-            this.confirmDelete = false;
         },
     }
 }
@@ -237,7 +237,6 @@ export default {
         0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
-            position: relative;
             display: flex;
             justify-content: space-between;
             padding: 20px;

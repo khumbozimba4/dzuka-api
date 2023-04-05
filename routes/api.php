@@ -50,6 +50,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::group(['prefix' => 'suppliers'], function () {
         Route::get('/', [SupplierController::class, 'index']);
         Route::post('/', [SupplierController::class, 'store']);
+        Route::patch('/{supplier}', [SupplierController::class, 'update']);
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'categories'], function () {

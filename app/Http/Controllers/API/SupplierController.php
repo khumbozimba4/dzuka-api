@@ -18,4 +18,14 @@ class SupplierController extends Controller
     {
         return Supplier::create($request->validated());
     }
+
+    public function update(SupplierRequest $request, $supplier)
+    {
+       return Supplier::find($supplier)->update($request->validated());
+    }
+
+    public function destroy($supplier)
+    {
+       return Supplier::find($supplier)->delete();
+    }
 }
