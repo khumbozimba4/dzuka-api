@@ -1,65 +1,50 @@
 <template>
-    <div
-        class="Main__Wrap"
-        ref="login"
-        :style="{
-            backgroundImage: `url(${Image})`,
-            backgroundSize: 'cover',
-        }"
-    >
-        <div class="Modal__Content">
-            <div class="Main__Content">
-                <div class="Logo__Content">
-                    <img :src="'/images/login-design.png'" alt="" />
-                </div>
-                <div class="form-wrap">
-                    <form class="login" @submit.prevent="login">
-                        <h2>Login</h2>
-                        <div class="inputs">
-                            <!-- Email -->
-                            <div class="input">
-                                <input
-                                    placeholder="Email"
-                                    type="email"
-                                    v-model="email"
-                                />
-                                <MailIcon class="icon" />
-                            </div>
-                            <!-- Password -->
-                            <div class="input">
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    v-model="password"
-                                />
-                                <LockClosedIcon class="icon" />
-                            </div>
-                            <!-- Error -->
-                            <div class="error text-red-500" v-show="error">
-                                {{ errorMessage }}
-                            </div>
-                            <!-- Forgot your password -->
-                            <!-- <router-link class="forgot-password" to="#">
-                                Forgot your password?
-                            </router-link> -->
-                            <!-- Sign in -->
-                            <div>
-                                <button class="button">Sign in</button>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- ---End Form--- -->
-                    <!-- background -->
-                </div>
+    <div class="Main__Wrap">
+        <!--        @Cover Image-->
+        <div class="Cover__Image"
+             :style="{
+                backgroundImage: `url(${Image})`,
+                backgroundSize: 'cover',
+            }"
+        ></div>
+        <!--        @Form-->
+        <form @submit.prevent="login">
+            <img :src="'/images/6to6-black.png'" style="width: 150px; height: 150px; object-fit: contain">
+            <h2>Login</h2>
+            <!-- Email -->
+            <div class="input__container">
+                <MailIcon class="icon"/>
+                <input
+                    placeholder="Email"
+                    type="email"
+                    v-model="email"
+                />
             </div>
-        </div>
+            <!-- Password -->
+            <div class="input__container">
+                <LockClosedIcon class="icon"/>
+                <input
+                    type="password"
+                    placeholder="Password"
+                    v-model="password"
+                />
+            </div>
+            <!-- Error -->
+            <div class="error text-red-500" v-show="error">
+                {{ errorMessage }}
+            </div>
+            <div>
+                <button class="button">Sign in</button>
+            </div>
+        </form>
     </div>
 </template>
 
 <script>
-import { MailIcon, LockClosedIcon } from "@heroicons/vue/outline";
+import {MailIcon, LockClosedIcon} from "@heroicons/vue/outline";
 import Loading from "../components/Loading.vue";
-import { mapGetters, mapActions } from "vuex";
+import {mapGetters, mapActions} from "vuex";
+
 export default {
     props: ["modalMessage"],
     components: {
@@ -71,7 +56,7 @@ export default {
         return {
             email: null,
             password: null,
-            Image: "'/images/bg.jpg'",
+            Image: "'/images/bg3.jpg'",
         };
     },
     methods: {
@@ -96,140 +81,72 @@ export default {
 <style lang="scss" scoped>
 .Main__Wrap {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 101;
-    position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
 
-    .Modal__Content {
+    .Cover__Image {
+        width: 70%;
+        height: 100vh;
+    }
+
+    form {
+        background: rgb(243 244 246);
+        width: 30%;
+        justify-items: center;
         display: flex;
-        justify-content: center;
-        border-radius: 8px;
-        width: 50%;
-        height: 80%;
-        background-color: rgba(30, 41, 59, 0.8);
+        flex-direction: column;
+        align-items: center;
+        padding-top: 5%;
 
-        .Main__Content {
+        h2 {
+            font-size: 25px;
+            color: rgba(30, 41, 59, 0.9);
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        .input__container {
+            padding: 15px;
             display: flex;
-            flex-direction: column;
             align-items: center;
+            margin-bottom: 25px;
+            width: 80%;
+            border-radius: 5px;
+            background: rgb(232,240,254);
+            border: 1px solid rgb(229 231 235);
 
-            .Logo__Content {
-                display: flex;
-                flex-direction: column;
-                img {
-                    width: 300px;
-                    object-fit: contain;
-                    padding: 40px 0;
-                }
+            .icon {
+                width: 20px;
+                height: 20px;
+                object-fit: contain;
+                margin: 10px;
             }
-            .form-wrap {
-                padding: 20px 0;
-                overflow: hidden;
-                display: flex;
-                width: 400px;
-                border-radius: 5px;
-                background-color: rgba(118, 134, 160, 0.8);
-                .login-register {
-                    margin-bottom: 32px;
 
-                    .router-link {
-                        color: #000;
-                    }
-                }
-                form {
-                    text-align: center;
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    flex: 1;
-                    @media (min-width: 900px) {
-                        padding: 0 58px;
-                    }
-                    p {
-                        .router-link {
-                            cursor: pointer;
-                        }
-                    }
+            input {
+                flex: 1;
+                border-radius: 2px;
+                border: none;
+                background: rgb(232,240,254);
+            }
+        }
 
-                    h2 {
-                        text-align: center;
-                        font-size: 32px;
-                        color: rgba(30, 41, 59, 0.9);
-                        margin-bottom: 40px;
-                    }
+        .button {
+            transition: 500ms ease all;
+            cursor: pointer;
+            margin-top: 24px;
+            padding: 15px;
+            background-color: rgba(30, 41, 59, 0.8);
+            color: #fff;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            width: 100px;
 
-                    .inputs {
-                        width: 100%;
-                        max-width: 350px;
+            &:focus {
+                outline: none;
+            }
 
-                        .input {
-                            position: relative;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            margin-bottom: 8px;
-
-                            input {
-                                width: 100%;
-                                border: none;
-                                padding: 4px 4px 4px 30px;
-                                height: 50px;
-                                border-radius: 2px;
-
-                                &:focus {
-                                    outline: none;
-                                }
-                            }
-                            .icon {
-                                width: 15px;
-                                object-fit: contain;
-                                position: absolute;
-                                left: 6px;
-                            }
-                            .error {
-                                color: rgb(182, 86, 86);
-                            }
-                        }
-                    }
-
-                    .forgot-password {
-                        text-decoration: none;
-                        color: #000;
-                        cursor: pointer;
-                        font-size: 14px;
-                        margin: 16px 0 32px;
-                        border-bottom: 1px solid transparent;
-                        transition: 0.5s ease all;
-
-                        &:hover {
-                            border-color: #303030;
-                        }
-                    }
-
-                    .button {
-                        transition: 500ms ease all;
-                        cursor: pointer;
-                        margin-top: 24px;
-                        padding: 8px 12px;
-                        background-color: rgba(30, 41, 59, 0.8);
-                        color: #fff;
-                        border-radius: 10px;
-                        bottom: none;
-
-                        &:focus {
-                            outline: none;
-                        }
-
-                        &:hover {
-                            background-color: rgba(19, 28, 43, 0.8);
-                        }
-                    }
-                }
+            &:hover {
+                background-color: rgba(19, 28, 43, 0.8);
             }
         }
     }

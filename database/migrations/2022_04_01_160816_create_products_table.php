@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->string('product_name');
             $table->foreignId('category_id')->constrained()->onUpdate('cascade');
             $table->float('price');
-            $table->float('stock')->default(0);
+            $table->integer('stock')->default(0);
             $table->string('description')->nullable();
             $table->string('product_photo_path')->nullable();
             $table->timestamps();

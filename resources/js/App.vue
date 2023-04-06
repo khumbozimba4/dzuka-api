@@ -12,9 +12,9 @@
 
 <script>
 import SideBar from "./components/SideBar.vue";
-import RegisterModal from "./components/RegisterModal.vue";
+import RegisterModal from "./components/user/RegisterModal.vue";
 import Loading from "./components/Loading.vue";
-import UserProfile from "./components/UserProfile.vue";
+import UserProfile from "./components/user/UserProfile.vue";
 import { mapGetters } from "vuex";
 export default {
     components: {

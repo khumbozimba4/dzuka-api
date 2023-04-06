@@ -50,6 +50,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::group(['prefix' => 'suppliers'], function () {
         Route::get('/', [SupplierController::class, 'index']);
         Route::post('/', [SupplierController::class, 'store']);
+        Route::patch('/{supplier}', [SupplierController::class, 'update']);
+        Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'categories'], function () {
@@ -57,8 +59,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
         Route::get('/search/{name}',[CategoriesController::class,'search']);
         Route::get('/{category}/products',[CategoriesController::class,'show']);
         Route::post('/store',[CategoriesController::class,'store']);
-        Route::patch('/{id}/update',[CategoriesController::class,'update']);
-        Route::delete('/{id}/destroy',[CategoriesController::class,'destroy']);
+        Route::patch('/{category}/update',[CategoriesController::class,'update']);
+        Route::delete('/{category}/destroy',[CategoriesController::class,'destroy']);
     });
 
     Route::group(['prefix' => 'products'], function () {

@@ -104,7 +104,7 @@ import {
     ColorSwatchIcon,
 } from "@heroicons/vue/outline";
 import Card from "../components/Card.vue";
-import ProductSearch from "../components/ProductSearch.vue";
+import ProductSearch from "../components/products/ProductSearch.vue";
 import moment from "moment";
 export default {
     components: {
