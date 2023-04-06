@@ -33,7 +33,8 @@
                     <thead class="Table__Head">
                         <tr class="Tr">
                             <td>#</td>
-                            <td>Product name</td>
+                            <td>Product</td>
+                            <td>Stock</td>
                             <td>Action</td>
                         </tr>
                     </thead>
@@ -50,7 +51,7 @@
                                 <strong>{{ index + 1 }}</strong>
                             </td>
                             <td>{{ product.product_name }}</td>
-
+                            <td>{{ product.stock }}</td>
                             <td class="Allocate__Stock">
                                 <button
                                     @click="toggleEdit(index)"
@@ -88,14 +89,12 @@ import {
     PencilIcon,
     XIcon,
 } from "@heroicons/vue/outline";
-import EditStock from "../components/EditStock.vue";
-import AddStock from "../components/stock/AddStock.vue";
+import EditStock from "../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 export default {
     components: {
         EditStock,
-        AddStock,
         SearchIcon,
         MinusIcon,
         CollectionIcon,
@@ -227,7 +226,6 @@ export default {
         }
     }
     .Contents__Container {
-        position: relative;
         margin: 20px;
         background-color: #fff;
         border-radius: 3px;

@@ -61,7 +61,7 @@
                             <strong>{{ index + 1 }}</strong>
                         </td>
                         <td>{{ supplier.name }}</td>
-                        <td>{{ supplier.phone_number }}</td>
+                        <td>{{ getPhoneNumber(`${supplier.phone_number}`) }}</td>
                         <td>{{ supplier.location }}</td>
                         <td class="Icons" v-if="userInfo.role !== finance">
                             <PencilIcon
@@ -102,6 +102,7 @@ import {mapActions, mapGetters} from "vuex";
 import AddSupplier from "../components/suppliers/AddSupplier";
 import EditSupplier from "../components/suppliers/EditSupplier";
 import ConfirmDelete from "../components/ConfirmDelete";
+import {PhoneNumberFormatter} from "../factories/PhoneNumberFormatterFactory";
 
 export default {
     name: "Suppliers",
@@ -149,7 +150,7 @@ export default {
             this.deletedItem = id;
             this.confirmDelete = true;
         },
-        toggleEditSupplier(id){
+        toggleEditSupplier(id) {
             this.editSupplier = true;
             this.selected = id;
         },
@@ -170,6 +171,9 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
+        getPhoneNumber(phone) {
+            return PhoneNumberFormatter.getPhoneNumber(phone);
+        }
     }
 }
 </script>

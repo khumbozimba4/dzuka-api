@@ -1,20 +1,21 @@
 <template>
-    <div class="Main__Wrap">
-        <div style="display: flex; justify-content: space-between">
-            <strong style="text-transform: capitalize"
-                >Submit Stock - {{ product.product_name }}</strong
-            >
-            <button @click="close">Close</button>
-        </div>
-        <div class="Input__Container">
-            <p>
-                Enter counted stock for <strong>{{ getDate() }}</strong> end of
-                business day
-            </p>
-            <br />
-        </div>
-
+    <div class="Modal">
         <form @submit.prevent="addToStock">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>
+                    <strong style="text-transform: capitalize"
+                    >Submit Stock - {{ product.product_name }}</strong
+                    >
+                </h1>
+                <button @click="close">Close</button>
+            </div>
+            <div class="Input__Container">
+                <p>
+                    Enter counted stock for <strong>{{ getDate() }}</strong> end of
+                    business day
+                </p>
+                <br/>
+            </div>
             <div class="Input__Container">
                 <label for="input_stock"><strong>Quantity</strong> </label>
                 <input name="input_stock" v-model="input_stock" type="number" required/>
@@ -30,7 +31,8 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import { mapActions, mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
+
 export default {
     props: ["product"],
     emits: ["getProducts", "close"],
@@ -88,7 +90,7 @@ export default {
     border-radius: 5px;
     padding: 20px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
 
     .Select__Boxes {
         display: flex;
@@ -102,6 +104,7 @@ export default {
             flex: 0.5;
             background-color: rgb(85, 120, 175);
         }
+
         .Button__inActive {
             padding: 10px 20px;
             color: #000;
@@ -115,6 +118,7 @@ export default {
             margin-top: 5px;
             display: flex;
             flex-direction: column;
+
             input {
                 margin-top: 5px;
                 background: none;
@@ -123,6 +127,7 @@ export default {
                 color: gray;
             }
         }
+
         button {
             padding: 5px 10px;
             background-color: rgb(30 41 59);

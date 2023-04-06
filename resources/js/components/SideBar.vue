@@ -6,105 +6,18 @@
             <p>{{ userInfo.name }}</p>
         </div>
 
-        <div class="Nav__Options">
-            <router-link to="/dashboard">
-                <div
-                    :class="[
-                        activeRoute == 'dashboard'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <ColorSwatchIcon class="Icon"/>
-                    <p class="Title">Dashboard</p>
-                </div>
-            </router-link
-            >
-            <router-link to="/inventory">
-                <div
-                    :class="[
-                        activeRoute == 'inventory'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <CollectionIcon class="Icon"/>
-                    <p class="Title">Categories/Products</p>
-                </div>
-            </router-link>
-            <router-link to="/stock">
-                <div
-                    :class="[
-                        activeRoute == 'stock'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <AdjustmentsIcon class="Icon"/>
-                    <p class="Title">Stock</p>
-                </div>
-            </router-link>
-            <router-link to="/sales">
-                <div
-                    :class="[
-                        activeRoute == 'sales'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <ShoppingBagIcon class="Icon"/>
-                    <p class="Title">Sales</p>
-                </div>
-            </router-link>
-            <router-link to="/expenses">
-                <div
-                    :class="[
-                        activeRoute == 'expenses'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <CreditCardIcon class="Icon"/>
-                    <p class="Title">Expenses</p>
-                </div>
-            </router-link
-            >
-            <router-link to="/transactions">
-                <div
-                    :class="[
-                        activeRoute == 'transactions'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <CreditCardIcon class="Icon"/>
-                    <p class="Title">Audit Trail</p>
-                </div>
-            </router-link>
-            <router-link to="/suppliers">
-                <div
-                    :class="[
-                        activeRoute == 'suppliers'
-                            ? 'Nav__Link__Active'
-                            : 'Nav__Link',
-                    ]"
-                >
-                    <CreditCardIcon class="Icon"/>
-                    <p class="Title">Suppliers</p>
-                </div>
-            </router-link
-            >
-            <div v-if="userInfo.role == admin">
-                <router-link to="/users">
+        <div class="Nav__Options" v-for="(item, index) in navigation" :key="index">
+            <div v-if="hasRole(item.role)">
+                <router-link :to="`/${item.route_name}`">
                     <div
                         :class="[
-                            activeRoute == 'users'
+                            activeRoute == item.route_name
                                 ? 'Nav__Link__Active'
                                 : 'Nav__Link',
                         ]"
                     >
-                        <UsersIcon class="Icon"/>
-                        <p class="Title">Users</p>
+                        <component :is="item.icon" class="Icon"/>
+                        <p class="Title">{{ item.title }}</p>
                     </div>
                 </router-link>
             </div>
@@ -128,6 +41,7 @@ import {
     LogoutIcon,
 } from "@heroicons/vue/outline";
 import {mapActions, mapGetters} from "vuex";
+import {NavOptions} from "../assets/data/nav-options";
 
 export default {
     components: {
@@ -142,7 +56,9 @@ export default {
         CreditCardIcon,
     },
     data() {
-        return {};
+        return {
+            navigation : []
+        };
     },
     computed: {
         ...mapGetters(["userInfo", "user"]),
@@ -152,19 +68,22 @@ export default {
     },
     created() {
         this.getActiveRoute();
-        this.setAdminVariable();
+        this.getNavOptions();
     },
     methods: {
         ...mapActions(["logout"]),
         getActiveRoute() {
             this.activeRoute = this.$route.path;
         },
-        setAdminVariable() {
-            this.admin = "admin";
-        },
         openUserProfileModal() {
             this.$store.commit("setUserProfileModal", true);
         },
+        getNavOptions() {
+            this.navigation = NavOptions;
+        },
+        hasRole(roles = []) {
+            return roles.includes(this.userInfo.role)
+        }
     },
 };
 </script>
@@ -230,6 +149,7 @@ export default {
 
             .Title {
                 color: rgb(203 213 225);
+                text-transform: capitalize;
 
                 &:hover {
                     color: #fff;
@@ -252,6 +172,7 @@ export default {
 
             .Title {
                 color: rgb(203 213 225);
+                text-transform: capitalize;
 
                 &:hover {
                     color: #fff;

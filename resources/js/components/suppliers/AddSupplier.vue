@@ -1,5 +1,5 @@
 <template>
-    <div class="Main__Wrap">
+    <div class="Modal">
         <form @submit.prevent="addSupplier">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1>
@@ -79,8 +79,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.Main__Wrap {
+<style lang="scss">
+.Modal {
     z-index: 9999;
     position: absolute;
     width: 100vw;

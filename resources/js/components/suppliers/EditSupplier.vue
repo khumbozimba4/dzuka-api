@@ -1,5 +1,5 @@
 <template>
-    <div class="Main__Wrap">
+    <div class="Modal">
         <form @submit.prevent="editSupplier">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1>
@@ -25,7 +25,7 @@
                 <label for="pin">Pin (4 digits)</label>
                 <input name="pin" type="number" v-model="pin" required/>
             </div>
-            <button>Add</button>
+            <button>Save</button>
 
             <div v-if="errorMessage">{{ errorMessage }}</div>
         </form>
@@ -89,63 +89,3 @@ export default {
     },
 };
 </script>
-
-
-<style lang="scss" scoped>
-.Main__Wrap {
-    z-index: 9999;
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: grid;
-    place-items: center;
-
-    form {
-        width: 50%;
-        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-
-        h1 {
-            font-weight: 800;
-        }
-
-        .Input__Container {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-
-            input {
-                background: none;
-                outline: none;
-                border-bottom: 1px solid gray;
-                color: gray;
-            }
-        }
-
-        .File_Input {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 10px
-        }
-
-        button {
-            padding: 5px 10px;
-            background-color: rgb(30 41 59);
-            color: #fff;
-            border-radius: 3px;
-            margin-top: 10px;
-
-            &:hover {
-                background: rgb(15 23 42);
-            }
-        }
-    }
-}
-</style>

@@ -1,7 +1,14 @@
 <template>
-    <div class="Main__Wrap">
+    <div class="Modal">
         <form @submit.prevent="addExpense">
-            <h1>Record Expense</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>
+                    <strong style="text-transform: capitalize"
+                    >Record Expense</strong
+                    >
+                </h1>
+                <button @click="close">Close</button>
+            </div>
             <div class="Input__Container">
                 <label for="date">Date</label>
                 <input name="date" type="date" v-model="date" required />
@@ -42,7 +49,7 @@
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 export default {
-    emits: ["getExpenses", "closeAdd"],
+    emits: ["getExpenses", "closeModal"],
     data() {
         return {
             date: null,
@@ -67,21 +74,11 @@ export default {
                     amount: this.amount,
                     description: this.description,
                 })
-                .then((res) => {
-                    this.addedExpense = res.data;
-                })
                 .then(() => {
-                    this.$emit("closeAdd");
+                    this.$emit("closeModal");
                 })
                 .then(() => {
                     this.$emit("getExpenses");
-                })
-                .then(() => {
-                    axios.post("api/transactions/store", {
-                        user_id: this.userInfo.id,
-                        transaction_name: "Record Expenses",
-                        description: `Added expense Id: ${this.addedExpense.id} Name: ${this.addedExpense.expense_on}`,
-                    });
                 })
                 .then(() => {
                     this.changeLoading();
@@ -91,50 +88,9 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
+        close(){
+            this.$emit("closeModal")
+        }
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.Main__Wrap {
-    position: absolute;
-    z-index: 99;
-    border-top: 1px solid gray;
-    background: #fff;
-    width: 400px;
-    top: 50px;
-    right: 200px;
-    border-radius: 5px;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
-
-    form {
-        padding: 20px;
-        h1 {
-            font-weight: 800;
-        }
-        .Input__Container {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            input {
-                background: none;
-                outline: none;
-                border-bottom: 1px solid gray;
-                color: gray;
-            }
-        }
-        button {
-            padding: 5px 10px;
-            background-color: rgb(30 41 59);
-            color: #fff;
-            border-radius: 3px;
-            margin-top: 10px;
-
-            &:hover {
-                background: rgb(15 23 42);
-            }
-        }
-    }
-}
-</style>

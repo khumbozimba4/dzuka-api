@@ -1,17 +1,12 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Dashboard from "../pages/Dashboard.vue";
 import Stock from "../pages/Stock.vue";
-import Inventory from "../pages/Inventory.vue";
+import Categories from "../pages/categories";
 import Products from "../pages/Products.vue";
 import Sales from "../pages/Sales.vue";
-import Sale from "../pages/Sale.vue";
-import Analytics from "../pages/Analytics.vue";
-import About from "../pages/About.vue";
 import Users from "../pages/Users.vue";
 import Expenses from "../pages/Expenses.vue";
 import Login from "../pages/Login.vue";
-import Transactions from "../pages/Transactions.vue";
-import History from "../pages/History.vue";
 import Suppliers from "../pages/Suppliers";
 
 const routes = [
@@ -32,11 +27,11 @@ const routes = [
         },
     },
     {
-        path: "/inventory",
-        name: "inventory",
-        component: Inventory,
+        path: "/categories",
+        name: "categories",
+        component: Categories,
         meta: {
-            title: "Inventory",
+            title: "Categories",
         },
     },
     {
@@ -45,14 +40,6 @@ const routes = [
         component: Products,
         meta: {
             title: "Products",
-        },
-    },
-    {
-        path: "/product/history",
-        name: "history",
-        component: History,
-        meta: {
-            title: "Product History",
         },
     },
     {
@@ -72,27 +59,11 @@ const routes = [
         },
     },
     {
-        path: "/sale",
-        name: "sale",
-        component: Sale,
-        meta: {
-            title: "Sale",
-        },
-    },
-    {
         path: "/expenses",
         name: "expenses",
         component: Expenses,
         meta: {
             title: "Expenses",
-        },
-    },
-    {
-        path: "/analytics",
-        name: "analytics",
-        component: Analytics,
-        meta: {
-            title: "Analytics",
         },
     },
     {
@@ -110,22 +81,6 @@ const routes = [
         component: Users,
         meta: {
             title: "Users",
-        },
-    },
-    {
-        path: "/about",
-        name: "about",
-        component: About,
-        meta: {
-            title: "About",
-        },
-    },
-    {
-        path: "/transactions",
-        name: "transactions",
-        component: Transactions,
-        meta: {
-            title: "Transactions",
         },
     },
 ];

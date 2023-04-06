@@ -90,8 +90,8 @@ import {
     TrashIcon,
 } from "@heroicons/vue/outline";
 import { mapActions, mapGetters } from "vuex";
-import UserSearch from "../components/UserSearch.vue";
-import EditUser from "../components/EditUser.vue";
+import UserSearch from "../components/user/UserSearch.vue";
+import EditUser from "../components/user/EditUser.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 export default {

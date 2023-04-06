@@ -1,5 +1,5 @@
 <template>
-    <div class="Main__Wrap">
+    <div class="Modal">
         <div
             style="
                 display: flex;
@@ -10,45 +10,56 @@
             <strong style="text-transform: capitalize">Edit</strong>
             <button @click="close">Close</button>
         </div>
-        <form @submit.prevent="editCategory">
+        <form @submit.prevent="editUser">
             <input type="text" v-model="name" />
+            <input type="text" v-model="email" />
+            <label for="role">Change Role</label>
+            <select id="role" name="role" v-model="role" style="padding:10px">
+                <option value="admin">Admin</option>
+                <option value="operations">Operations</option>
+                <option value="finance">Finance</option>
+            </select>
             <button type="submit">Save</button>
         </form>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 import { mapActions } from "vuex";
 export default {
-    props: ["category"],
-    emits: ["getCategories", "closeModal"],
+    props: ["user"],
+    emits: ["getUsers", "closeModal"],
     created() {
-        this.getCategory();
+        this.getUser();
     },
     data() {
         return {
             name: "",
-            description: "",
+            email: "",
+            role: "",
         };
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        getCategory() {
-            this.name = this.category.category_name;
-            this.description = this.category.description;
+        getUser() {
+            this.name = this.user.name;
+            this.email = this.user.email;
+            this.role = this.user.role;
         },
-        editCategory() {
+        editUser() {
             this.changeLoading();
             axios
-                .patch(`api/categories/${this.category.id}/update`, {
-                    category_name: this.name,
-                    description: this.description,
+                .patch(`api/users/${this.user.id}/update`, {
+                    name: this.name,
+                    email: this.email,
+                    role: this.role,
                 })
                 .then(() => {
                     this.$emit("closeModal");
                 })
                 .then(() => {
-                    this.$emit("getCategories");
+                    this.$emit("getUsers");
                 })
                 .then(() => {
                     this.changeLoading();
@@ -64,36 +75,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.Main__Wrap {
-    position: absolute;
-    margin-top: 10px;
-    width: 35%;
-    right: 10%;
-    background-color: #fff;
-    padding: 20px;
-    z-index: 99;
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        input {
-            width: 100%;
-            padding: 10px;
-        }
-        button {
-            padding: 5px 10px;
-            background-color: rgb(30 41 59);
-            color: #fff;
-            border-radius: 3px;
-            margin-top: 10px;
-
-            &:hover {
-                background: rgb(15 23 42);
-            }
-        }
-    }
-}
-</style>

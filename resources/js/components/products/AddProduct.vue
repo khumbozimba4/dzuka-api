@@ -1,10 +1,10 @@
 <template>
-    <div class="Main__Wrap">
+    <div class="Modal">
         <form @submit.prevent="addProduct">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1>
                     <strong style="text-transform: capitalize"
-                        >Add Product</strong
+                    >Add Product</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
@@ -29,7 +29,8 @@
             </div>
             <div class="File_Input">
                 <label for="product_photo">Product Photo</label>
-                <input type="file" id="product_photo" ref="product_photo" class="custom-file-input" @change="previewFiles" accept="image/*">
+                <input type="file" id="product_photo" ref="product_photo" class="custom-file-input"
+                       @change="previewFiles" accept="image/*">
             </div>
             <button>Add</button>
 
@@ -40,7 +41,8 @@
 
 <script>
 import axios from "axios";
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
+
 export default {
     emits: ["getProducts", "closeModal"],
     props: ["category_id"],
@@ -50,7 +52,7 @@ export default {
             name: "",
             price: null,
             errorMessage: null,
-            product_photo:'',
+            product_photo: '',
         };
     },
     methods: {
@@ -66,7 +68,7 @@ export default {
             console.log(formData)
             axios
                 .post("api/products/store", formData, {
-                    headers:{
+                    headers: {
                         "Content-Type": "multipart/form-data"
                     }
                 })
@@ -84,60 +86,13 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
-        close(){
+        close() {
             this.$emit("closeModal");
         },
-        previewFiles(){
+        previewFiles() {
             this.product_photo = this.$refs.product_photo.files[0]
             console.log(this.product_photo);
         }
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.Main__Wrap {
-    position: absolute;
-    border-top: 1px solid gray;
-    background: #fff;
-    z-index: 999;
-    top: 50px;
-    right: 200px;
-    border-radius: 5px;
-    width: 500px;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
-
-    form {
-        padding: 20px;
-        h1 {
-            font-weight: 800;
-        }
-        .Input__Container {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            input {
-                background: none;
-                outline: none;
-                border-bottom: 1px solid gray;
-                color: gray;
-            }
-        }
-        .File_Input{
-            display: flex; flex-direction: column; gap: 5px; margin-top: 10px
-        }
-        button {
-            padding: 5px 10px;
-            background-color: rgb(30 41 59);
-            color: #fff;
-            border-radius: 3px;
-            margin-top: 10px;
-
-            &:hover {
-                background: rgb(15 23 42);
-            }
-        }
-    }
-}
-</style>

@@ -1,26 +1,27 @@
 <template>
     <div class="Main__Wrapper">
+        <ConfirmDelete
+            @toggleCancel="toggleCancel"
+            @toggleDelete="toggleDelete"
+            v-if="confirmDelete"
+        />
         <div class="NavBar__Container">
             <div class="Title">
-                <CreditCardIcon class="Icon" />
-                <p>Transactions</p>
+                <CollectionIcon class="Icon" />
+                <p>Product Categories</p>
             </div>
             <div class="Search__Bar">
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search transaction"
+                    placeholder="Search Categories"
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon" />
             </div>
-
             <div class="Options"></div>
         </div>
-        <TransactionSearch v-if="search" :search="search" />
-
-        <div v-if="errorMessage">{{ errorMessage }}</div>
-
+        <CategorySearch v-if="search" :search="search" />
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -28,42 +29,67 @@
                     Filters
                 </div>
                 <div class="Right__Side">
+                    <div
+                        class="Add__Category"
+                        @click="isOpen = !isOpen"
+                        v-if="userInfo.role !== finance"
+                    >
+                        Add Category
+                    </div>
                     <PrinterIcon class="Icon" />
                 </div>
+                <AddCategory @getCategories="getCategories" v-if="isOpen" @closeModal="isOpen = false"/>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
                             <td>#</td>
-                            <td>Date</td>
-                            <td>User</td>
-                            <td>Transaction Name</td>
-                            <td>Description</td>
+                            <td>Product Category</td>
+                            <td>Registered Products</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
+                            <td>View</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="transaction, index in transactions"
-                            :key="transaction.id"
+                            v-for="(category, index) in categories"
+                            :key="category.id"
                         >
                             <td>
                                 <strong>{{ index + 1 }}</strong>
                             </td>
-                            <td>
-                                {{ getDate(transaction.created_at) }}
+                            <td>{{ category.category_name }}</td>
+                            <td>{{ category.products.length }}</td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditCategory(category)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteCategory(category.id)"
+                                />
+                                <EditCategory
+                                    :category="category"
+                                    @getCategories="getCategories"
+                                    @closeModal="editCategoryOpen = false"
+                                    v-if="
+                                        editCategoryOpen &&
+                                        selected == categories[index]
+                                    "
+                                />
                             </td>
-                            <td>{{ transaction.user.name }}</td>
-                            <td>{{ transaction.transaction_name }}</td>
-
-                            <td>{{ transaction.description }}</td>
+                            <td>
+                                <ArrowNarrowRightIcon
+                                    class="Icon"
+                                    @click="gotoProducts(category)"
+                                />
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="p-4" v-if="transactions.length == 0">
-                    No transactions recorded yet
-                </div>
             </div>
         </div>
     </div>
@@ -76,62 +102,108 @@ import {
     SearchIcon,
     PrinterIcon,
     ArrowNarrowRightIcon,
-    ShoppingBagIcon,
-    CreditCardIcon,
     PencilIcon,
+    TrashIcon,
 } from "@heroicons/vue/outline";
-import TransactionSearch from "../components/TransactionSearch.vue";
-import moment from "moment";
+import AddCategory from "../components/categories/AddCategory.vue";
+import CategorySearch from "../components/categories/CategorySearch.vue";
+import EditCategory from "../components/categories/EditCategory.vue";
+import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 export default {
+    name: "categories",
     components: {
-        TransactionSearch,
+        AddCategory,
+        CategorySearch,
+        EditCategory,
+        ConfirmDelete,
         SearchIcon,
+        TrashIcon,
         PencilIcon,
         CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
-        PrinterIcon,
-        CreditCardIcon,
-        ShoppingBagIcon,
     },
     data() {
         return {
-            transactions: [],
             isOpen: false,
-            errorMessage: null,
+            categories: [],
             search: "",
-            editExpenseOpen: false,
-            selected: null,
+            editCategoryOpen: null,
+            selected: [],
+            confirmDelete: false,
+            deletedItem: null,
+            finance: "",
         };
     },
     computed: {
         ...mapGetters(["userInfo"]),
     },
     created() {
-        this.getTransactions();
+        this.getCategories();
+        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        getDate(date) {
-            return moment(date).format("LL");
+        setFinanceVariable() {
+            this.finance = "finance";
         },
-        getTransactions() {
+        getCategories() {
             this.changeLoading();
             axios
-                .get("api/transactions")
-                .then((res) => {
-                    this.transactions = res.data;
+                .get("api/categories")
+                .then((response) => {
+                    this.categories = response.data;
+                })
+                .then(() => {
+                    this.isOpen = false;
                 })
                 .then(() => {
                     this.changeLoading();
                 })
                 .catch((err) => {
                     this.changeLoading();
+                    console.log("error", err);
+                });
+        },
+        gotoProducts(category) {
+            this.$router.push({
+                name: "products",
+                params: {
+                    categoryName: category.category_name,
+                    category_id: category.id,
+                },
+            });
+        },
+        toggleEditCategory(category) {
+            this.selected = category;
+            this.editCategoryOpen = !this.editCategoryOpen;
+        },
+        toggleDeleteCategory(id) {
+            this.deletedItem = id;
+            this.confirmDelete = true;
+        },
+        toggleDelete() {
+            this.changeLoading();
+            axios
+                .delete(`api/categories/${this.deletedItem}/destroy`)
+                .then(() => {
+                    this.confirmDelete = false;
+                })
+                .then(() => {
+                    this.getCategories();
+                })
+                .then(() => {
+                    this.changeLoading();
+                })
+                .catch((err) => {
                     this.errorMessage = err.message;
                 });
+        },
+        toggleCancel() {
+            this.confirmDelete = false;
         },
     },
 };
@@ -170,8 +242,8 @@ export default {
             .Input {
                 background: none;
                 border: 0px;
-                padding: 10px 10px;
-                width: 180px;
+                padding: 10px 20px;
+                width: 200px;
 
                 &:focus {
                     outline: none;
@@ -179,7 +251,7 @@ export default {
                 }
             }
             .Search__Icon {
-                padding: 5px 10px;
+                padding: 5px 20px;
                 height: 30px;
                 color: rgb(115 115 115);
             }
@@ -194,7 +266,6 @@ export default {
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
             0 4px 6px -4px rgb(0 0 0 / 0.1);
         .Heading {
-            position: relative;
             display: flex;
             justify-content: space-between;
             padding: 20px;
@@ -258,8 +329,11 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+                        .Icons {
+                            display: flex;
+                            gap: 30px;
+                        }
                         td {
-                            position: relative;
                             .Icon {
                                 width: 25px;
                                 object-fit: contain;
@@ -267,6 +341,12 @@ export default {
                                 color: rgb(23, 34, 49);
                                 &:hover {
                                     color: rgb(2, 2, 3);
+                                }
+                            }
+                            .Icon_Delete {
+                                color: rgb(209, 74, 74);
+                                &:hover {
+                                    color: rgb(155, 23, 23);
                                 }
                             }
                         }

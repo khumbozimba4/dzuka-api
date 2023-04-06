@@ -1,23 +1,44 @@
 <template>
-    <div class="Main__Wrap">
+    <div class="Modal">
         <form @submit.prevent="editExpense">
-            <input type="text" v-model="on" />
-            <input type="text" v-model="date" />
-            <input type="number" v-model="amount" />
-            <textarea
-                id="w3review"
-                name="description"
-                v-model="description"
-                rows="4"
-                cols="30"
-            ></textarea>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1>
+                    <strong style="text-transform: capitalize"
+                    >Edit Expense</strong
+                    >
+                </h1>
+                <button @click="close">Close</button>
+            </div>
+            <div class="Input__Container">
+                <label for="on">On</label>
+                <input name="on" type="text" v-model="on" required/>
+            </div>
+            <div class="Input__Container">
+                <label for="date">Date</label>
+                <input name="date" type="date" v-model="date" required/>
+            </div>
+            <div class="Input__Container">
+                <label for="date">Amount</label>
+                <input name="amount" type="number" v-model="amount" required/>
+            </div>
+            <div class="Input__Container">
+                <label for="description">Description</label>
+                <textarea
+                    id="w3review"
+                    name="description"
+                    v-model="description"
+                    rows="4"
+                    cols="30"
+                ></textarea>
+            </div>
             <button type="submit">Save</button>
         </form>
     </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
+
 export default {
     props: ["expense"],
     emits: ["getExpenses", "closeModal"],
@@ -64,38 +85,9 @@ export default {
                     this.errMsg = err.message;
                 });
         },
+        close() {
+            this.$emit("closeModal")
+        }
     },
 };
 </script>
-
-<style lang="scss" scoped>
-.Main__Wrap {
-    position: absolute;
-    top: 20px;
-    right: 100px;
-    background-color: #fff;
-    padding: 20px;
-    z-index: 99;
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        input {
-            width: 100%;
-            padding: 10px;
-        }
-        button {
-            padding: 5px 10px;
-            background-color: rgb(30 41 59);
-            color: #fff;
-            border-radius: 3px;
-            margin-top: 10px;
-
-            &:hover {
-                background: rgb(15 23 42);
-            }
-        }
-    }
-}
-</style>

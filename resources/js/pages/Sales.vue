@@ -7,7 +7,7 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <ShoppingBagIcon class="Icon" />
+                <ShoppingBagIcon class="Icon"/>
                 <p>Sales</p>
             </div>
             <div class="Search__Bar">
@@ -17,53 +17,53 @@
                     placeholder="Search sales by customer"
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon" />
+                <SearchIcon class="Search__Icon"/>
             </div>
             <div class="Options"></div>
         </div>
-        <SaleSearch v-if="search" :search="search" />
+        <SaleSearch v-if="search" :search="search"/>
 
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
+                    <AdjustmentsIcon class="Icon"/>
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <PrinterIcon class="Icon" />
+                    <PrinterIcon class="Icon"/>
                 </div>
             </div>
 
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                        <tr class="Tr">
-                            <td>#</td>
-                            <td>Date</td>
-                            <td>Product</td>
-                            <td>Stock Sold</td>
-                            <td>Total Amount</td>
-                        </tr>
+                    <tr class="Tr">
+                        <td>#</td>
+                        <td>Date</td>
+                        <td>Product</td>
+                        <td>Stock Sold</td>
+                        <td>Total Amount</td>
+                    </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!sales.length">
-                            No sales made yet!
-                        </tr>
-                        <tr
-                            class="Tr"
-                            v-for="(sale, index) in sales"
-                            :key="sale.id"
-                        >
-                            <td>
-                                <strong>{{ index + 1 }}</strong>
-                            </td>
-                            <td>{{ getDate(sale.created_at) }}</td>
-                            <td>{{ sale.product.product_name }}</td>
-                            <td>{{ sale.quantity }}</td>
-                            <td>
-                                {{ sale.amount }}
-                            </td>
-                        </tr>
+                    <tr v-if="!sales.length">
+                        No sales made yet!
+                    </tr>
+                    <tr
+                        class="Tr"
+                        v-for="(sale, index) in sales"
+                        :key="sale.id"
+                    >
+                        <td>
+                            <strong>{{ index + 1 }}</strong>
+                        </td>
+                        <td>{{ getDate(sale.created_at) }}</td>
+                        <td>{{ sale.product.product_name }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>
+                            {{ getCurrency(sale.amount) }}
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -85,20 +85,18 @@ import {
     PencilIcon,
     TrashIcon,
 } from "@heroicons/vue/outline";
-import { XCircleIcon } from "@heroicons/vue/solid";
-import AddSale from "../components/AddSale.vue";
-import EditSale from "../components/EditSale.vue";
+import {XCircleIcon} from "@heroicons/vue/solid";
 import SaleSearch from "../components/SaleSearch.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 import "@ocrv/vue-tailwind-pagination/styles";
 import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
-import { mapActions, mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import moment from "moment";
+import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+
 export default {
     components: {
-        AddSale,
-        EditSale,
         SaleSearch,
         ConfirmDelete,
         VueTailwindPagination,
@@ -145,8 +143,8 @@ export default {
         getDate(date) {
             return moment(new Date(date)).format("LL");
         },
-        getSalesQuantity(previous, stock) {
-            return previous < stock ? 0 : previous - stock;
+        getCurrency(amount) {
+            return CurrencyFormatter.getCurrency(amount);
         },
     },
 };
@@ -157,6 +155,7 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
+
     .NavBar__Container {
         background-color: #fff;
         display: flex;
@@ -171,6 +170,7 @@ export default {
             padding: 0 10px;
             border-right: 1px solid gray;
             margin-right: 25px;
+
             .Icon {
                 height: 30px;
                 object-fit: contain;
@@ -182,6 +182,7 @@ export default {
             align-items: center;
             background-color: rgb(212 212 212);
             border-radius: 5px;
+
             .Input {
                 background: none;
                 border: 0px;
@@ -193,6 +194,7 @@ export default {
                     border: 0px;
                 }
             }
+
             .Search__Icon {
                 padding: 5px 20px;
                 height: 30px;
@@ -200,6 +202,7 @@ export default {
             }
         }
     }
+
     .Contents__Container {
         margin: 20px;
         background-color: #fff;
@@ -207,13 +210,15 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-            0 4px 6px -4px rgb(0 0 0 / 0.1);
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+
         .Heading {
             position: relative;
             display: flex;
             justify-content: space-between;
             padding: 20px;
             border-bottom: 1px solid rgb(163 163 163);
+
             .Left__Side {
                 position: relative;
                 display: flex;
@@ -227,13 +232,14 @@ export default {
                     object-fit: contain;
                     cursor: pointer;
                 }
+
                 .Filters__Container {
                     position: absolute;
                     width: 300px;
                     z-index: 999;
                     background: #fff;
                     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-                        0 4px 6px -4px rgb(0 0 0 / 0.1);
+                    0 4px 6px -4px rgb(0 0 0 / 0.1);
                     top: 30px;
                     left: 20px;
                     border-top: 1px solid rgb(163, 163, 163);
@@ -256,6 +262,7 @@ export default {
                         display: grid;
                         grid-template-columns: 60% 20% 20%;
                         border-top: 1px solid lightgrey;
+
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
@@ -273,10 +280,12 @@ export default {
                     }
                 }
             }
+
             .Right__Side {
                 display: flex;
                 align-items: center;
                 gap: 10px;
+
                 .Add__Category {
                     padding: 5px 20px;
                     border: 1px solid rgb(115 115 115);
@@ -289,6 +298,7 @@ export default {
                         color: rgb(82 82 82);
                     }
                 }
+
                 .Icon {
                     height: 30px;
                     object-fit: contain;
@@ -300,42 +310,53 @@ export default {
                 }
             }
         }
+
         .Table__Container {
             padding: 20px;
+
             .Table {
                 width: 100%;
 
                 .Table__Head {
                     font-weight: 800;
                     color: rgb(38 38 38);
+
                     .Tr {
                         height: 40px;
                     }
                 }
+
                 .Table__Body {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+
                         .Icons {
                             display: flex;
                             gap: 30px;
                         }
+
                         td {
                             position: relative;
+
                             .Icon {
                                 width: 25px;
                                 object-fit: contain;
                                 cursor: pointer;
                                 color: rgb(23, 34, 49);
+
                                 &:hover {
                                     color: rgb(2, 2, 3);
                                 }
                             }
+
                             .Icon_Delete {
                                 color: rgb(209, 74, 74);
+
                                 &:hover {
                                     color: rgb(155, 23, 23);
                                 }
