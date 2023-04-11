@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 class SubmitAuditStockController extends Controller
 {
     public function index(){
-        return SubmitAuditStock::with('product')->orderBy('created_at', 'desc')->get();
+        return SubmitAuditStock::with(['product', 'user'])->orderBy('created_at', 'desc')->get();
     }
 
     public function store(SubmitAuditStockRequest $request){
@@ -23,7 +23,7 @@ class SubmitAuditStockController extends Controller
         SubmitAuditStock::create([
             'product_id' => $request->get('product_id'),
             'stock_count'=>$request->get('stock_count'),
-            'submitted_by'=>auth()->user()->{'id'}
+            'user_id'=>auth()->user()->id
         ]);
 
         $add_inventories_quantity = 0;

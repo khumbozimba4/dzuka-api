@@ -27,8 +27,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
-    Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);

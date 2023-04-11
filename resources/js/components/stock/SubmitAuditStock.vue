@@ -22,9 +22,8 @@
             </div>
 
             <button>Save</button>
+            <div v-if="errorMessage">{{ errorMessage }}</div>
         </form>
-
-        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 

@@ -1,13 +1,15 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Dashboard from "../pages/Dashboard.vue";
-import Stock from "../pages/Stock.vue";
-import Categories from "../pages/categories";
+import Stock from "../pages/stock/Stock.vue";
+import Categories from "../pages/Categories";
 import Products from "../pages/Products.vue";
 import Sales from "../pages/Sales.vue";
 import Users from "../pages/Users.vue";
 import Expenses from "../pages/Expenses.vue";
 import Login from "../pages/Login.vue";
 import Suppliers from "../pages/Suppliers";
+import Audits from "../pages/stock/Audits";
+import Supplies from "../pages/stock/Supplies";
 
 const routes = [
     {
@@ -48,6 +50,22 @@ const routes = [
         component: Stock,
         meta: {
             title: "Stock",
+        },
+    },
+    {
+        path: "/submit-audit-stock",
+        name: "audits",
+        component: Audits,
+        meta: {
+            title: "Audits",
+        },
+    },
+    {
+        path: "/supplies",
+        name: "supplies",
+        component: Supplies,
+        meta: {
+            title: "Supplies",
         },
     },
     {

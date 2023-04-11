@@ -10,8 +10,6 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Laratrust\Traits\LaratrustUserTrait;
-//use Laratrust\Contracts\LaratrustUser;
-//use Laratrust\Traits\HasRolesAndPermissions;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -22,7 +20,6 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
-//    use HasRolesAndPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +28,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email','role',
+        'email', 'role',
         'password',
     ];
 
@@ -68,5 +65,10 @@ class User extends Authenticatable
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
-     }
+    }
+
+    public function audits(): HasMany
+    {
+        return $this->hasMany(SubmitAuditStock::class);
+    }
 }

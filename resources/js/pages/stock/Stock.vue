@@ -21,8 +21,9 @@
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
-                    Filters
+                    <div>ALL</div>
+                    <div @click="goToAudits">Audit Histories</div>
+                    <div @click="goToSupplies">Supplies</div>
                 </div>
                 <div class="Right__Side">
                     <PrinterIcon class="Icon" />
@@ -34,7 +35,7 @@
                         <tr class="Tr">
                             <td>#</td>
                             <td>Product</td>
-                            <td>Stock</td>
+                            <td>Stock Count</td>
                             <td>Action</td>
                         </tr>
                     </thead>
@@ -89,7 +90,7 @@ import {
     PencilIcon,
     XIcon,
 } from "@heroicons/vue/outline";
-import EditStock from "../components/stock/SubmitAuditStock.vue";
+import EditStock from "../../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 export default {
@@ -161,6 +162,16 @@ export default {
                 },
             });
         },
+        goToAudits(){
+            this.$router.push({
+                name:"audits"
+            })
+        },
+        goToSupplies(){
+            this.$router.push({
+                name:"supplies"
+            })
+        }
     },
     watch: {
         search(value) {

@@ -12,11 +12,16 @@ class SubmitAuditStock extends Model
     protected $fillable = [
         'product_id',
         'stock_count',
-        'submitted_by'
+        'user_id'
     ];
 
     public function product():BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function user():BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

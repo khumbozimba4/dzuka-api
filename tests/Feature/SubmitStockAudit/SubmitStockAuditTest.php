@@ -13,7 +13,7 @@ class SubmitStockAuditTest extends TestCase
 {
     public function test_get_submit_audit_stocks():void{
         SubmitAuditStock::factory()->create([
-            'submitted_by' => $this->kampingo->{'id'}
+            'user_id' => $this->kampingo->{'id'}
         ]);
         $response = $this->login()->get('api/submit-audit-stock');
 
@@ -29,7 +29,7 @@ class SubmitStockAuditTest extends TestCase
 
         AddInventory::factory()->create([
             'product_id' =>$product->getKey(),
-            'quantity' => 2,
+            'quantity' => 10,
             'supplier_id'=> $supplier->getKey()
         ]);
 
@@ -44,7 +44,7 @@ class SubmitStockAuditTest extends TestCase
         ]);
         $this->assertDatabaseCount('sales',1);
 
-        $amount =$product->{'price'} * 3;
+        $amount =$product->{'price'} * 5;
         $this->assertDatabaseHas('sales',[
             'product_id' => $product->getKey(),
             'amount' => sprintf("%s.0",$amount),

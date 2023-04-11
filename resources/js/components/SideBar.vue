@@ -1,6 +1,6 @@
 <template>
     <div class="Main__Wrapper">
-        <div class="Dzuka__Logo">PaMsika</div>
+        <div class="Dzuka__Logo">6to6</div>
         <div class="User__Profile" @click="openUserProfileModal">
             <UserCircleIcon class="User__Icon"/>
             <p>{{ userInfo.name }}</p>

@@ -15,8 +15,8 @@ class CreateProductSaleTable extends Migration
     {
         Schema::create('product_sale', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('sale_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained();
+            $table->foreignId('sale_id')->constrained();
             $table->float('quantity')->default(1);
             $table->timestamps();
         });

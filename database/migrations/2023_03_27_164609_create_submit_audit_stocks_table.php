@@ -17,7 +17,7 @@ class CreateSubmitAuditStocksTable extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained();
             $table->integer('stock_count');
-            $table->unsignedBigInteger('submitted_by');
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }

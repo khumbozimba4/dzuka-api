@@ -1,27 +1,23 @@
 <template>
     <div class="Main__Wrapper">
-        <ConfirmDelete
-            @toggleCancel="confirmDelete = false"
-            @toggleDelete="deleteSupplier"
-            v-if="confirmDelete"
-        />
         <div class="NavBar__Container">
             <div class="Title">
-                <CollectionIcon class="Icon"/>
-                <p>Suppliers</p>
+                <CreditCardIcon class="Icon"/>
+                <p>Stock Audits</p>
             </div>
             <div class="Search__Bar">
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search Suppliers"
+                    placeholder="Search..."
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon"/>
             </div>
+
             <div class="Options"></div>
         </div>
-        <CategorySearch v-if="search" :search="search"/>
+        <div v-if="errorMessage">{{ errorMessage }}</div>
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -29,62 +25,35 @@
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <div
-                        class="Add__Category"
-                        @click="addSupplier = !addSupplier"
-                        v-if="userInfo.role !== finance"
-                    >
-                        Add Supplier
-                    </div>
                     <PrinterIcon class="Icon"/>
                 </div>
-                <AddSupplier @getSuppliers="getSuppliers" v-if="addSupplier" @closeModal="addSupplier = false"/>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
                     <tr class="Tr">
-                        <td>#</td>
-                        <td>Supplier Name</td>
-                        <td>Phone Number</td>
-                        <td>Location</td>
-                        <td v-if="userInfo.role !== finance">Actions</td>
+                        <td>Date</td>
+                        <td>Product</td>
+                        <td>Stock Count</td>
+                        <td>Submitted By</td>
                     </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="!suppliers.length">
-                        No suppliers available!
-                    </tr>
                     <tr
                         class="Tr"
-                        v-for="(supplier, index) in suppliers"
-                        :key="supplier.id"
+                        v-for="audit in audits"
+                        :key="audit.id"
                     >
-                        <td>
-                            <strong>{{ index + 1 }}</strong>
-                        </td>
-                        <td>{{ supplier.name }}</td>
-                        <td>{{ getPhoneNumber(`${supplier.phone_number}`) }}</td>
-                        <td>{{ supplier.location }}</td>
-                        <td class="Icons" v-if="userInfo.role !== finance">
-                            <PencilIcon
-                                class="Icon"
-                                @click="toggleEditSupplier(supplier)"
-                            />
-                            <TrashIcon
-                                class="Icon Icon_Delete"
-                                @click="toggleDeleteSupplier(supplier.id)"
-                            />
-                            <EditSupplier
-                                :supplier="supplier"
-                                @getSuppliers="getSuppliers"
-                                @closeModal="editSupplier = false"
-                                v-if=" editSupplier && selected === suppliers[index]"
-                            />
-                        </td>
+                        <td>{{ getDate(audit.created_at) }}</td>
+                        <td>{{ audit.product.product_name }}</td>
+                        <td>{{ audit.stock_count }}</td>
+                        <td>{{ audit.user.name }}</td>
                     </tr>
                     </tbody>
                 </table>
+                <div class="p-4" v-if="audits.length == 0">
+                    No Audit submissions incurred yet
+                </div>
             </div>
         </div>
     </div>
@@ -92,91 +61,44 @@
 
 <script>
 import axios from "axios";
+import moment from "moment";
 import {
     AdjustmentsIcon,
-    ArrowNarrowRightIcon,
-    CollectionIcon,
-    PencilIcon,
+    CreditCardIcon,
     PrinterIcon,
-    SearchIcon,
-    TrashIcon
+    SearchIcon
 } from "@heroicons/vue/outline";
-import {mapActions, mapGetters} from "vuex";
-import AddSupplier from "../components/suppliers/AddSupplier";
-import EditSupplier from "../components/suppliers/EditSupplier";
-import ConfirmDelete from "../components/ConfirmDelete";
-import {PhoneNumberFormatter} from "../factories/PhoneNumberFormatterFactory";
 
 export default {
-    name: "Suppliers",
+    name: "Audits",
     components: {
-        EditSupplier,
-        AddSupplier,
-        ConfirmDelete,
         SearchIcon,
-        TrashIcon,
-        PencilIcon,
-        CollectionIcon,
         AdjustmentsIcon,
         PrinterIcon,
-        ArrowNarrowRightIcon,
+        CreditCardIcon,
     },
     data() {
         return {
-            'suppliers': [],
-            'addSupplier': false,
-            'editSupplier': false,
-            'selected': null,
-            'confirmDelete': false,
-            'deletedItem': null,
-            'errorMessage': ""
+            audits: [],
+            error: ""
         }
     },
     created() {
-        this.getSuppliers();
-    },
-    computed: {
-        ...mapGetters(["userInfo"]),
+        this.getAuditSubmissions()
     },
     methods: {
-        ...mapActions(["changeLoading"]),
-        getSuppliers() {
-            axios.get('api/suppliers')
+        getAuditSubmissions() {
+            axios.get("api/submit-audit-stock")
                 .then(({data}) => {
-                    this.suppliers = data
+                    this.audits = data;
                 })
-                .catch((error) => {
-                    console.log(error.message)
+                .catch(({message}) => {
+                    this.error = message
                 })
         },
-        toggleDeleteSupplier(id) {
-            this.deletedItem = id;
-            this.confirmDelete = true;
+        getDate(date) {
+            return moment(new Date(date)).format("LL");
         },
-        toggleEditSupplier(id) {
-            this.editSupplier = true;
-            this.selected = id;
-        },
-        deleteSupplier() {
-            this.changeLoading();
-            axios
-                .delete(`api/suppliers/${this.deletedItem}`)
-                .then(() => {
-                    this.confirmDelete = false;
-                })
-                .then(() => {
-                    this.getSuppliers();
-                })
-                .then(() => {
-                    this.changeLoading();
-                })
-                .catch((err) => {
-                    this.errorMessage = err.message;
-                });
-        },
-        getPhoneNumber(phone) {
-            return PhoneNumberFormatter.getPhoneNumber(phone);
-        }
     }
 }
 </script>
@@ -349,4 +271,3 @@ export default {
     }
 }
 </style>
-
