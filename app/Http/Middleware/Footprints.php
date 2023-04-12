@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class Footprints
 {
-    private array $hidden = ['password', 'pin', 'new_pin'];
+    private $hidden = ['password', 'pin', 'new_pin'];
 
     public function handle(Request $request, Closure $next)
     {

@@ -4,6 +4,7 @@ namespace SubmitStockAudit;
 
 use App\Models\AddInventory;
 use App\Models\Category;
+use App\Models\Footprint;
 use App\Models\Product;
 use App\Models\SubmitAuditStock;
 use App\Models\Supplier;
@@ -27,7 +28,7 @@ class SubmitStockAuditTest extends TestCase
             'category_id' => $category->getKey()
         ]);
 
-        AddInventory::factory()->create([
+        $this->login()->post('api/add-inventory', [
             'product_id' =>$product->getKey(),
             'quantity' => 10,
             'supplier_id'=> $supplier->getKey()
@@ -37,6 +38,7 @@ class SubmitStockAuditTest extends TestCase
             'product_id' =>$product->getKey(),
             'stock_count' => 5
         ]);
+
         $response->assertOk();
         $this->assertDatabaseHas('submit_audit_stocks',[
             'product_id' =>$product->getKey(),
@@ -48,7 +50,7 @@ class SubmitStockAuditTest extends TestCase
         $this->assertDatabaseHas('sales',[
             'product_id' => $product->getKey(),
             'amount' => sprintf("%s.0",$amount),
-            'quantity' => "3"
+            'quantity' => 5
         ]);
     }
 }

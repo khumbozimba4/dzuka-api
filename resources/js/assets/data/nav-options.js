@@ -15,7 +15,21 @@ export const NavOptions = [
         title: "stock",
         route_name: "stock",
         icon: "AdjustmentsIcon",
-        role: ["admin", "operations", "finance"]
+        role: ["admin", "operations", "finance"],
+        sub_menu: [
+            {
+                title: "Audits",
+                route_name: "audits",
+                icon: "AdjustmentsIcon",
+                role: ["admin", "operations", "finance"],
+            },
+            {
+                title: "Supplies",
+                route_name: "supplies",
+                icon: "AdjustmentsIcon",
+                role: ["admin", "operations", "finance"],
+            }
+        ]
     },
     {
         title: "sales",

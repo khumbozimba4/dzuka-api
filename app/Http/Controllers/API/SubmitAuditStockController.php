@@ -26,11 +26,7 @@ class SubmitAuditStockController extends Controller
             'user_id'=>auth()->user()->id
         ]);
 
-        $add_inventories_quantity = 0;
-        foreach (AddInventory::getByToday() as $inventory){
-            $add_inventories_quantity +=  $inventory->{'quantity'};
-        }
-        $sale_quantity = $product->{'stock'} - $request->get('stock_count') - $add_inventories_quantity;
+        $sale_quantity = $product->{'stock'} - $request->get('stock_count');
 
         Sale::create([
             'product_id' => $request->get('product_id'),

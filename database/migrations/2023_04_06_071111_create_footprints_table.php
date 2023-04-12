@@ -16,13 +16,13 @@ class CreateFootprintsTable extends Migration
     {
         Schema::create('footprints', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->nullable()->constrained();
             $table->string('endpoint');
             $table->string('uri');
             $table->string('method');
-            $table->string('request');
-            $table->string('response')->nullable();
-            $table->string('status')->nullable();
+            $table->json('request');
+            $table->text('response')->nullable();
+            $table->integer('status')->nullable();
             $table->boolean('success');
             $table->timestamps();
         });

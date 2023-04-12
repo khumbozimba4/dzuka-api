@@ -10,6 +10,7 @@ use App\Http\Controllers\API\SubmitAuditStockController;
 use App\Http\Controllers\API\SupplierController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Middleware\Footprints;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,8 +34,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);
         Route::get('/search/{name}', [UserController::class, 'search']);
-        Route::patch('/{id}/update', [UserController::class, 'update']);
-        Route::delete('/{id}/destroy', [UserController::class, 'destroy']);
+        Route::patch('/{user}/update', [UserController::class, 'update']);
+        Route::delete('/{user}/destroy', [UserController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'add-inventory'], function () {
@@ -67,7 +68,6 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
         Route::get('/',[ProductController::class,'index']);
         Route::get('/search/{name}',[ProductController::class,'search']);
         Route::post('/store',[ProductController::class,'store']);
-        Route::patch('/{product}/store-product-photo',[ProductController::class,'storeProductPhoto']);
         Route::delete('/{product}/destroy',[ProductController::class,'destroy']);
     });
 

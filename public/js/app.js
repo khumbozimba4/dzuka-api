@@ -25458,6 +25458,9 @@ var _hoisted_4 = {
   "class": "Title"
 };
 var _hoisted_5 = {
+  "class": "Title"
+};
+var _hoisted_6 = {
   "class": "Sign__Out"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -25485,7 +25488,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, {
       "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
         return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-          "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)([$options.activeRoute == item.route_name ? 'Nav__Link__Active' : 'Nav__Link'])
+          "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)([$options.activeRoute === item.route_name ? 'Nav__Link__Active' : 'Nav__Link'])
         }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)(item.icon), {
           "class": "Icon"
         })), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.title), 1
@@ -25499,10 +25502,37 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
     }, 1032
     /* PROPS, DYNAMIC_SLOTS */
-    , ["to"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+    , ["to"]), item.sub_menu ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+      key: 0
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(item.sub_menu, function (sub_item, i_) {
+      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+        key: i_
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+        to: "/".concat(sub_item.route_name)
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+            "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)([$options.activeRoute === sub_item.route_name ? 'Nav__Link__Active' : 'Nav__Link'])
+          }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)(sub_item.icon), {
+            "class": "Icon"
+          })), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(sub_item.title), 1
+          /* TEXT */
+          )], 2
+          /* CLASS */
+          )];
+        }),
+        _: 2
+        /* DYNAMIC */
+
+      }, 1032
+      /* PROPS, DYNAMIC_SLOTS */
+      , ["to"])]);
+    }), 128
+    /* KEYED_FRAGMENT */
+    )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
   }), 128
   /* KEYED_FRAGMENT */
-  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_LogoutIcon, {
+  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_LogoutIcon, {
     "class": "Icon",
     onClick: _ctx.logout
   }, null, 8
@@ -29084,7 +29114,18 @@ var NavOptions = [{
   title: "stock",
   route_name: "stock",
   icon: "AdjustmentsIcon",
-  role: ["admin", "operations", "finance"]
+  role: ["admin", "operations", "finance"],
+  sub_menu: [{
+    title: "Audits",
+    route_name: "audits",
+    icon: "AdjustmentsIcon",
+    role: ["admin", "operations", "finance"]
+  }, {
+    title: "Supplies",
+    route_name: "supplies",
+    icon: "AdjustmentsIcon",
+    role: ["admin", "operations", "finance"]
+  }]
 }, {
   title: "sales",
   route_name: "sales",
