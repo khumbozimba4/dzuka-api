@@ -11,10 +11,19 @@ class CreateFootprintsTable extends Migration
      *
      * @return void
      */
+
     public function up()
     {
         Schema::create('footprints', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->string('endpoint');
+            $table->string('uri');
+            $table->string('method');
+            $table->string('request');
+            $table->string('response')->nullable();
+            $table->string('status')->nullable();
+            $table->boolean('success');
             $table->timestamps();
         });
     }
