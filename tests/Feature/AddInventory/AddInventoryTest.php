@@ -28,7 +28,7 @@ class AddInventoryTest extends TestCase
             'quantity' =>5,
         ];
 
-        $this->login()->post('api/addInventory', $data);
+        $this->login()->post('api/add-inventory', $data);
 
         $this->assertDatabaseHas('add_inventories',$data);
     }

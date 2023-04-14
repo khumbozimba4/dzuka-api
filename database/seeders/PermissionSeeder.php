@@ -14,17 +14,5 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        DB::table("permissions")->insert([
-            [
-                'name' => 'create-user',
-                'display_name' => 'Create Users', // optional
-                'description' => 'create new user', // optional
-            ],
-            [
-                'name' => 'edit-user',
-                'display_name' => 'Edit Users', // optional
-                'description' => 'edit existing users', // optional
-            ]
-        ]);
     }
 }

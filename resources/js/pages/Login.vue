@@ -89,7 +89,7 @@ export default {
     }
 
     form {
-        background: rgb(243 244 246);
+        background: #fff;
         width: 30%;
         justify-items: center;
         display: flex;
@@ -111,7 +111,7 @@ export default {
             margin-bottom: 25px;
             width: 80%;
             border-radius: 5px;
-            background: rgb(232,240,254);
+            background: rgb(229 231 235);
             border: 1px solid rgb(229 231 235);
 
             .icon {
@@ -125,7 +125,7 @@ export default {
                 flex: 1;
                 border-radius: 2px;
                 border: none;
-                background: rgb(232,240,254);
+                background: rgb(229 231 235);
             }
         }
 

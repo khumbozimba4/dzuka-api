@@ -3,56 +3,43 @@ export const NavOptions = [
         title: "dashboard",
         route_name: "dashboard",
         icon: "ColorSwatchIcon",
-        role: ["admin", "operations", "finance"]
+        role: ["Admin", "Operations", "Finance"],
     },
     {
-        title: "categories",
+        title: "centers",
         route_name: "categories",
         icon: "CollectionIcon",
-        role: ["admin", "operations", "finance"]
+        role: ["Admin", "Operations", "Finance"],
     },
     {
         title: "stock",
         route_name: "stock",
         icon: "AdjustmentsIcon",
-        role: ["admin", "operations", "finance"],
-        sub_menu: [
-            {
-                title: "Audits",
-                route_name: "audits",
-                icon: "AdjustmentsIcon",
-                role: ["admin", "operations", "finance"],
-            },
-            {
-                title: "Supplies",
-                route_name: "supplies",
-                icon: "AdjustmentsIcon",
-                role: ["admin", "operations", "finance"],
-            }
-        ]
+        role: ["Admin", "Operations", "Finance"],
     },
     {
         title: "sales",
         route_name: "sales",
         icon: "ShoppingBagIcon",
-        role: ["admin", "operations", "finance"]
+        role: ["Admin", "Operations", "Finance"],
+
     },
     {
         title: "expenses",
         route_name: "expenses",
         icon: "CreditCardIcon",
-        role: ["admin", "operations", "finance"]
+        role: ["Admin", "Operations", "Finance"],
     },
     {
         title: "suppliers",
         route_name: "suppliers",
         icon: "CreditCardIcon",
-        role: ["admin", "operations", "finance"]
+        role: ["Admin", "Operations", "Finance"],
     },
     {
         title: "users",
         route_name: "users",
         icon: "UsersIcon",
-        role: ["admin"]
+        role: ["Admin"],
     },
 ];

@@ -14,7 +14,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        return Product::with('histories.product')->orderBy('created_at', 'desc')->get();
+        return Product::orderBy('created_at', 'desc')->get();
     }
 
     public function search($name)

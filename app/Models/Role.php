@@ -2,9 +2,17 @@
 
 namespace App\Models;
 
-use Laratrust\Models\LaratrustRole;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Role extends LaratrustRole
+class Role extends Model
 {
-    public $guarded = [];
+    use HasFactory;
+    protected $guarded;
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class);
+    }
 }

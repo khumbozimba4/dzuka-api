@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -45,10 +46,16 @@ class CreateUser extends Command
 
         if ($this->confirm(sprintf('Create %s with all permissions?', $name), true)) {
             try {
+                $role = Role::where('name', 'Admin')->first();
+
+                if (!$role) {
+                    $role = Role::create(['name' => 'Admin']);
+                }
+
                 $user = User::create([
                     'name' => $name,
-                    'role' => 'admin',
                     'email' => $email,
+                    'role_id' => $role->getKey(),
                     'password' => Hash::make($password)
                 ]);
                 $this->info(sprintf('token => %s', ($user->createToken($user->{'name'}))->plainTextToken));

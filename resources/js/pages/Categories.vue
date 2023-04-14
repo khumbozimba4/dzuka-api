@@ -8,7 +8,7 @@
         <div class="NavBar__Container">
             <div class="Title">
                 <CollectionIcon class="Icon" />
-                <p>Product Categories</p>
+                <p>Centers</p>
             </div>
             <div class="Search__Bar">
                 <input
@@ -34,7 +34,7 @@
                         @click="isOpen = !isOpen"
                         v-if="userInfo.role !== finance"
                     >
-                        Add Category
+                        Add Center
                     </div>
                     <PrinterIcon class="Icon" />
                 </div>
@@ -45,8 +45,8 @@
                     <thead class="Table__Head">
                         <tr class="Tr">
                             <td>#</td>
-                            <td>Product Category</td>
-                            <td>Registered Products</td>
+                            <td>Center Name</td>
+                            <td>Center Products</td>
                             <td v-if="userInfo.role !== finance">Actions</td>
                             <td>View</td>
                         </tr>

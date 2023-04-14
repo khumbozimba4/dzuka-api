@@ -12,7 +12,7 @@
                     <div
                         :class="[
                             activeRoute === item.route_name
-                                ? 'Nav__Link__Active'
+                                ? 'Nav__Link Nav__Link__Active'
                                 : 'Nav__Link',
                         ]"
                     >
@@ -20,20 +20,6 @@
                         <p class="Title">{{ item.title }}</p>
                     </div>
                 </router-link>
-                <div v-if="item.sub_menu" v-for="(sub_item, i_) in item.sub_menu" :key="i_">
-                    <router-link :to="`/${sub_item.route_name}`">
-                        <div
-                            :class="[
-                            activeRoute === sub_item.route_name
-                                ? 'Nav__Link__Active'
-                                : 'Nav__Link',
-                        ]"
-                        >
-                            <component :is="sub_item.icon" class="Icon"/>
-                            <p class="Title">{{ sub_item.title }}</p>
-                        </div>
-                    </router-link>
-                </div>
             </div>
         </div>
         <div class="Sign__Out">
@@ -172,26 +158,8 @@ export default {
         }
 
         .Nav__Link__Active {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            padding: 15px 25px;
             background: rgb(15 23 42);
             color: rgb(29 78 216);
-            cursor: pointer;
-
-            .Icon {
-                height: 25px;
-            }
-
-            .Title {
-                color: rgb(203 213 225);
-                text-transform: capitalize;
-
-                &:hover {
-                    color: #fff;
-                }
-            }
         }
     }
 

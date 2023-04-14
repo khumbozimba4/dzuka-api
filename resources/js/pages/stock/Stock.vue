@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <AdjustmentsIcon class="Icon" />
+                <AdjustmentsIcon class="Icon"/>
                 <p>Stock Control</p>
             </div>
             <div class="Search__Bar">
@@ -12,66 +12,62 @@
                     placeholder="Search product"
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon" />
+                <SearchIcon class="Search__Icon"/>
             </div>
             <div class="Options"></div>
         </div>
 
-        <!-- MAIN TABLE CONTAINER -->
         <div class="Contents__Container">
             <div class="Heading">
-                <div class="Left__Side">
-                    <div>ALL</div>
-                    <div @click="goToAudits">Audit Histories</div>
-                    <div @click="goToSupplies">Supplies</div>
-                </div>
-                <div class="Right__Side">
-                    <PrinterIcon class="Icon" />
+                <div class="Tabs">
+                    <div class="Item__Active Item">Stock</div>
+                    <div class="Item" @click="goToAudits">Audit Histories</div>
+                    <div class="Item" @click="goToSupplies">Supplies</div>
                 </div>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                        <tr class="Tr">
-                            <td>#</td>
-                            <td>Product</td>
-                            <td>Stock Count</td>
-                            <td>Action</td>
-                        </tr>
+                    <tr class="Tr">
+                        <td>#</td>
+                        <td>Product</td>
+                        <td>Stock Count</td>
+                        <td>Action</td>
+                    </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!products.length">
-                            No products available!
-                        </tr>
-                        <tr
-                            class="Tr"
-                            v-for="(product, index) in products"
-                            :key="product.id"
-                        >
-                            <td>
-                                <strong>{{ index + 1 }}</strong>
-                            </td>
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.stock }}</td>
-                            <td class="Allocate__Stock">
-                                <button
-                                    @click="toggleEdit(index)"
-                                    class="submit_button"
-                                >
-                                    Submit Audited Stock
-                                </button>
+                    <tr v-if="!products.length">
+                        No products available!
+                    </tr>
+                    <tr
+                        class="Tr"
+                        v-for="(product, index) in products"
+                        :key="product.id"
+                    >
+                        <td>
+                            <strong>{{ index + 1 }}</strong>
+                        </td>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td class="Allocate__Stock">
+                            <button
+                                @click="toggleEdit(index)"
+                                class="button button_submit"
+                            >
+                                Submit Audited Stock
+                            </button>
 
-                                <EditStock
-                                    v-if="
+                            <EditStock
+                                v-if="
                                         isOpen &&
                                         products[index] === clickedProduct
                                     "
-                                    :product="product"
-                                    @getProducts="getProducts"
-                                    @close="isOpen = false"
-                                />
-                            </td>
-                        </tr>
+                                :product="product"
+                                @getProducts="getProducts"
+                                @close="isOpen = false"
+                            />
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -92,7 +88,8 @@ import {
 } from "@heroicons/vue/outline";
 import EditStock from "../../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
-import { mapActions, mapGetters } from "vuex";
+import {mapActions, mapGetters} from "vuex";
+
 export default {
     components: {
         EditStock,
@@ -162,14 +159,14 @@ export default {
                 },
             });
         },
-        goToAudits(){
+        goToAudits() {
             this.$router.push({
-                name:"audits"
+                name: "audits"
             })
         },
-        goToSupplies(){
+        goToSupplies() {
             this.$router.push({
-                name:"supplies"
+                name: "supplies"
             })
         }
     },
@@ -193,6 +190,7 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
+
     .NavBar__Container {
         background-color: #fff;
         display: flex;
@@ -207,6 +205,7 @@ export default {
             padding: 0 10px;
             border-right: 1px solid gray;
             margin-right: 25px;
+
             .Icon {
                 height: 30px;
                 object-fit: contain;
@@ -218,6 +217,7 @@ export default {
             align-items: center;
             background-color: rgb(212 212 212);
             border-radius: 5px;
+
             .Input {
                 background: none;
                 border: 0px;
@@ -229,6 +229,7 @@ export default {
                     border: 0px;
                 }
             }
+
             .Search__Icon {
                 padding: 5px 20px;
                 height: 30px;
@@ -236,6 +237,7 @@ export default {
             }
         }
     }
+
     .Contents__Container {
         margin: 20px;
         background-color: #fff;
@@ -243,68 +245,57 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-            0 4px 6px -4px rgb(0 0 0 / 0.1);
-        .Heading2 {
-            padding: 20px;
-            border-bottom: 1px solid rgb(163 163 163);
-        }
-        .Heading {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            border-bottom: 1px solid rgb(163 163 163);
-            .Left__Side {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                font-weight: 700;
-                cursor: pointer;
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-                .Icon {
-                    height: 20px;
-                    object-fit: contain;
-                    cursor: pointer;
-                }
-            }
-            .Right__Side {
+        .Heading {
+            padding: 20px;
+            border-bottom: 1px solid rgb(163 163 163);
+
+            .Tabs {
+                width: 100%;
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                .Add__Category {
-                    padding: 5px 20px;
-                    border: 1px solid rgb(115 115 115);
-                    border-radius: 3px;
-                    color: rgb(115 115 115);
+                cursor: pointer;
+                text-transform: uppercase;
+
+                .Item {
+                    flex: 1;
+                    padding: 10px;
+                    color: rgb(31 41 55);
+                    text-align: center;
                     cursor: pointer;
-                    font-size: 15px;
+                    border: 1px solid rgb(243 244 246);
+                    background-color: rgb(229 231 235);
+                    border-radius: 3px;
+                    margin: 0 5px;
 
                     &:hover {
-                        color: rgb(82 82 82);
+                        opacity: 0.7;
                     }
                 }
-                .Icon {
-                    height: 30px;
-                    object-fit: contain;
-                    padding: 5px 20px;
-                    border: 1px solid rgb(115 115 115);
-                    border-radius: 3px;
-                    color: rgb(115 115 115);
-                    cursor: pointer;
+
+                .Item__Active {
+                    background-color: rgb(34 197 94);
+                    color: white;
                 }
             }
         }
+
         .Table__Container {
             padding: 20px;
+
             .Table {
                 width: 100%;
 
                 .Table__Head {
                     font-weight: 800;
                     color: rgb(38 38 38);
+
                     .Tr {
                         height: 40px;
                     }
                 }
+
                 .Table__Body {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
@@ -313,13 +304,15 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+
                         td {
                         }
+
                         .Allocate__Stock {
                             margin: 10px;
                             display: flex;
 
-                            .history_button {
+                            .button {
                                 background: purple;
                                 color: #fff;
                                 font-weight: bold;
@@ -329,16 +322,9 @@ export default {
                                 text-transform: capitalize;
                                 border-radius: 3px;
                             }
-                            .submit_button {
-                                margin-right: 20px;
+
+                            .button_submit {
                                 background: green;
-                                color: #fff;
-                                font-weight: bold;
-                                text-align: center;
-                                padding: 10px;
-                                margin-top: 5px;
-                                text-transform: capitalize;
-                                border-radius: 3px;
                             }
                         }
                     }

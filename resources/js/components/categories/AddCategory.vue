@@ -4,7 +4,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1>
                     <strong style="text-transform: capitalize"
-                    >Add Category</strong
+                    >Add Center</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
