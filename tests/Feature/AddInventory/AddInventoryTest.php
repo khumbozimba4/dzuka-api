@@ -10,13 +10,15 @@ use Tests\TestCase;
 
 class AddInventoryTest extends TestCase
 {
-    public function test_get_add_inventories():void{
+    public function test_get_add_inventories():void
+    {
         AddInventory::factory()->create();
         $response = $this->login()->get('api/addInventory');
         $response->assertOk();
     }
 
-    public function test_add_inventory():void{
+    public function test_add_inventory():void
+    {
         $category = Category::factory()->create();
         $product = Product::factory()->create([
             'category_id' => $category->getKey()

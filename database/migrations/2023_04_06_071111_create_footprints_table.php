@@ -16,7 +16,7 @@ class CreateFootprintsTable extends Migration
     {
         Schema::create('footprints', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained();
+            $table->foreignId('user_id')->nullable();
             $table->string('endpoint');
             $table->string('uri');
             $table->string('method');

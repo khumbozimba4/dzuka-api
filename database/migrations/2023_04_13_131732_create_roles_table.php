@@ -18,7 +18,6 @@ class CreateRolesTable extends Migration
             $table->string('name');
             $table->foreignId('created_by')->nullable();
             $table->foreignId('deleted_by')->nullable();
-            $table->softDeletes();
             $table->timestamps();
         });
     }

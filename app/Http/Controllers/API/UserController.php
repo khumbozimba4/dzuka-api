@@ -5,17 +5,18 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function index()
+    public function index(): Response
     {
-        return User::get();
+        return response(User::with('role')->get());
     }
 
     public function search($name)
@@ -24,28 +25,18 @@ class UserController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user): User
     {
-        $user = User::find($id);
-       
         $user->update([
-            "name"=>$request->name,
-            "email"=>$request->email,
-            "role"=>$request->role,  
+            "name"=>$request->get('name'),
+            "email"=>$request->get('email'),
+            "role_id"=>$request->get('role_id'),
         ]);
         return $user;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(User $user): ?bool
     {
-        $user = User::find($id);
-        $user->delete();
-        return;
+        return $user->delete();
     }
 }

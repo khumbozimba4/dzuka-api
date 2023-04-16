@@ -321,10 +321,14 @@ export default {
                                 margin-top: 5px;
                                 text-transform: capitalize;
                                 border-radius: 3px;
+
+                                &:hover{
+                                    opacity: 0.5;
+                                }
                             }
 
                             .button_submit {
-                                background: green;
+                                background-color: rgb(34 197 94);
                             }
                         }
                     }

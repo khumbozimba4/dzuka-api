@@ -34,8 +34,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);
         Route::get('/search/{name}', [UserController::class, 'search']);
-        Route::patch('/{user}/update', [UserController::class, 'update']);
-        Route::delete('/{user}/destroy', [UserController::class, 'destroy']);
+        Route::patch('/{user}/', [UserController::class, 'update']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'add-inventory'], function () {

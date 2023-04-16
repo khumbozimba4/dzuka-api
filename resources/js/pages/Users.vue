@@ -54,7 +54,7 @@
                             </td>
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
+                            <td>{{ user.role.name }}</td>
                             <td class="Icons" v-if="userInfo.role !== finance">
                                 <PencilIcon
                                     class="Icon"
@@ -165,7 +165,7 @@ export default {
         toggleDelete() {
             this.changeLoading();
             axios
-                .delete(`api/users/${this.deletedItem}/destroy`)
+                .delete(`api/users/${this.deletedItem}`)
                 .then(() => {
                     this.confirmDelete = false;
                 })

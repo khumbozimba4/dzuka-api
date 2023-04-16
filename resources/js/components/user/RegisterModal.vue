@@ -18,11 +18,11 @@
                         </div>
                         <!-- Role -->
                         <div class="Input__Select">
-                            <label for="role">Select Role</label>
-                            <select id="role" name="role" v-model="role">
-                                <option value="admin">Admin</option>
-                                <option value="operations">Operations</option>
-                                <option value="finance">Finance</option>
+                            <label for="role_id">Select Role</label>
+                            <select id="role_id" name="role_id" v-model="role_id">
+                                <option value="1">Admin</option>
+                                <option value="2">Operations</option>
+                                <option value="3">Finance</option>
                             </select>
                         </div>
                         <!-- Password -->
@@ -78,7 +78,7 @@ export default {
             password: null,
             password_confirmation: null,
             name: null,
-            role: null,
+            role_id: null,
         };
     },
     methods: {
@@ -88,7 +88,7 @@ export default {
                 .dispatch("register", {
                     name: this.name,
                     email: this.email,
-                    role: this.role,
+                    role_id: this.role_id,
                     password: this.password,
                     password_confirmation: this.password_confirmation,
                 })
