@@ -20,7 +20,9 @@
 
 <script>
 import axios from "axios";
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
+import {API} from "../../api";
+
 export default {
     emits: ["getCategories", "closeModal"],
     data() {
@@ -32,10 +34,9 @@ export default {
         ...mapActions(["changeLoading"]),
         addCategory() {
             this.changeLoading();
-            axios
-                .post("api/categories/store", {
-                    category_name: this.name,
-                })
+            API.addCategory({
+                category_name: this.name,
+            })
                 .then(() => {
                     this.$emit("getCategories");
                 })
@@ -47,7 +48,7 @@ export default {
                     console.log(err);
                 });
         },
-        close(){
+        close() {
             this.$emit("closeModal")
         }
     },

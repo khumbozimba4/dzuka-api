@@ -57,11 +57,11 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
 
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/',[CategoriesController::class,'index']);
-        Route::get('/search/{name}',[CategoriesController::class,'search']);
-        Route::get('/{category}/products',[CategoriesController::class,'show']);
-        Route::post('/store',[CategoriesController::class,'store']);
-        Route::patch('/{category}/update',[CategoriesController::class,'update']);
-        Route::delete('/{category}/destroy',[CategoriesController::class,'destroy']);
+        Route::get('/{name}/search',[CategoriesController::class,'search']);
+        Route::get('/{category}',[CategoriesController::class,'show']);
+        Route::post('/',[CategoriesController::class,'store']);
+        Route::patch('/{category}',[CategoriesController::class,'update']);
+        Route::delete('/{category}',[CategoriesController::class,'destroy']);
     });
 
     Route::group(['prefix' => 'products'], function () {

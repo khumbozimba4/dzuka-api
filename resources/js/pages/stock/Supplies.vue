@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <CreditCardIcon class="Icon"/>
+                <ShoppingBagIcon class="Icon"/>
                 <p>Supplies</p>
             </div>
             <div class="Search__Bar">
@@ -66,7 +66,7 @@ import {
     AdjustmentsIcon,
     CreditCardIcon,
     PrinterIcon,
-    SearchIcon
+    SearchIcon, ShoppingBagIcon
 } from "@heroicons/vue/outline";
 
 export default {
@@ -76,6 +76,7 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         CreditCardIcon,
+        ShoppingBagIcon
     },
     data() {
         return {

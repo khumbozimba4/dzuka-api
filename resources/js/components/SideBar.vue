@@ -39,6 +39,7 @@ import {
     UserCircleIcon,
     CreditCardIcon,
     LogoutIcon,
+    UserGroupIcon
 } from "@heroicons/vue/outline";
 import {mapActions, mapGetters} from "vuex";
 import {NavOptions} from "../assets/data/nav-options";
@@ -54,6 +55,7 @@ export default {
         UserCircleIcon,
         LogoutIcon,
         CreditCardIcon,
+        UserGroupIcon
     },
     data() {
         return {

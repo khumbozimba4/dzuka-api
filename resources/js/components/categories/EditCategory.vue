@@ -20,6 +20,7 @@
 
 <script>
 import { mapActions } from "vuex";
+import {API} from "../../api";
 export default {
     props: ["category"],
     emits: ["getCategories", "closeModal"],
@@ -29,7 +30,6 @@ export default {
     data() {
         return {
             name: "",
-            description: "",
         };
     },
     methods: {
@@ -40,11 +40,9 @@ export default {
         },
         editCategory() {
             this.changeLoading();
-            axios
-                .patch(`api/categories/${this.category.id}/update`, {
-                    category_name: this.name,
-                    description: this.description,
-                })
+            API.updateCategory(this.category.id, {
+                category_name: this.name
+            })
                 .then(() => {
                     this.$emit("closeModal");
                 })

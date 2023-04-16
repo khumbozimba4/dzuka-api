@@ -33,7 +33,7 @@ export const NavOptions = [
     {
         title: "suppliers",
         route_name: "suppliers",
-        icon: "CreditCardIcon",
+        icon: "UserGroupIcon",
         role: ["Admin", "Operations", "Finance"],
     },
     {

@@ -21,7 +21,6 @@
             </div>
             <div class="Options"></div>
         </div>
-        <CategorySearch v-if="search" :search="search"/>
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
@@ -80,7 +79,7 @@
                                 @closeModal="editCategoryOpen = false"
                                 v-if="
                                         editCategoryOpen &&
-                                        selected == categories[index]
+                                        selected === categories[index]
                                     "
                             />
                         </td>
@@ -109,17 +108,15 @@ import {
     TrashIcon,
 } from "@heroicons/vue/outline";
 import AddCategory from "../components/categories/AddCategory.vue";
-import CategorySearch from "../components/categories/CategorySearch.vue";
 import EditCategory from "../components/categories/EditCategory.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
-import axios from "axios";
 import {mapActions, mapGetters} from "vuex";
+import {API} from "../api";
 
 export default {
     name: "categories",
     components: {
         AddCategory,
-        CategorySearch,
         EditCategory,
         ConfirmDelete,
         SearchIcon,
@@ -156,10 +153,9 @@ export default {
         },
         getCategories() {
             this.changeLoading();
-            axios
-                .get("api/categories")
-                .then((response) => {
-                    this.categories = response.data;
+            API.getCategories()
+                .then(({data}) => {
+                    this.categories = data;
                 })
                 .then(() => {
                     this.isOpen = false;
@@ -191,8 +187,7 @@ export default {
         },
         toggleDelete() {
             this.changeLoading();
-            axios
-                .delete(`api/categories/${this.deletedItem}/destroy`)
+            API.deleteCategory(this.deletedItem)
                 .then(() => {
                     this.confirmDelete = false;
                 })

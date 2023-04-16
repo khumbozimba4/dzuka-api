@@ -22,8 +22,6 @@
             <div class="Options"></div>
         </div>
 
-        <UserSearch v-if="search" :search="search" />
-
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Right__Side">
@@ -69,7 +67,7 @@
                                     @getUsers="getUsers"
                                     @closeModal="editUserOpen = false"
                                     v-if="
-                                        editUserOpen && selected == users[index]
+                                        editUserOpen && selected === users[index]
                                     "
                                 />
                             </td>
@@ -90,13 +88,11 @@ import {
     TrashIcon,
 } from "@heroicons/vue/outline";
 import { mapActions, mapGetters } from "vuex";
-import UserSearch from "../components/user/UserSearch.vue";
 import EditUser from "../components/user/EditUser.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 export default {
     components: {
-        UserSearch,
         ConfirmDelete,
         SearchIcon,
         UserCircleIcon,

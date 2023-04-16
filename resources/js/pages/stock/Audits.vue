@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <CreditCardIcon class="Icon"/>
+                <AdjustmentsIcon class="Icon"/>
                 <p>Stock Audits</p>
             </div>
             <div class="Search__Bar">
@@ -63,10 +63,10 @@
 import axios from "axios";
 import moment from "moment";
 import {
-    AdjustmentsIcon,
     CreditCardIcon,
     PrinterIcon,
-    SearchIcon
+    SearchIcon,
+    AdjustmentsIcon
 } from "@heroicons/vue/outline";
 
 export default {

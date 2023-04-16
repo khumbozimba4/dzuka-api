@@ -7,7 +7,7 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <CollectionIcon class="Icon"/>
+                <UserGroupIcon class="Icon"/>
                 <p>Suppliers</p>
             </div>
             <div class="Search__Bar">
@@ -99,7 +99,8 @@ import {
     PencilIcon,
     PrinterIcon,
     SearchIcon,
-    TrashIcon
+    TrashIcon,
+    UserGroupIcon
 } from "@heroicons/vue/outline";
 import {mapActions, mapGetters} from "vuex";
 import AddSupplier from "../components/suppliers/AddSupplier";
@@ -120,6 +121,7 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
+        UserGroupIcon
     },
     data() {
         return {

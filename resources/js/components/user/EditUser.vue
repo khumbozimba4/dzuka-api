@@ -55,6 +55,7 @@ export default {
             this.name = this.user.name;
             this.email = this.user.email;
             this.role = this.user.role.name;
+            this.role_id = this.user.role_id;
         },
         editUser() {
             this.changeLoading();
