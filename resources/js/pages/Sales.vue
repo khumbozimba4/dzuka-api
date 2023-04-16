@@ -14,7 +14,7 @@
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search sales by customer"
+                    placeholder="Search..."
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon"/>
@@ -42,7 +42,7 @@
                         <td>Date</td>
                         <td>Product</td>
                         <td>Stock Sold</td>
-                        <td>Total Amount</td>
+                        <td>Total Amount (MWK)</td>
                     </tr>
                     </thead>
                     <tbody class="Table__Body">

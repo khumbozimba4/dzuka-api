@@ -14,7 +14,7 @@
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search by Name / Email"
+                    placeholder="Search..."
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon" />

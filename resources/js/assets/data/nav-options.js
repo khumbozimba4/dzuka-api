@@ -12,7 +12,7 @@ export const NavOptions = [
         role: ["Admin", "Operations", "Finance"],
     },
     {
-        title: "stock",
+        title: "products/stock",
         route_name: "stock",
         icon: "AdjustmentsIcon",
         role: ["Admin", "Operations", "Finance"],

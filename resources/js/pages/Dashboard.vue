@@ -63,7 +63,7 @@
                         <td>#</td>
                         <td>Product</td>
                         <td>Quantity</td>
-                        <td>Amount</td>
+                        <td>Amount (MWK)</td>
                     </tr>
                     </thead>
                     <tbody class="Table__Body">

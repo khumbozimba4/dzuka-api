@@ -12,7 +12,7 @@
                 <p>{{ categoryName }} | Products</p>
             </div>
             <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search product"/>
+                <input type="text" class="Input" placeholder="Search..."/>
                 <SearchIcon class="Search__Icon"/>
             </div>
             <div class="Options"></div>
@@ -49,11 +49,14 @@
                         <td>#</td>
                         <td>Product name</td>
                         <td>Total Stock</td>
-                        <td>Price</td>
+                        <td>Price (MWK)</td>
                         <td v-if="userInfo.role !== finance">Actions</td>
                     </tr>
                     </thead>
                     <tbody class="Table__Body">
+                    <tr v-if="!products.length">
+                        No products available!
+                    </tr>
                     <tr
                         class="Tr"
                         v-for="(product, index) in products"
@@ -94,6 +97,7 @@ import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 import {mapActions, mapGetters} from "vuex";
 import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+import {API} from "../api";
 
 export default {
     components: {
@@ -138,8 +142,7 @@ export default {
             this.categoryName = this.$route.params.categoryName;
             this.category_id = this.$route.params.category_id;
 
-            axios
-                .get(`api/categories/${this.category_id}/products`)
+           API.getCategoryProducts(this.$route.params.category_id)
                 .then((response) => {
                     this.products = response.data;
                 })

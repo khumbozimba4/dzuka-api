@@ -3,7 +3,7 @@
         <div class="NavBar__Container">
             <div class="Title">
                 <AdjustmentsIcon class="Icon"/>
-                <p>Stock Control</p>
+                <p>Products/Stock</p>
             </div>
             <div class="Search__Bar">
                 <input
@@ -31,6 +31,7 @@
                     <tr class="Tr">
                         <td>#</td>
                         <td>Product</td>
+                        <td>Price(MKW)</td>
                         <td>Stock Count</td>
                         <td>Action</td>
                     </tr>
@@ -48,6 +49,7 @@
                             <strong>{{ index + 1 }}</strong>
                         </td>
                         <td>{{ product.product_name }}</td>
+                        <td>{{ getCurrency(product.price) }}</td>
                         <td>{{ product.stock }}</td>
                         <td class="Allocate__Stock">
                             <button
@@ -89,6 +91,7 @@ import {
 import EditStock from "../../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
 import {mapActions, mapGetters} from "vuex";
+import {CurrencyFormatter} from "../../factories/CurrencyFormatterFactory";
 
 export default {
     components: {
@@ -168,7 +171,10 @@ export default {
             this.$router.push({
                 name: "supplies"
             })
-        }
+        },
+        getCurrency(amount) {
+            return CurrencyFormatter.getCurrency(amount);
+        },
     },
     watch: {
         search(value) {

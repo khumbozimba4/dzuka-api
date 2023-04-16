@@ -14,7 +14,7 @@
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search Categories"
+                    placeholder="Search..."
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon"/>
@@ -51,7 +51,7 @@
                     </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="categories.length === 0" class="Tr" style="padding-top: 5px">
+                    <tr v-if="!categories.length">
                         No centers available!
                     </tr>
                     <tr

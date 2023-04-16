@@ -14,7 +14,7 @@
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search sales by customer"
+                    placeholder="Search.."
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon"/>
@@ -50,10 +50,10 @@
                 <table class="Table">
                     <thead class="Table__Head">
                     <tr class="Tr">
-                        <td>ExpenseID</td>
+                        <td>#</td>
                         <td>Date</td>
                         <td>Expense on</td>
-                        <td>Amount</td>
+                        <td>Amount (MWK)</td>
                         <td>Description</td>
                         <td v-if="userInfo.role !== finance">Actions</td>
                     </tr>
@@ -65,7 +65,7 @@
                         :key="expense.id"
                     >
                         <td>
-                            <strong>{{ expense.id }}</strong>
+                            <strong>{{ index + 1 }}</strong>
                         </td>
                         <td>{{ getDate(expense.date) }}</td>
                         <td>{{ expense.expense_on }}</td>
