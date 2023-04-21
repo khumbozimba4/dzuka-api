@@ -3,7 +3,7 @@
         <div class="NavBar__Container">
             <div class="Title">
                 <AdjustmentsIcon class="Icon" />
-                <p>Stock Control</p>
+                <p>Products/Stock</p>
             </div>
             <div class="Search__Bar">
                 <input
@@ -17,15 +17,12 @@
             <div class="Options"></div>
         </div>
 
-        <!-- MAIN TABLE CONTAINER -->
         <div class="Contents__Container">
             <div class="Heading">
-                <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
-                    Filters
-                </div>
-                <div class="Right__Side">
-                    <PrinterIcon class="Icon" />
+                <div class="Tabs">
+                    <div class="Item__Active Item">Stock</div>
+                    <div class="Item" @click="goToAudits">Audit Histories</div>
+                    <div class="Item" @click="goToSupplies">Supplies</div>
                 </div>
             </div>
             <div class="Table__Container">
@@ -34,7 +31,8 @@
                         <tr class="Tr">
                             <td>#</td>
                             <td>Product</td>
-                            <td>Stock</td>
+                            <td>Price(MKW)</td>
+                            <td>Stock Count</td>
                             <td>Action</td>
                         </tr>
                     </thead>
@@ -51,11 +49,12 @@
                                 <strong>{{ index + 1 }}</strong>
                             </td>
                             <td>{{ product.product_name }}</td>
+                            <td>{{ getCurrency(product.price) }}</td>
                             <td>{{ product.stock }}</td>
                             <td class="Allocate__Stock">
                                 <button
                                     @click="toggleEdit(index)"
-                                    class="submit_button"
+                                    class="button button_submit"
                                 >
                                     Submit Audited Stock
                                 </button>
@@ -89,9 +88,11 @@ import {
     PencilIcon,
     XIcon,
 } from "@heroicons/vue/outline";
-import EditStock from "../components/stock/SubmitAuditStock.vue";
+import EditStock from "../../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
+import { CurrencyFormatter } from "../../factories/CurrencyFormatterFactory";
+
 export default {
     components: {
         EditStock,
@@ -161,6 +162,19 @@ export default {
                 },
             });
         },
+        goToAudits() {
+            this.$router.push({
+                name: "audits",
+            });
+        },
+        goToSupplies() {
+            this.$router.push({
+                name: "supplies",
+            });
+        },
+        getCurrency(amount) {
+            return CurrencyFormatter.getCurrency(amount);
+        },
     },
     watch: {
         search(value) {
@@ -182,6 +196,7 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
+
     .NavBar__Container {
         background-color: #fff;
         display: flex;
@@ -196,6 +211,7 @@ export default {
             padding: 0 10px;
             border-right: 1px solid gray;
             margin-right: 25px;
+
             .Icon {
                 height: 30px;
                 object-fit: contain;
@@ -207,6 +223,7 @@ export default {
             align-items: center;
             background-color: rgb(212 212 212);
             border-radius: 5px;
+
             .Input {
                 background: none;
                 border: 0px;
@@ -218,6 +235,7 @@ export default {
                     border: 0px;
                 }
             }
+
             .Search__Icon {
                 padding: 5px 20px;
                 height: 30px;
@@ -225,6 +243,7 @@ export default {
             }
         }
     }
+
     .Contents__Container {
         margin: 20px;
         background-color: #fff;
@@ -233,67 +252,56 @@ export default {
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
             0 4px 6px -4px rgb(0 0 0 / 0.1);
-        .Heading2 {
-            padding: 20px;
-            border-bottom: 1px solid rgb(163 163 163);
-        }
-        .Heading {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            border-bottom: 1px solid rgb(163 163 163);
-            .Left__Side {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-                font-weight: 700;
-                cursor: pointer;
 
-                .Icon {
-                    height: 20px;
-                    object-fit: contain;
-                    cursor: pointer;
-                }
-            }
-            .Right__Side {
+        .Heading {
+            padding: 20px;
+            border-bottom: 1px solid rgb(163 163 163);
+
+            .Tabs {
+                width: 100%;
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                .Add__Category {
-                    padding: 5px 20px;
-                    border: 1px solid rgb(115 115 115);
-                    border-radius: 3px;
-                    color: rgb(115 115 115);
+                cursor: pointer;
+                text-transform: uppercase;
+
+                .Item {
+                    flex: 1;
+                    padding: 10px;
+                    color: rgb(31 41 55);
+                    text-align: center;
                     cursor: pointer;
-                    font-size: 15px;
+                    border: 1px solid rgb(243 244 246);
+                    background-color: rgb(229 231 235);
+                    border-radius: 3px;
+                    margin: 0 5px;
 
                     &:hover {
-                        color: rgb(82 82 82);
+                        opacity: 0.7;
                     }
                 }
-                .Icon {
-                    height: 30px;
-                    object-fit: contain;
-                    padding: 5px 20px;
-                    border: 1px solid rgb(115 115 115);
-                    border-radius: 3px;
-                    color: rgb(115 115 115);
-                    cursor: pointer;
+
+                .Item__Active {
+                    background-color: rgb(34 197 94);
+                    color: white;
                 }
             }
         }
+
         .Table__Container {
             padding: 20px;
+
             .Table {
                 width: 100%;
 
                 .Table__Head {
                     font-weight: 800;
                     color: rgb(38 38 38);
+
                     .Tr {
                         height: 40px;
                     }
                 }
+
                 .Table__Body {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
@@ -302,13 +310,15 @@ export default {
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+
                         td {
                         }
+
                         .Allocate__Stock {
                             margin: 10px;
                             display: flex;
 
-                            .history_button {
+                            .button {
                                 background: purple;
                                 color: #fff;
                                 font-weight: bold;
@@ -317,17 +327,14 @@ export default {
                                 margin-top: 5px;
                                 text-transform: capitalize;
                                 border-radius: 3px;
+
+                                &:hover {
+                                    opacity: 0.5;
+                                }
                             }
-                            .submit_button {
-                                margin-right: 20px;
-                                background: green;
-                                color: #fff;
-                                font-weight: bold;
-                                text-align: center;
-                                padding: 10px;
-                                margin-top: 5px;
-                                text-transform: capitalize;
-                                border-radius: 3px;
+
+                            .button_submit {
+                                background-color: rgb(34 197 94);
                             }
                         }
                     }

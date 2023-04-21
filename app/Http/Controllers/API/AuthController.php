@@ -2,59 +2,49 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
 class  AuthController extends Controller
 {
-    
-// LOGIN
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $fields = $request->validate([
-            'email'=>'required|string|email',
-            'password'=>'required|string'
-        ]);
-        // Check email
-        $user = User::where('email',$fields['email'])->first();
-       //check password
-        if(!$user||!Hash::check($fields['password'],$user->password)){
+        $user = User::where('email', $request->get('email'))->first();
+        if (!$user || !Hash::check($request->get('password'), $user->password)) {
             return response([
-                'message'=>'Incorrect Credentials'
-            ],401);
+                'message' => 'Incorrect Credentials'
+            ], 401);
         }
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken($user->{'name'})->plainTextToken;
         $response = [
-            'user'=>$user,
-            'token'=>$token
+            'user' => array_merge($user->toArray(), [
+                'role' => $user->role->{'name'}
+            ]),
+            'token' => $token
         ];
-        return response($response,201);
+        return response($response, 200);
 
     }
-// REGISTER
-    public function register(Request $request)
+
+    public function register(RegisterRequest $request)
     {
-        $fields = $request->validate([
-            'name'=>'required|string',
-            'email'=>'required|string|email|unique:users,email',
-            'role'=>'required|string',
-            'password'=>'required|string|confirmed'
-        ]);
         $user = User::create([
-            'name'=>$fields['name'],
-            'email'=>$fields['email'],
-            'role'=>$fields['role'],
-            'password'=>bcrypt($fields['password']),
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
+            'role_id' => $request->get('role_id'),
+            'password' => bcrypt($request->get('password'),),
         ]);
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken($request->get('name'))->plainTextToken;
         $response = [
-            'user'=>$user,
-            'token'=>$token
+            'user' => array_merge($user->toArray(), [
+                'role' => $user->role->{'name'}
+            ]),
+            'token' => $token
         ];
-        return response($response,201);
-
+        return response($response, 200);
     }
-    
+
 }

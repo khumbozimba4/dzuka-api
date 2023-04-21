@@ -23,7 +23,7 @@
             </div>
             <div class="Input__Container">
                 <label for="pin">Pin (4 digits)</label>
-                <input name="pin" type="password" v-model="pin" maxlength = "4" required/>
+                <input name="pin" type="number" v-model="pin" maxlength = "4" required/>
             </div>
             <button>Add</button>
 

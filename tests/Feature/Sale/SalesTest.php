@@ -2,6 +2,7 @@
 
 namespace Sale;
 
+use App\Models\Footprint;
 use App\Models\Sale;
 use Tests\TestCase;
 

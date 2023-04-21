@@ -17,21 +17,14 @@ class RoleSeeder extends Seeder
     {
         DB::table("roles")->insert([
             [
-                'name' => 'admin',
-                'display_name' => 'User Administrator', // optional
-                'description' => 'User is allowed to manage and edit other users', // optional
+                'name' => 'Admin',
             ],
             [
-                'name' => 'finance',
-                'display_name' => 'Finance User', // optional
-                'description' => 'Financial auditor', // optional
+                'name' => 'Operations',
             ],
             [
-                'name' => 'operations',
-                'display_name' => 'Operations User', // optional
-                'description' => 'Operations user', // optional
+                'name' => 'Finance',
             ],
         ]);
-
     }
 }

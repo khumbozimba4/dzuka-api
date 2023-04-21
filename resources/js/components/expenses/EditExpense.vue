@@ -1,25 +1,31 @@
 <template>
     <div class="Modal">
         <form @submit.prevent="editExpense">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
                 <h1>
                     <strong style="text-transform: capitalize"
-                    >Edit Expense</strong
+                        >Edit Expense</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
             </div>
             <div class="Input__Container">
                 <label for="on">On</label>
-                <input name="on" type="text" v-model="on" required/>
+                <input name="on" type="text" v-model="on" required />
             </div>
             <div class="Input__Container">
                 <label for="date">Date</label>
-                <input name="date" type="date" v-model="date" required/>
+                <input name="date" type="date" v-model="date" required />
             </div>
             <div class="Input__Container">
                 <label for="date">Amount</label>
-                <input name="amount" type="number" v-model="amount" required/>
+                <input name="amount" type="number" v-model="amount" required />
             </div>
             <div class="Input__Container">
                 <label for="description">Description</label>
@@ -37,7 +43,7 @@
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import { mapActions } from "vuex";
 
 export default {
     props: ["expense"],
@@ -86,8 +92,8 @@ export default {
                 });
         },
         close() {
-            this.$emit("closeModal")
-        }
+            this.$emit("closeModal");
+        },
     },
 };
 </script>

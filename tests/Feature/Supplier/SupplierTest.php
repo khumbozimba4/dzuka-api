@@ -32,4 +32,26 @@ class SupplierTest extends TestCase
 
         $this->assertDatabaseHas('suppliers',$data);
     }
+
+    public function test_update_supplier():void{
+        $supplier =  Supplier::factory()->create([
+            'name' => 'Samson',
+            'location' => 'Lilongwe',
+            'pin' => '1234',
+            'phone_number' => '0996679617',
+        ]);
+        $this->login()->patch(sprintf('api/suppliers/%s', $supplier->getKey()), [
+            'name' => 'Sam',
+            'location' => 'Lilongwe',
+            'pin' => '1234',
+            'phone_number' => '0996679617',
+        ]);
+
+        $this->assertDatabaseHas('suppliers',[
+            'name' => 'Sam',
+            'location' => 'Lilongwe',
+            'pin' => '1234',
+            'phone_number' => '0996679617',
+        ]);
+    }
 }

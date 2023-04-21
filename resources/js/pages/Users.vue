@@ -14,15 +14,13 @@
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search by Name / Email"
+                    placeholder="Search..."
                     v-model="search"
                 />
                 <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
-
-        <UserSearch v-if="search" :search="search" />
 
         <div class="Contents__Container">
             <div class="Heading">
@@ -54,7 +52,7 @@
                             </td>
                             <td>{{ user.name }}</td>
                             <td>{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
+                            <td>{{ user.role.name }}</td>
                             <td class="Icons" v-if="userInfo.role !== finance">
                                 <PencilIcon
                                     class="Icon"
@@ -69,7 +67,8 @@
                                     @getUsers="getUsers"
                                     @closeModal="editUserOpen = false"
                                     v-if="
-                                        editUserOpen && selected == users[index]
+                                        editUserOpen &&
+                                        selected === users[index]
                                     "
                                 />
                             </td>
@@ -90,13 +89,11 @@ import {
     TrashIcon,
 } from "@heroicons/vue/outline";
 import { mapActions, mapGetters } from "vuex";
-import UserSearch from "../components/user/UserSearch.vue";
 import EditUser from "../components/user/EditUser.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 export default {
     components: {
-        UserSearch,
         ConfirmDelete,
         SearchIcon,
         UserCircleIcon,
@@ -165,7 +162,7 @@ export default {
         toggleDelete() {
             this.changeLoading();
             axios
-                .delete(`api/users/${this.deletedItem}/destroy`)
+                .delete(`api/users/${this.deletedItem}`)
                 .then(() => {
                     this.confirmDelete = false;
                 })

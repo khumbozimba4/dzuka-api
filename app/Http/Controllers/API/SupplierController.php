@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SupplierRequest;
 use App\Models\Supplier;
-use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
@@ -19,13 +18,13 @@ class SupplierController extends Controller
         return Supplier::create($request->validated());
     }
 
-    public function update(SupplierRequest $request, $supplier)
+    public function update(SupplierRequest $request, Supplier $supplier): bool
     {
-       return Supplier::find($supplier)->update($request->validated());
+       return $supplier->update($request->validated());
     }
 
-    public function destroy($supplier)
+    public function destroy(Supplier $supplier): ?bool
     {
-       return Supplier::find($supplier)->delete();
+       return $supplier->delete();
     }
 }

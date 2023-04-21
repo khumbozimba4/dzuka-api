@@ -1,37 +1,47 @@
 <template>
     <div class="Modal">
         <form @submit.prevent="addToStock">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
                 <h1>
                     <strong style="text-transform: capitalize"
-                    >Submit Stock - {{ product.product_name }}</strong
+                        >Submit Stock - {{ product.product_name }}</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
             </div>
             <div class="Input__Container">
                 <p>
-                    Enter counted stock for <strong>{{ getDate() }}</strong> end of
-                    business day
+                    Enter counted stock for <strong>{{ getDate() }}</strong> end
+                    of business day
                 </p>
-                <br/>
+                <br />
             </div>
             <div class="Input__Container">
                 <label for="input_stock"><strong>Quantity</strong> </label>
-                <input name="input_stock" v-model="input_stock" type="number" required/>
+                <input
+                    name="input_stock"
+                    v-model="input_stock"
+                    type="number"
+                    required
+                />
             </div>
 
             <button>Save</button>
+            <div v-if="errorMessage">{{ errorMessage }}</div>
         </form>
-
-        <div v-if="errorMessage">{{ errorMessage }}</div>
     </div>
 </template>
 
 <script>
 import axios from "axios";
 import moment from "moment";
-import {mapActions, mapGetters} from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
     props: ["product"],
@@ -90,7 +100,7 @@ export default {
     border-radius: 5px;
     padding: 20px;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
 
     .Select__Boxes {
         display: flex;

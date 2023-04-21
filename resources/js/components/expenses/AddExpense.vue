@@ -1,10 +1,16 @@
 <template>
     <div class="Modal">
         <form @submit.prevent="addExpense">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
                 <h1>
                     <strong style="text-transform: capitalize"
-                    >Record Expense</strong
+                        >Record Expense</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
@@ -88,9 +94,9 @@ export default {
                     this.errorMessage = err.message;
                 });
         },
-        close(){
-            this.$emit("closeModal")
-        }
+        close() {
+            this.$emit("closeModal");
+        },
     },
 };
 </script>

@@ -1,29 +1,33 @@
 <template>
     <div class="Main__Wrapper">
-        <div class="Dzuka__Logo">PaMsika</div>
+        <div class="Dzuka__Logo">6to6</div>
         <div class="User__Profile" @click="openUserProfileModal">
-            <UserCircleIcon class="User__Icon"/>
+            <UserCircleIcon class="User__Icon" />
             <p>{{ userInfo.name }}</p>
         </div>
 
-        <div class="Nav__Options" v-for="(item, index) in navigation" :key="index">
+        <div
+            class="Nav__Options"
+            v-for="(item, index) in navigation"
+            :key="index"
+        >
             <div v-if="hasRole(item.role)">
                 <router-link :to="`/${item.route_name}`">
                     <div
                         :class="[
-                            activeRoute == item.route_name
-                                ? 'Nav__Link__Active'
+                            activeRoute === item.route_name
+                                ? 'Nav__Link Nav__Link__Active'
                                 : 'Nav__Link',
                         ]"
                     >
-                        <component :is="item.icon" class="Icon"/>
+                        <component :is="item.icon" class="Icon" />
                         <p class="Title">{{ item.title }}</p>
                     </div>
                 </router-link>
             </div>
         </div>
         <div class="Sign__Out">
-            <LogoutIcon class="Icon" @click="logout"/>
+            <LogoutIcon class="Icon" @click="logout" />
         </div>
     </div>
 </template>
@@ -39,9 +43,10 @@ import {
     UserCircleIcon,
     CreditCardIcon,
     LogoutIcon,
+    UserGroupIcon,
 } from "@heroicons/vue/outline";
-import {mapActions, mapGetters} from "vuex";
-import {NavOptions} from "../assets/data/nav-options";
+import { mapActions, mapGetters } from "vuex";
+import { NavOptions } from "../assets/data/nav-options";
 
 export default {
     components: {
@@ -54,10 +59,11 @@ export default {
         UserCircleIcon,
         LogoutIcon,
         CreditCardIcon,
+        UserGroupIcon,
     },
     data() {
         return {
-            navigation : []
+            navigation: [],
         };
     },
     computed: {
@@ -82,8 +88,8 @@ export default {
             this.navigation = NavOptions;
         },
         hasRole(roles = []) {
-            return roles.includes(this.userInfo.role)
-        }
+            return roles.includes(this.userInfo.role);
+        },
     },
 };
 </script>
@@ -158,26 +164,8 @@ export default {
         }
 
         .Nav__Link__Active {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            padding: 15px 25px;
             background: rgb(15 23 42);
             color: rgb(29 78 216);
-            cursor: pointer;
-
-            .Icon {
-                height: 25px;
-            }
-
-            .Title {
-                color: rgb(203 213 225);
-                text-transform: capitalize;
-
-                &:hover {
-                    color: #fff;
-                }
-            }
         }
     }
 

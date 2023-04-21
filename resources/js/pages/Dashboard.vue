@@ -23,7 +23,7 @@
         />
         <div class="Cards__Wrap">
             <Card
-                :cardNote="salesToday.length"
+                :cardNote="sales.length"
                 src="checkoutcart"
                 title="Total sales today"
                 color="Card__Note__Green"
@@ -49,7 +49,7 @@
                 <div class="Right__Side">
                     <h1>
                         <strong class="font-bold">Sales Today</strong>
-                        ({{ date }})
+                        {{ getDate() }}
                     </h1>
                 </div>
                 <div class="Left__Side">
@@ -60,32 +60,26 @@
                 <table class="Table">
                     <thead class="Table__Head">
                         <tr class="Tr">
-                            <td>SaleID</td>
-                            <td>Date</td>
-                            <td>Customer</td>
-                            <td>Customer Contact</td>
-                            <td>Products/Services</td>
-                            <td>Total Price (MKW)</td>
+                            <td>#</td>
+                            <td>Product</td>
+                            <td>Quantity</td>
+                            <td>Amount (MWK)</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="sale in salesToday"
+                            v-for="(sale, index) in sales"
                             :key="sale.id"
                         >
                             <td>
-                                <strong>{{ sale.id }}</strong>
+                                <strong>{{ index + 1 }}</strong>
                             </td>
-                            <td>{{ sale.date }}</td>
-                            <td>{{ sale.customer_name }}</td>
-                            <td>{{ sale.customer_contact }}</td>
-                            <td>{{ sale.products.length }}</td>
-                            <td>{{ sale.sale_amount }}</td>
+                            <td>{{ sale.product.product_name }}</td>
+                            <td>{{ sale.quantity }}</td>
+                            <td>{{ getCurrency(sale.amount) }}</td>
                         </tr>
-                        <div v-if="salesToday.length === 0">
-                            No sales made yet!
-                        </div>
+                        <div v-if="sales.length === 0">No sales made yet!</div>
                     </tbody>
                 </table>
             </div>
@@ -106,6 +100,8 @@ import {
 import Card from "../components/Card.vue";
 import ProductSearch from "../components/products/ProductSearch.vue";
 import moment from "moment";
+import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
+
 export default {
     components: {
         Card,
@@ -114,7 +110,6 @@ export default {
         ColorSwatchIcon,
         CollectionIcon,
         AdjustmentsIcon,
-        PrinterIcon,
         ArrowNarrowRightIcon,
         PrinterIcon,
         ShoppingBagIcon,
@@ -123,16 +118,14 @@ export default {
         return {
             products: [],
             outOfStock: [],
-            salesToday: [],
-            date: null,
+            sales: [],
             transactions: [],
             search: "",
         };
     },
     created() {
         this.getProducts();
-        this.getSalesToday();
-        this.getDate();
+        this.getSales();
         this.getTransactionsToday();
     },
     methods: {
@@ -149,11 +142,11 @@ export default {
                     console.log(err.message);
                 });
         },
-        getSalesToday() {
+        getSales() {
             axios
-                .get("api/sales/today")
-                .then((res) => {
-                    this.salesToday = res.data;
+                .get("api/sales")
+                .then(({ data }) => {
+                    this.sales = this.filterByToday(data);
                 })
                 .catch((err) => {
                     console.log(err.message);
@@ -171,11 +164,19 @@ export default {
         },
         getOutOfStock() {
             this.outOfStock = this.products.filter(
-                (product) => product.stock == 0.0
+                (product) => product.stock === 0
             );
         },
-        getDate() {
-            this.date = moment(new Date()).format("MMM Do YY");
+        getDate(date = new Date()) {
+            return moment(new Date(date)).format("MMM Do YY");
+        },
+        filterByToday(sales) {
+            return sales.filter(
+                (sale) => this.getDate(sale.created_at) === this.getDate()
+            );
+        },
+        getCurrency(amount) {
+            return CurrencyFormatter.getCurrency(amount);
         },
         closeSearch() {
             this.search = "";
@@ -195,6 +196,7 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: column;
+
     .NavBar__Container {
         background-color: #fff;
         display: flex;
@@ -209,6 +211,7 @@ export default {
             padding: 0 10px;
             border-right: 1px solid gray;
             margin-right: 25px;
+
             .Icon {
                 height: 30px;
                 object-fit: contain;
@@ -220,6 +223,7 @@ export default {
             align-items: center;
             background-color: rgb(212 212 212);
             border-radius: 5px;
+
             .Input {
                 background: none;
                 border: 0px;
@@ -231,6 +235,7 @@ export default {
                     border: 0px;
                 }
             }
+
             .Search__Icon {
                 padding: 5px 10px;
                 height: 30px;
@@ -238,12 +243,14 @@ export default {
             }
         }
     }
+
     .Cards__Wrap {
         display: flex;
         padding: 20px;
         margin: 20px;
         gap: 100px;
     }
+
     .Contents__Container {
         margin: 20px;
         background-color: #fff;
@@ -252,12 +259,14 @@ export default {
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
             0 4px 6px -4px rgb(0 0 0 / 0.1);
+
         .Heading {
             position: relative;
             display: flex;
             justify-content: space-between;
             padding: 20px;
             border-bottom: 1px solid rgb(163 163 163);
+
             .Left__Side {
                 display: flex;
                 gap: 10px;
@@ -271,10 +280,12 @@ export default {
                     cursor: pointer;
                 }
             }
+
             .Right__Side {
                 display: flex;
                 align-items: center;
                 gap: 10px;
+
                 .Add__Category {
                     padding: 5px 20px;
                     border: 1px solid rgb(115 115 115);
@@ -287,6 +298,7 @@ export default {
                         color: rgb(82 82 82);
                     }
                 }
+
                 .Icon {
                     height: 30px;
                     object-fit: contain;
@@ -298,25 +310,31 @@ export default {
                 }
             }
         }
+
         .Table__Container {
             padding: 20px;
+
             .Table {
                 width: 100%;
 
                 .Table__Head {
                     font-weight: 800;
                     color: rgb(38 38 38);
+
                     .Tr {
                         height: 40px;
                     }
                 }
+
                 .Table__Body {
                     .Tr {
                         border-top: 1px solid rgb(229 229 229);
                         height: 40px;
+
                         &:hover {
                             background-color: rgb(236, 236, 236);
                         }
+
                         td {
                             .Icon {
                                 height: 30px;

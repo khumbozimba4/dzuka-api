@@ -15,8 +15,8 @@ class CreateAddInventoriesTable extends Migration
     {
         Schema::create('add_inventories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onUpdate('cascade');
-            $table->foreignId('supplier_id')->constrained()->onUpdate('cascade');
+            $table->foreignId('product_id')->constrained();
+            $table->foreignId('supplier_id')->constrained();
             $table->integer('quantity');
             $table->timestamps();
         });

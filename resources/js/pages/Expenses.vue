@@ -7,27 +7,27 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <CreditCardIcon class="Icon"/>
+                <CreditCardIcon class="Icon" />
                 <p>Expenses</p>
             </div>
             <div class="Search__Bar">
                 <input
                     type="text"
                     class="Input"
-                    placeholder="Search sales by customer"
+                    placeholder="Search.."
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
 
             <div class="Options"></div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
-        <ExpenseSearch :search="search" v-if="search"/>
+        <ExpenseSearch :search="search" v-if="search" />
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon"/>
+                    <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
                 <div class="Right__Side">
@@ -38,7 +38,7 @@
                     >
                         Record Expense
                     </div>
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
                 <AddExpense
                     @getExpenses="getExpenses"
@@ -49,48 +49,48 @@
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>ExpenseID</td>
-                        <td>Date</td>
-                        <td>Expense on</td>
-                        <td>Amount</td>
-                        <td>Description</td>
-                        <td v-if="userInfo.role !== finance">Actions</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>#</td>
+                            <td>Date</td>
+                            <td>Expense on</td>
+                            <td>Amount (MWK)</td>
+                            <td>Description</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr
-                        class="Tr"
-                        v-for="(expense, index) in expenses"
-                        :key="expense.id"
-                    >
-                        <td>
-                            <strong>{{ expense.id }}</strong>
-                        </td>
-                        <td>{{ getDate(expense.date) }}</td>
-                        <td>{{ expense.expense_on }}</td>
-                        <td>{{ getCurrency(expense.amount) }}</td>
-                        <td>{{ expense.description }}</td>
-                        <td class="Icons" v-if="userInfo.role !== finance">
-                            <PencilIcon
-                                class="Icon"
-                                @click="toggleEditExpense(expense)"
-                            />
-                            <TrashIcon
-                                class="Icon Icon_Delete"
-                                @click="toggleDeleteExpense(expense.id)"
-                                :style="deleteIcon"
-                            />
-                            <EditExpense
-                                :expense="expense"
-                                @getExpenses="getExpenses"
-                                v-if="
+                        <tr
+                            class="Tr"
+                            v-for="(expense, index) in expenses"
+                            :key="expense.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ getDate(expense.date) }}</td>
+                            <td>{{ expense.expense_on }}</td>
+                            <td>{{ getCurrency(expense.amount) }}</td>
+                            <td>{{ expense.description }}</td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditExpense(expense)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteExpense(expense.id)"
+                                    :style="deleteIcon"
+                                />
+                                <EditExpense
+                                    :expense="expense"
+                                    @getExpenses="getExpenses"
+                                    v-if="
                                         editExpenseOpen &&
                                         selected == expenses[index]
                                     "
-                            />
-                        </td>
-                    </tr>
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <div class="p-4" v-if="expenses.length == 0">
@@ -118,8 +118,8 @@ import ExpenseSearch from "../components/expenses/ExpenseSearch.vue";
 import EditExpense from "../components/expenses/EditExpense.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
-import {mapActions, mapGetters} from "vuex";
-import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+import { mapActions, mapGetters } from "vuex";
+import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
 import moment from "moment";
 
 export default {
@@ -277,7 +277,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             display: flex;
