@@ -1,28 +1,28 @@
 <template>
     <div class="Main__Wrap">
         <!--        @Cover Image-->
-        <div class="Cover__Image"
-             :style="{
+        <div
+            class="Cover__Image"
+            :style="{
                 backgroundImage: `url(${Image})`,
                 backgroundSize: 'cover',
             }"
         ></div>
         <!--        @Form-->
         <form @submit.prevent="login">
-            <img :src="'/images/6to6-black.png'" style="width: 150px; height: 150px; object-fit: contain">
+            <img
+                :src="'/images/6to6-black.png'"
+                style="width: 150px; height: 150px; object-fit: contain"
+            />
             <h2>Login</h2>
             <!-- Email -->
             <div class="input__container">
-                <MailIcon class="icon"/>
-                <input
-                    placeholder="Email"
-                    type="email"
-                    v-model="email"
-                />
+                <MailIcon class="icon" />
+                <input placeholder="Email" type="email" v-model="email" />
             </div>
             <!-- Password -->
             <div class="input__container">
-                <LockClosedIcon class="icon"/>
+                <LockClosedIcon class="icon" />
                 <input
                     type="password"
                     placeholder="Password"
@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import {MailIcon, LockClosedIcon} from "@heroicons/vue/outline";
+import { MailIcon, LockClosedIcon } from "@heroicons/vue/outline";
 import Loading from "../components/Loading.vue";
-import {mapGetters, mapActions} from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
     props: ["modalMessage"],

@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <AdjustmentsIcon class="Icon"/>
+                <AdjustmentsIcon class="Icon" />
                 <p>Stock Audits</p>
             </div>
             <div class="Search__Bar">
@@ -12,7 +12,7 @@
                     placeholder="Search..."
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
 
             <div class="Options"></div>
@@ -21,34 +21,30 @@
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon"/>
+                    <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>Date</td>
-                        <td>Product</td>
-                        <td>Stock Count</td>
-                        <td>Submitted By</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>Date</td>
+                            <td>Product</td>
+                            <td>Stock Count</td>
+                            <td>Submitted By</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr
-                        class="Tr"
-                        v-for="audit in audits"
-                        :key="audit.id"
-                    >
-                        <td>{{ getDate(audit.created_at) }}</td>
-                        <td>{{ audit.product.product_name }}</td>
-                        <td>{{ audit.stock_count }}</td>
-                        <td>{{ audit.user.name }}</td>
-                    </tr>
+                        <tr class="Tr" v-for="audit in audits" :key="audit.id">
+                            <td>{{ getDate(audit.created_at) }}</td>
+                            <td>{{ audit.product.product_name }}</td>
+                            <td>{{ audit.stock_count }}</td>
+                            <td>{{ audit.user.name }}</td>
+                        </tr>
                     </tbody>
                 </table>
                 <div class="p-4" v-if="audits.length == 0">
@@ -66,7 +62,7 @@ import {
     CreditCardIcon,
     PrinterIcon,
     SearchIcon,
-    AdjustmentsIcon
+    AdjustmentsIcon,
 } from "@heroicons/vue/outline";
 
 export default {
@@ -80,27 +76,28 @@ export default {
     data() {
         return {
             audits: [],
-            error: ""
-        }
+            error: "",
+        };
     },
     created() {
-        this.getAuditSubmissions()
+        this.getAuditSubmissions();
     },
     methods: {
         getAuditSubmissions() {
-            axios.get("api/submit-audit-stock")
-                .then(({data}) => {
+            axios
+                .get("api/submit-audit-stock")
+                .then(({ data }) => {
                     this.audits = data;
                 })
-                .catch(({message}) => {
-                    this.error = message
-                })
+                .catch(({ message }) => {
+                    this.error = message;
+                });
         },
         getDate(date) {
             return moment(new Date(date)).format("LL");
         },
-    }
-}
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -163,7 +160,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             display: flex;

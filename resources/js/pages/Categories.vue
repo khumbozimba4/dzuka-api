@@ -31,13 +31,17 @@
                     <div
                         class="Add__Category"
                         @click="isOpen = !isOpen"
-                        v-if="userInfo.role !== finance"
+                        v-if="userInfo.role !== 'Finance'"
                     >
                         Add Center
                     </div>
                     <PrinterIcon class="Icon"/>
                 </div>
-                <AddCategory @getCategories="getCategories" v-if="isOpen" @closeModal="isOpen = false"/>
+                <AddCategory
+                    @getCategories="getCategories"
+                    v-if="isOpen"
+                    @closeModal="isOpen = false"
+                />
             </div>
             <div class="Table__Container">
                 <table class="Table">
@@ -46,17 +50,17 @@
                         <td>#</td>
                         <td>Center Name</td>
                         <td>Center Products</td>
-                        <td v-if="userInfo.role !== finance">Actions</td>
+                        <td v-if="userInfo.role !== 'Finance'">Actions</td>
                         <td>View</td>
                     </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="!categories.length">
+                    <tr v-if="!categories.list.length">
                         No centers available!
                     </tr>
                     <tr
                         class="Tr"
-                        v-for="(category, index) in categories"
+                        v-for="(category, index) in categories.list"
                         :key="category.id"
                     >
                         <td>
@@ -64,7 +68,7 @@
                         </td>
                         <td>{{ category.category_name }}</td>
                         <td>{{ category.products.length }}</td>
-                        <td class="Icons" v-if="userInfo.role !== finance">
+                        <td class="Icons" v-if="userInfo.role !== 'Finance'">
                             <PencilIcon
                                 class="Icon"
                                 @click="toggleEditCategory(category)"
@@ -92,6 +96,14 @@
                     </tr>
                     </tbody>
                 </table>
+                <TablePagination
+                    :current="categories.current_page"
+                    :total="categories.total"
+                    :per_page="categories.per_page"
+                    :prev_page_url="categories.prev_page_url"
+                    :next_page_url="categories.next_page_url"
+                    @change="(value) => getCategories(value)"
+                />
             </div>
         </div>
     </div>
@@ -112,10 +124,15 @@ import EditCategory from "../components/categories/EditCategory.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import {mapActions, mapGetters} from "vuex";
 import {API} from "../api";
+import VueTailwindPagination from '@ocrv/vue-tailwind-pagination';
+import '@ocrv/vue-tailwind-pagination/styles'
+import TablePagination from "../components/TablePagination";
 
 export default {
     name: "categories",
     components: {
+        TablePagination,
+        VueTailwindPagination,
         AddCategory,
         EditCategory,
         ConfirmDelete,
@@ -130,32 +147,39 @@ export default {
     data() {
         return {
             isOpen: false,
-            categories: [],
+            categories: {
+                list: [],
+                current_page: 1,
+                per_page: null,
+                total: null,
+                next_page_url: null,
+                prev_page_url: null,
+            },
             search: "",
             editCategoryOpen: null,
             selected: [],
             confirmDelete: false,
             deletedItem: null,
-            finance: "",
         };
     },
     computed: {
         ...mapGetters(["userInfo"]),
     },
     created() {
-        this.getCategories();
-        this.setFinanceVariable();
+        this.getCategories(this.categories.current_page);
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        setFinanceVariable() {
-            this.finance = "finance";
-        },
-        getCategories() {
+        getCategories(page) {
             this.changeLoading();
-            API.getCategories()
+            API.listCategories(page)
                 .then(({data}) => {
-                    this.categories = data;
+                    this.categories.list = data.data;
+                    this.categories.current_page = data.current_page;
+                    this.categories.per_page = data.per_page;
+                    this.categories.total = data.total;
+                    this.categories.next_page_url = data.next_page_url;
+                    this.categories.prev_page_url = data.prev_page_url;
                 })
                 .then(() => {
                     this.isOpen = false;

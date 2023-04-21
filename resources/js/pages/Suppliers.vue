@@ -7,7 +7,7 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <UserGroupIcon class="Icon"/>
+                <UserGroupIcon class="Icon" />
                 <p>Suppliers</p>
             </div>
             <div class="Search__Bar">
@@ -17,15 +17,15 @@
                     placeholder="Search..."
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
-        <CategorySearch v-if="search" :search="search"/>
+        <CategorySearch v-if="search" :search="search" />
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon"/>
+                    <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
                 <div class="Right__Side">
@@ -36,53 +36,62 @@
                     >
                         Add Supplier
                     </div>
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
-                <AddSupplier @getSuppliers="getSuppliers" v-if="addSupplier" @closeModal="addSupplier = false"/>
+                <AddSupplier
+                    @getSuppliers="getSuppliers"
+                    v-if="addSupplier"
+                    @closeModal="addSupplier = false"
+                />
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>#</td>
-                        <td>Supplier Name</td>
-                        <td>Phone Number</td>
-                        <td>Location</td>
-                        <td v-if="userInfo.role !== finance">Actions</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>#</td>
+                            <td>Supplier Name</td>
+                            <td>Phone Number</td>
+                            <td>Location</td>
+                            <td v-if="userInfo.role !== finance">Actions</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="!suppliers.length">
-                        No suppliers available!
-                    </tr>
-                    <tr
-                        class="Tr"
-                        v-for="(supplier, index) in suppliers"
-                        :key="supplier.id"
-                    >
-                        <td>
-                            <strong>{{ index + 1 }}</strong>
-                        </td>
-                        <td>{{ supplier.name }}</td>
-                        <td>{{ getPhoneNumber(`${supplier.phone_number}`) }}</td>
-                        <td>{{ supplier.location }}</td>
-                        <td class="Icons" v-if="userInfo.role !== finance">
-                            <PencilIcon
-                                class="Icon"
-                                @click="toggleEditSupplier(supplier)"
-                            />
-                            <TrashIcon
-                                class="Icon Icon_Delete"
-                                @click="toggleDeleteSupplier(supplier.id)"
-                            />
-                            <EditSupplier
-                                :supplier="supplier"
-                                @getSuppliers="getSuppliers"
-                                @closeModal="editSupplier = false"
-                                v-if=" editSupplier && selected === suppliers[index]"
-                            />
-                        </td>
-                    </tr>
+                        <tr v-if="!suppliers.length">
+                            No suppliers available!
+                        </tr>
+                        <tr
+                            class="Tr"
+                            v-for="(supplier, index) in suppliers"
+                            :key="supplier.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ supplier.name }}</td>
+                            <td>
+                                {{ getPhoneNumber(`${supplier.phone_number}`) }}
+                            </td>
+                            <td>{{ supplier.location }}</td>
+                            <td class="Icons" v-if="userInfo.role !== finance">
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditSupplier(supplier)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteSupplier(supplier.id)"
+                                />
+                                <EditSupplier
+                                    :supplier="supplier"
+                                    @getSuppliers="getSuppliers"
+                                    @closeModal="editSupplier = false"
+                                    v-if="
+                                        editSupplier &&
+                                        selected === suppliers[index]
+                                    "
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -100,13 +109,13 @@ import {
     PrinterIcon,
     SearchIcon,
     TrashIcon,
-    UserGroupIcon
+    UserGroupIcon,
 } from "@heroicons/vue/outline";
-import {mapActions, mapGetters} from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import AddSupplier from "../components/suppliers/AddSupplier";
 import EditSupplier from "../components/suppliers/EditSupplier";
 import ConfirmDelete from "../components/ConfirmDelete";
-import {PhoneNumberFormatter} from "../factories/PhoneNumberFormatterFactory";
+import { PhoneNumberFormatter } from "../factories/PhoneNumberFormatterFactory";
 
 export default {
     name: "Suppliers",
@@ -121,18 +130,18 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         ArrowNarrowRightIcon,
-        UserGroupIcon
+        UserGroupIcon,
     },
     data() {
         return {
-            'suppliers': [],
-            'addSupplier': false,
-            'editSupplier': false,
-            'selected': null,
-            'confirmDelete': false,
-            'deletedItem': null,
-            'errorMessage': ""
-        }
+            suppliers: [],
+            addSupplier: false,
+            editSupplier: false,
+            selected: null,
+            confirmDelete: false,
+            deletedItem: null,
+            errorMessage: "",
+        };
     },
     created() {
         this.getSuppliers();
@@ -143,13 +152,14 @@ export default {
     methods: {
         ...mapActions(["changeLoading"]),
         getSuppliers() {
-            axios.get('api/suppliers')
-                .then(({data}) => {
-                    this.suppliers = data
+            axios
+                .get("api/suppliers")
+                .then(({ data }) => {
+                    this.suppliers = data;
                 })
                 .catch((error) => {
-                    console.log(error.message)
-                })
+                    console.log(error.message);
+                });
         },
         toggleDeleteSupplier(id) {
             this.deletedItem = id;
@@ -178,9 +188,9 @@ export default {
         },
         getPhoneNumber(phone) {
             return PhoneNumberFormatter.getPhoneNumber(phone);
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -243,7 +253,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             display: flex;
@@ -351,4 +361,3 @@ export default {
     }
 }
 </style>
-

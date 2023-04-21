@@ -67,7 +67,8 @@
                                     @getUsers="getUsers"
                                     @closeModal="editUserOpen = false"
                                     v-if="
-                                        editUserOpen && selected === users[index]
+                                        editUserOpen &&
+                                        selected === users[index]
                                     "
                                 />
                             </td>

@@ -1,11 +1,16 @@
 import axios from "axios";
+const baseUrl = 'api';
 
 export class API{
     static getProducts(){
         return axios.get('api/products');
     }
-    static getCategories(){
-        return axios.get('api/categories');
+    static listCategories(page) {
+        return axios.get(`${baseUrl}/categories`, {
+            params: {
+                page: page
+            }
+        });
     }
     static searchCategory(name){
         return axios.get(`api/categories/${name}/search`);
@@ -22,4 +27,6 @@ export class API{
     static deleteCategory(category){
         return axios.delete(`api/categories/${category}`);
     }
+
+
 }

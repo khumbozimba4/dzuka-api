@@ -7,7 +7,7 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <ShoppingBagIcon class="Icon"/>
+                <ShoppingBagIcon class="Icon" />
                 <p>Sales</p>
             </div>
             <div class="Search__Bar">
@@ -17,53 +17,53 @@
                     placeholder="Search..."
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
-        <SaleSearch v-if="search" :search="search"/>
+        <SaleSearch v-if="search" :search="search" />
 
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon"/>
+                    <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
             </div>
 
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>#</td>
-                        <td>Date</td>
-                        <td>Product</td>
-                        <td>Stock Sold</td>
-                        <td>Total Amount (MWK)</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>#</td>
+                            <td>Date</td>
+                            <td>Product</td>
+                            <td>Stock Sold</td>
+                            <td>Total Amount (MWK)</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="!sales.length">
-                        No sales made yet!
-                    </tr>
-                    <tr
-                        class="Tr"
-                        v-for="(sale, index) in sales"
-                        :key="sale.id"
-                    >
-                        <td>
-                            <strong>{{ index + 1 }}</strong>
-                        </td>
-                        <td>{{ getDate(sale.created_at) }}</td>
-                        <td>{{ sale.product.product_name }}</td>
-                        <td>{{ sale.quantity }}</td>
-                        <td>
-                            {{ getCurrency(sale.amount) }}
-                        </td>
-                    </tr>
+                        <tr v-if="!sales.length">
+                            No sales made yet!
+                        </tr>
+                        <tr
+                            class="Tr"
+                            v-for="(sale, index) in sales"
+                            :key="sale.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ getDate(sale.created_at) }}</td>
+                            <td>{{ sale.product.product_name }}</td>
+                            <td>{{ sale.quantity }}</td>
+                            <td>
+                                {{ getCurrency(sale.amount) }}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -85,15 +85,15 @@ import {
     PencilIcon,
     TrashIcon,
 } from "@heroicons/vue/outline";
-import {XCircleIcon} from "@heroicons/vue/solid";
+import { XCircleIcon } from "@heroicons/vue/solid";
 import SaleSearch from "../components/SaleSearch.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
 import "@ocrv/vue-tailwind-pagination/styles";
 import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
-import {mapActions, mapGetters} from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import moment from "moment";
-import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
 
 export default {
     components: {
@@ -210,7 +210,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             position: relative;
@@ -239,7 +239,7 @@ export default {
                     z-index: 999;
                     background: #fff;
                     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-                    0 4px 6px -4px rgb(0 0 0 / 0.1);
+                        0 4px 6px -4px rgb(0 0 0 / 0.1);
                     top: 30px;
                     left: 20px;
                     border-top: 1px solid rgb(163, 163, 163);

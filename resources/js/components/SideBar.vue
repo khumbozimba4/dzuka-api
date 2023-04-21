@@ -2,11 +2,15 @@
     <div class="Main__Wrapper">
         <div class="Dzuka__Logo">6to6</div>
         <div class="User__Profile" @click="openUserProfileModal">
-            <UserCircleIcon class="User__Icon"/>
+            <UserCircleIcon class="User__Icon" />
             <p>{{ userInfo.name }}</p>
         </div>
 
-        <div class="Nav__Options" v-for="(item, index) in navigation" :key="index">
+        <div
+            class="Nav__Options"
+            v-for="(item, index) in navigation"
+            :key="index"
+        >
             <div v-if="hasRole(item.role)">
                 <router-link :to="`/${item.route_name}`">
                     <div
@@ -16,14 +20,14 @@
                                 : 'Nav__Link',
                         ]"
                     >
-                        <component :is="item.icon" class="Icon"/>
+                        <component :is="item.icon" class="Icon" />
                         <p class="Title">{{ item.title }}</p>
                     </div>
                 </router-link>
             </div>
         </div>
         <div class="Sign__Out">
-            <LogoutIcon class="Icon" @click="logout"/>
+            <LogoutIcon class="Icon" @click="logout" />
         </div>
     </div>
 </template>
@@ -39,10 +43,10 @@ import {
     UserCircleIcon,
     CreditCardIcon,
     LogoutIcon,
-    UserGroupIcon
+    UserGroupIcon,
 } from "@heroicons/vue/outline";
-import {mapActions, mapGetters} from "vuex";
-import {NavOptions} from "../assets/data/nav-options";
+import { mapActions, mapGetters } from "vuex";
+import { NavOptions } from "../assets/data/nav-options";
 
 export default {
     components: {
@@ -55,11 +59,11 @@ export default {
         UserCircleIcon,
         LogoutIcon,
         CreditCardIcon,
-        UserGroupIcon
+        UserGroupIcon,
     },
     data() {
         return {
-            navigation : []
+            navigation: [],
         };
     },
     computed: {
@@ -84,8 +88,8 @@ export default {
             this.navigation = NavOptions;
         },
         hasRole(roles = []) {
-            return roles.includes(this.userInfo.role)
-        }
+            return roles.includes(this.userInfo.role);
+        },
     },
 };
 </script>

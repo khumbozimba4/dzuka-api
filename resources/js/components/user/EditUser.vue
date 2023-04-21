@@ -3,25 +3,30 @@
         <form @submit.prevent="editUser">
             <div
                 style="
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 20px;
-            "
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
+                "
             >
                 <strong style="text-transform: capitalize">Edit User</strong>
                 <button @click="close">Close</button>
             </div>
             <div class="Input__Container">
                 <label for="name">Name</label>
-                <input name="name" v-model="name" required/>
+                <input name="name" v-model="name" required />
             </div>
             <div class="Input__Container">
                 <label for="name">Email</label>
-                <input name="email" v-model="email" required/>
+                <input name="email" v-model="email" required />
             </div>
             <div class="Input__Container">
                 <label for="role_id">Change Role</label>
-                <select id="role_id" name="role_id" v-model="role_id" style="padding:10px">
+                <select
+                    id="role_id"
+                    name="role_id"
+                    v-model="role_id"
+                    style="padding: 10px"
+                >
                     <option value="1">Admin</option>
                     <option value="2">Operations</option>
                     <option value="3">Finance</option>

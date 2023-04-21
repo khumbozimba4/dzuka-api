@@ -19,7 +19,11 @@
                         <!-- Role -->
                         <div class="Input__Select">
                             <label for="role_id">Select Role</label>
-                            <select id="role_id" name="role_id" v-model="role_id">
+                            <select
+                                id="role_id"
+                                name="role_id"
+                                v-model="role_id"
+                            >
                                 <option value="1">Admin</option>
                                 <option value="2">Operations</option>
                                 <option value="3">Finance</option>

@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <ColorSwatchIcon class="Icon"/>
+                <ColorSwatchIcon class="Icon" />
                 <p>Dashboard</p>
             </div>
             <div class="Search__Bar">
@@ -12,7 +12,7 @@
                     placeholder="Search product"
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
@@ -53,35 +53,33 @@
                     </h1>
                 </div>
                 <div class="Left__Side">
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>#</td>
-                        <td>Product</td>
-                        <td>Quantity</td>
-                        <td>Amount (MWK)</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>#</td>
+                            <td>Product</td>
+                            <td>Quantity</td>
+                            <td>Amount (MWK)</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr
-                        class="Tr"
-                        v-for="(sale, index) in sales"
-                        :key="sale.id"
-                    >
-                        <td>
-                            <strong>{{ index + 1 }}</strong>
-                        </td>
-                        <td>{{ sale.product.product_name }}</td>
-                        <td>{{ sale.quantity }}</td>
-                        <td>{{ getCurrency(sale.amount) }}</td>
-                    </tr>
-                    <div v-if="sales.length === 0">
-                        No sales made yet!
-                    </div>
+                        <tr
+                            class="Tr"
+                            v-for="(sale, index) in sales"
+                            :key="sale.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ sale.product.product_name }}</td>
+                            <td>{{ sale.quantity }}</td>
+                            <td>{{ getCurrency(sale.amount) }}</td>
+                        </tr>
+                        <div v-if="sales.length === 0">No sales made yet!</div>
                     </tbody>
                 </table>
             </div>
@@ -102,7 +100,7 @@ import {
 import Card from "../components/Card.vue";
 import ProductSearch from "../components/products/ProductSearch.vue";
 import moment from "moment";
-import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
 
 export default {
     components: {
@@ -147,8 +145,8 @@ export default {
         getSales() {
             axios
                 .get("api/sales")
-                .then(({data}) => {
-                    this.sales = this.filterByToday(data)
+                .then(({ data }) => {
+                    this.sales = this.filterByToday(data);
                 })
                 .catch((err) => {
                     console.log(err.message);
@@ -169,15 +167,15 @@ export default {
                 (product) => product.stock === 0
             );
         },
-        getDate(date = (new Date())) {
+        getDate(date = new Date()) {
             return moment(new Date(date)).format("MMM Do YY");
         },
-        filterByToday(sales){
-            return sales.filter((sale) => (
-                this.getDate(sale.created_at) === this.getDate()
-            ));
+        filterByToday(sales) {
+            return sales.filter(
+                (sale) => this.getDate(sale.created_at) === this.getDate()
+            );
         },
-        getCurrency(amount){
+        getCurrency(amount) {
             return CurrencyFormatter.getCurrency(amount);
         },
         closeSearch() {
@@ -260,7 +258,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             position: relative;

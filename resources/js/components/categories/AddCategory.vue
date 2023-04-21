@@ -1,17 +1,23 @@
 <template>
     <div class="Modal">
         <form @submit.prevent="addCategory">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div
+                style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                "
+            >
                 <h1>
                     <strong style="text-transform: capitalize"
-                    >Add Center</strong
+                        >Add Center</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
             </div>
             <div class="Input__Container">
                 <label for="name">Name</label>
-                <input name="name" v-model="name" required/>
+                <input name="name" v-model="name" required />
             </div>
             <button>Add</button>
         </form>
@@ -20,8 +26,8 @@
 
 <script>
 import axios from "axios";
-import {mapActions} from "vuex";
-import {API} from "../../api";
+import { mapActions } from "vuex";
+import { API } from "../../api";
 
 export default {
     emits: ["getCategories", "closeModal"],
@@ -49,8 +55,8 @@ export default {
                 });
         },
         close() {
-            this.$emit("closeModal")
-        }
+            this.$emit("closeModal");
+        },
     },
 };
 </script>

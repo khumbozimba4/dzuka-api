@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <AdjustmentsIcon class="Icon"/>
+                <AdjustmentsIcon class="Icon" />
                 <p>Products/Stock</p>
             </div>
             <div class="Search__Bar">
@@ -12,7 +12,7 @@
                     placeholder="Search product"
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
@@ -28,48 +28,48 @@
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>#</td>
-                        <td>Product</td>
-                        <td>Price(MKW)</td>
-                        <td>Stock Count</td>
-                        <td>Action</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>#</td>
+                            <td>Product</td>
+                            <td>Price(MKW)</td>
+                            <td>Stock Count</td>
+                            <td>Action</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="!products.length">
-                        No products available!
-                    </tr>
-                    <tr
-                        class="Tr"
-                        v-for="(product, index) in products"
-                        :key="product.id"
-                    >
-                        <td>
-                            <strong>{{ index + 1 }}</strong>
-                        </td>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ getCurrency(product.price) }}</td>
-                        <td>{{ product.stock }}</td>
-                        <td class="Allocate__Stock">
-                            <button
-                                @click="toggleEdit(index)"
-                                class="button button_submit"
-                            >
-                                Submit Audited Stock
-                            </button>
+                        <tr v-if="!products.length">
+                            No products available!
+                        </tr>
+                        <tr
+                            class="Tr"
+                            v-for="(product, index) in products"
+                            :key="product.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ getCurrency(product.price) }}</td>
+                            <td>{{ product.stock }}</td>
+                            <td class="Allocate__Stock">
+                                <button
+                                    @click="toggleEdit(index)"
+                                    class="button button_submit"
+                                >
+                                    Submit Audited Stock
+                                </button>
 
-                            <EditStock
-                                v-if="
+                                <EditStock
+                                    v-if="
                                         isOpen &&
                                         products[index] === clickedProduct
                                     "
-                                :product="product"
-                                @getProducts="getProducts"
-                                @close="isOpen = false"
-                            />
-                        </td>
-                    </tr>
+                                    :product="product"
+                                    @getProducts="getProducts"
+                                    @close="isOpen = false"
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -90,8 +90,8 @@ import {
 } from "@heroicons/vue/outline";
 import EditStock from "../../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
-import {mapActions, mapGetters} from "vuex";
-import {CurrencyFormatter} from "../../factories/CurrencyFormatterFactory";
+import { mapActions, mapGetters } from "vuex";
+import { CurrencyFormatter } from "../../factories/CurrencyFormatterFactory";
 
 export default {
     components: {
@@ -164,13 +164,13 @@ export default {
         },
         goToAudits() {
             this.$router.push({
-                name: "audits"
-            })
+                name: "audits",
+            });
         },
         goToSupplies() {
             this.$router.push({
-                name: "supplies"
-            })
+                name: "supplies",
+            });
         },
         getCurrency(amount) {
             return CurrencyFormatter.getCurrency(amount);
@@ -251,7 +251,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             padding: 20px;
@@ -328,7 +328,7 @@ export default {
                                 text-transform: capitalize;
                                 border-radius: 3px;
 
-                                &:hover{
+                                &:hover {
                                     opacity: 0.5;
                                 }
                             }

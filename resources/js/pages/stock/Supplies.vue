@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <ShoppingBagIcon class="Icon"/>
+                <ShoppingBagIcon class="Icon" />
                 <p>Supplies</p>
             </div>
             <div class="Search__Bar">
@@ -12,7 +12,7 @@
                     placeholder="Search..."
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
 
             <div class="Options"></div>
@@ -21,34 +21,34 @@
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon"/>
+                    <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
                 <div class="Right__Side">
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>Date</td>
-                        <td>Product</td>
-                        <td>Quantity</td>
-                        <td>Supplier</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>Date</td>
+                            <td>Product</td>
+                            <td>Quantity</td>
+                            <td>Supplier</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr
-                        class="Tr"
-                        v-for="supple in supplies"
-                        :key="supple.id"
-                    >
-                        <td>{{ getDate(supple.created_at) }}</td>
-                        <td>{{ supple.product.product_name }}</td>
-                        <td>{{ supple.quantity }}</td>
-                        <td>{{ supple.supplier.name }}</td>
-                    </tr>
+                        <tr
+                            class="Tr"
+                            v-for="supple in supplies"
+                            :key="supple.id"
+                        >
+                            <td>{{ getDate(supple.created_at) }}</td>
+                            <td>{{ supple.product.product_name }}</td>
+                            <td>{{ supple.quantity }}</td>
+                            <td>{{ supple.supplier.name }}</td>
+                        </tr>
                     </tbody>
                 </table>
                 <div class="p-4" v-if="supplies.length == 0">
@@ -66,7 +66,8 @@ import {
     AdjustmentsIcon,
     CreditCardIcon,
     PrinterIcon,
-    SearchIcon, ShoppingBagIcon
+    SearchIcon,
+    ShoppingBagIcon,
 } from "@heroicons/vue/outline";
 
 export default {
@@ -76,32 +77,33 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         CreditCardIcon,
-        ShoppingBagIcon
+        ShoppingBagIcon,
     },
     data() {
         return {
             supplies: [],
-            errorMessage: ""
-        }
+            errorMessage: "",
+        };
     },
     created() {
-        this.getAuditSubmissions()
+        this.getAuditSubmissions();
     },
     methods: {
         getAuditSubmissions() {
-            axios.get("api/add-inventory")
-                .then(({data}) => {
+            axios
+                .get("api/add-inventory")
+                .then(({ data }) => {
                     this.supplies = data;
                 })
-                .catch(({message}) => {
-                    this.errorMessage = message
-                })
+                .catch(({ message }) => {
+                    this.errorMessage = message;
+                });
         },
         getDate(date) {
             return moment(new Date(date)).format("LL");
         },
-    }
-}
+    },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -164,7 +166,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             display: flex;
