@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 class SubmitAuditStockController extends Controller
 {
     public function index(){
-        return SubmitAuditStock::with(['product', 'user'])->orderBy('created_at', 'desc')->get();
+        return SubmitAuditStock::with(['product', 'user'])->orderBy('created_at', 'desc')->paginate(10);
     }
 
     public function store(SubmitAuditStockRequest $request){

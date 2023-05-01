@@ -44,7 +44,7 @@
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="(user, index) in users"
+                            v-for="(user, index) in list"
                             :key="user.id"
                         >
                             <td>
@@ -68,13 +68,22 @@
                                     @closeModal="editUserOpen = false"
                                     v-if="
                                         editUserOpen &&
-                                        selected === users[index]
+                                        selected === list[index]
                                     "
                                 />
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <TablePagination
+                    v-if="list.length"
+                    :current="users.current_page"
+                    :total="users.total"
+                    :per_page="users.per_page"
+                    :prev_page_url="users.prev_page_url"
+                    :next_page_url="users.next_page_url"
+                    @change="(value) => getUsers(value)"
+                />
             </div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -92,28 +101,30 @@ import { mapActions, mapGetters } from "vuex";
 import EditUser from "../components/user/EditUser.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
+import { API } from "../api";
+import TablePagination from "../components/TablePagination.vue";
 export default {
     components: {
-        ConfirmDelete,
-        SearchIcon,
-        UserCircleIcon,
-        PencilIcon,
-        TrashIcon,
-        EditUser,
-    },
+    ConfirmDelete,
+    SearchIcon,
+    UserCircleIcon,
+    PencilIcon,
+    TrashIcon,
+    EditUser,
+    TablePagination
+},
     data() {
         return {
             isOpen: false,
-            sales: [],
             errorMessage: "",
             totalAmount: 0,
-            users: [],
+            users: null,
+            list:[],
             search: "",
             editUserOpen: false,
             selected: null,
             confirmDelete: false,
             deletedItem: null,
-            finance: "",
         };
     },
     created() {
@@ -135,13 +146,12 @@ export default {
         setFinanceVariable() {
             this.finance = "finance";
         },
-        getUsers() {
+        getUsers(page) {
             this.changeLoading();
-
-            axios
-                .get("api/users")
-                .then((res) => {
-                    this.users = res.data;
+            API.listUsers(page)
+                .then(({data}) => {
+                    this.users = data;
+                    this.list = data.data;
                 })
                 .then(() => {
                     this.changeLoading();

@@ -23,24 +23,17 @@
         />
         <div class="Cards__Wrap">
             <Card
-                :cardNote="sales.length"
+                :cardNote="total_sales"
                 src="checkoutcart"
                 title="Total sales today"
                 color="Card__Note__Green"
             />
             <Card
-                :cardNote="outOfStock.length"
+                :cardNote="total_products_out_of_stock"
                 src="outofstock"
                 title="Out of stock"
                 color="Card__Note"
                 @click="gotoStock"
-            />
-            <Card
-                :cardNote="transactions.length"
-                src="shoppinglist"
-                title="Transactions today"
-                color="Card__Note__Purple"
-                @click="gotoTransactions"
             />
         </div>
 
@@ -62,6 +55,7 @@
                         <tr class="Tr">
                             <td>#</td>
                             <td>Product</td>
+                            <td>Price</td>
                             <td>Quantity</td>
                             <td>Amount (MWK)</td>
                         </tr>
@@ -69,19 +63,29 @@
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="(sale, index) in sales"
+                            v-for="(sale, index) in list"
                             :key="sale.id"
                         >
                             <td>
                                 <strong>{{ index + 1 }}</strong>
                             </td>
                             <td>{{ sale.product.product_name }}</td>
+                            <td>{{ sale.product.price }}</td>
                             <td>{{ sale.quantity }}</td>
                             <td>{{ getCurrency(sale.amount) }}</td>
                         </tr>
-                        <div v-if="sales.length === 0">No sales made yet!</div>
+                        <div v-if="!list.length">No sales made yet!</div>
                     </tbody>
                 </table>
+                <TablePagination
+                    v-if="list.length"
+                    :current="sales.current_page"
+                    :total="sales.total"
+                    :per_page="sales.per_page"
+                    :prev_page_url="sales.prev_page_url"
+                    :next_page_url="sales.next_page_url"
+                    @change="(value) => getSales(value)"
+                />
             </div>
         </div>
     </div>
@@ -101,6 +105,8 @@ import Card from "../components/Card.vue";
 import ProductSearch from "../components/products/ProductSearch.vue";
 import moment from "moment";
 import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
+import { API } from "../api";
+import TablePagination from "../components/TablePagination.vue";
 
 export default {
     components: {
@@ -113,76 +119,52 @@ export default {
         ArrowNarrowRightIcon,
         PrinterIcon,
         ShoppingBagIcon,
+        TablePagination,
     },
     data() {
         return {
-            products: [],
-            outOfStock: [],
-            sales: [],
-            transactions: [],
+            sales: null,
+            list: [],
             search: "",
+            total_sales: null,
+            total_products_out_of_stock: null,
         };
     },
     created() {
-        this.getProducts();
+        this.getSummaries();
         this.getSales();
-        this.getTransactionsToday();
     },
     methods: {
-        getProducts() {
-            axios
-                .get("api/products")
-                .then((res) => {
-                    this.products = res.data;
-                })
-                .then(() => {
-                    this.getOutOfStock();
-                })
-                .catch((err) => {
-                    console.log(err.message);
-                });
-        },
-        getSales() {
-            axios
-                .get("api/sales")
+        getSummaries() {
+            API.listSummaries()
                 .then(({ data }) => {
-                    this.sales = this.filterByToday(data);
+                    console.log(data);
+                    this.total_sales = data["total_sales"];
+                    this.total_products_out_of_stock =
+                        data["total_products_out_of_stock"];
                 })
                 .catch((err) => {
                     console.log(err.message);
                 });
         },
-        getTransactionsToday() {
-            axios
-                .get("api/transactions/today")
-                .then((res) => {
-                    this.transactions = res.data;
+        getSales(page) {
+            API.listSales(page)
+                .then(({ data }) => {
+                    this.sales = data;
+                    this.list = data.data;
                 })
                 .catch((err) => {
                     console.log(err.message);
                 });
-        },
-        getOutOfStock() {
-            this.outOfStock = this.products.filter(
-                (product) => product.stock === 0
-            );
         },
         getDate(date = new Date()) {
             return moment(new Date(date)).format("MMM Do YY");
-        },
-        filterByToday(sales) {
-            return sales.filter(
-                (sale) => this.getDate(sale.created_at) === this.getDate()
-            );
         },
         getCurrency(amount) {
             return CurrencyFormatter.getCurrency(amount);
         },
         closeSearch() {
             this.search = "";
-        },
-        gotoTransactions() {
-            this.$router.push("/transactions");
         },
         gotoStock() {
             this.$router.push("/stock");

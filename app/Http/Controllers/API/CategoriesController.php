@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
@@ -14,13 +13,13 @@ class CategoriesController extends Controller
 
     public function index()
     {
-        return \response(Category::with('products')->paginate(10));
+        return \response(Category::with('products')->orderBy('created_at', 'desc')->paginate(10));
     }
 
     public function search($name)
     {
         return \response(
-            Category::where('category_name', 'like', '%' . $name . '%')->with('products')->get()->paginate()
+            Category::where('category_name', 'like', '%' . $name . '%')->with('products')->get()->paginate(10)
         );
     }
 

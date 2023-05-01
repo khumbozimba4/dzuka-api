@@ -61,7 +61,7 @@
                     <tbody class="Table__Body">
                         <tr
                             class="Tr"
-                            v-for="(expense, index) in expenses"
+                            v-for="(expense, index) in list"
                             :key="expense.id"
                         >
                             <td>
@@ -71,7 +71,10 @@
                             <td>{{ expense.expense_on }}</td>
                             <td>{{ getCurrency(expense.amount) }}</td>
                             <td>{{ expense.description }}</td>
-                            <td class="Icons" v-if="userInfo.role !== finance">
+                            <td
+                                class="Icons"
+                                v-if="userInfo.role !== 'finance'"
+                            >
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditExpense(expense)"
@@ -86,14 +89,23 @@
                                     @getExpenses="getExpenses"
                                     v-if="
                                         editExpenseOpen &&
-                                        selected == expenses[index]
+                                        selected == list[index]
                                     "
                                 />
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div class="p-4" v-if="expenses.length == 0">
+                <TablePagination
+                    v-if="list.length"
+                    :current="expenses.current_page"
+                    :total="expenses.total"
+                    :per_page="expenses.per_page"
+                    :prev_page_url="expenses.prev_page_url"
+                    :next_page_url="expenses.next_page_url"
+                    @change="(value) => getExpenses(value)"
+                />
+                <div class="p-4" v-if="!list.length">
                     No expenses incurred yet
                 </div>
             </div>
@@ -121,6 +133,8 @@ import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
 import moment from "moment";
+import { API } from "../api";
+import TablePagination from "../components/TablePagination.vue";
 
 export default {
     components: {
@@ -137,10 +151,12 @@ export default {
         CreditCardIcon,
         ShoppingBagIcon,
         TrashIcon,
+        TablePagination,
     },
     data() {
         return {
-            expenses: [],
+            expenses: null,
+            list: [],
             isOpen: false,
             errorMessage: null,
             search: "",
@@ -149,7 +165,6 @@ export default {
             deleteIcon: "Icon_Delete",
             confirmDelete: false,
             deletedItem: null,
-            finance: "",
         };
     },
     computed: {
@@ -157,19 +172,15 @@ export default {
     },
     created() {
         this.getExpenses();
-        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        setFinanceVariable() {
-            this.finance = "finance";
-        },
-        getExpenses() {
+        getExpenses(page) {
             this.changeLoading();
-            axios
-                .get("api/expenses")
-                .then((res) => {
-                    this.expenses = res.data;
+            API.listExpenses(page)
+                .then(({ data }) => {
+                    this.expenses = data;
+                    this.list = data.data;
                 })
                 .then(() => {
                     this.changeLoading();

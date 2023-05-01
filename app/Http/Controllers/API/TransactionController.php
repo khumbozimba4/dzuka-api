@@ -21,7 +21,10 @@ class TransactionController extends Controller
 
     public function search($name)
     {
-        return Transaction::where('user_id','like','%'.$name.'%')->orWhere('transaction_name','like','%'.$name.'%')->with('user')->get();
+        return Transaction::where('user_id','like','%'.$name.'%')
+        ->orWhere('transaction_name','like','%'.$name.'%')
+        ->with('user')
+        ->get();
     }
 
     public function today()

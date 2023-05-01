@@ -1,13 +1,22 @@
 <template>
     <div class="wrapper" v-if="total > per_page">
         <div class="Action__Buttons">
-            <button :class="!prev_page_url && 'disabled'" :disabled="!prev_page_url"
-                    @click="$emit('change', current - 1)">
+            <button
+                :class="!prev_page_url && 'disabled'"
+                :disabled="!prev_page_url"
+                @click="$emit('change', current - 1)"
+            >
                 PREV
             </button>
-            <div class="Pages"><strong>{{ current }}</strong> / {{ Math.ceil(total / per_page) }}</div>
-            <button :class="!next_page_url && 'disabled'" :disabled="!next_page_url"
-                    @click="$emit('change', current + 1)">
+            <div class="Pages">
+                <strong>{{ current }}</strong> /
+                {{ Math.ceil(total / per_page) }}
+            </div>
+            <button
+                :class="!next_page_url && 'disabled'"
+                :disabled="!next_page_url"
+                @click="$emit('change', current + 1)"
+            >
                 NEXT
             </button>
         </div>
@@ -15,18 +24,16 @@
 </template>
 
 <script>
-import {
-    ChevronLeftIcon, ChevronRightIcon
-} from "@heroicons/vue/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/outline";
 
 export default {
     name: "TablePagination",
     props: ["current", "total", "per_page", "next_page_url", "prev_page_url"],
     components: {
         ChevronLeftIcon,
-        ChevronRightIcon
+        ChevronRightIcon,
     },
-}
+};
 </script>
 
 <style lang="scss" scoped>

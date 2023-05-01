@@ -21,6 +21,7 @@
                             <input
                                 :placeholder="userInfo.email"
                                 v-model="email"
+                                type="email"
                                 required
                             />
 
