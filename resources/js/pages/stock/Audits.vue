@@ -39,7 +39,7 @@
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr class="Tr" v-for="audit in audits" :key="audit.id">
+                        <tr class="Tr" v-for="audit in list" :key="audit.id">
                             <td>{{ getDate(audit.created_at) }}</td>
                             <td>{{ audit.product.product_name }}</td>
                             <td>{{ audit.stock_count }}</td>
@@ -47,7 +47,16 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="p-4" v-if="audits.length == 0">
+                <TablePagination
+                    v-if="list.length"
+                    :current="audits.current_page"
+                    :total="audits.total"
+                    :per_page="audits.per_page"
+                    :prev_page_url="audits.prev_page_url"
+                    :next_page_url="audits.next_page_url"
+                    @change="(value) => getAuditSubmissions(value)"
+                />
+                <div class="p-4" v-if="list.length == 0">
                     No Audit submissions incurred yet
                 </div>
             </div>
@@ -56,7 +65,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import moment from "moment";
 import {
     CreditCardIcon,
@@ -64,6 +72,8 @@ import {
     SearchIcon,
     AdjustmentsIcon,
 } from "@heroicons/vue/outline";
+import { API } from "../../api";
+import TablePagination from "../../components/TablePagination.vue";
 
 export default {
     name: "Audits",
@@ -72,22 +82,24 @@ export default {
         AdjustmentsIcon,
         PrinterIcon,
         CreditCardIcon,
+        TablePagination,
     },
     data() {
         return {
-            audits: [],
+            audits: null,
+            list: [],
             error: "",
         };
     },
     created() {
-        this.getAuditSubmissions();
+        this.getAuditSubmissions(1);
     },
     methods: {
-        getAuditSubmissions() {
-            axios
-                .get("api/submit-audit-stock")
+        getAuditSubmissions(page) {
+            API.listAudits(page)
                 .then(({ data }) => {
                     this.audits = data;
+                    this.list = data.data;
                 })
                 .catch(({ message }) => {
                     this.error = message;

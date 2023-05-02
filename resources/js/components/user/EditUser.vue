@@ -13,11 +13,11 @@
             </div>
             <div class="Input__Container">
                 <label for="name">Name</label>
-                <input name="name" v-model="name" required />
+                <input name="name" type="text" v-model="name" required />
             </div>
             <div class="Input__Container">
                 <label for="name">Email</label>
-                <input name="email" v-model="email" required />
+                <input name="email" type="email" v-model="email" required />
             </div>
             <div class="Input__Container">
                 <label for="role_id">Change Role</label>

@@ -14,12 +14,12 @@ class ProductController extends Controller
 
     public function index()
     {
-        return Product::orderBy('created_at', 'desc')->get();
+        return Product::with("category")->orderBy('created_at', 'desc')->paginate(10);
     }
 
     public function search($name)
     {
-        return Product::where('product_name','like','%'.$name.'%')->with('category','sales')->get();
+        return Product::where('product_name','like','%'.$name.'%')->with('category','sales')->orderBy('created_at', 'desc')->paginate(10);
     }
 
     public function store(Request $request): Product

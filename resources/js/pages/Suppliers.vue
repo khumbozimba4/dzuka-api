@@ -56,12 +56,12 @@
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!suppliers.length">
+                        <tr v-if="!list.length">
                             No suppliers available!
                         </tr>
                         <tr
                             class="Tr"
-                            v-for="(supplier, index) in suppliers"
+                            v-for="(supplier, index) in list"
                             :key="supplier.id"
                         >
                             <td>
@@ -86,14 +86,22 @@
                                     @getSuppliers="getSuppliers"
                                     @closeModal="editSupplier = false"
                                     v-if="
-                                        editSupplier &&
-                                        selected === suppliers[index]
+                                        editSupplier && selected === list[index]
                                     "
                                 />
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <TablePagination
+                    v-if="list.length"
+                    :current="suppliers.current_page"
+                    :total="suppliers.total"
+                    :per_page="suppliers.per_page"
+                    :prev_page_url="suppliers.prev_page_url"
+                    :next_page_url="suppliers.next_page_url"
+                    @change="(value) => getSuppliers(value)"
+                />
             </div>
         </div>
     </div>
@@ -115,11 +123,14 @@ import { mapActions, mapGetters } from "vuex";
 import AddSupplier from "../components/suppliers/AddSupplier";
 import EditSupplier from "../components/suppliers/EditSupplier";
 import ConfirmDelete from "../components/ConfirmDelete";
+import TablePagination from "../components/TablePagination";
 import { PhoneNumberFormatter } from "../factories/PhoneNumberFormatterFactory";
+import { API } from "../api";
 
 export default {
     name: "Suppliers",
     components: {
+        TablePagination,
         EditSupplier,
         AddSupplier,
         ConfirmDelete,
@@ -134,7 +145,8 @@ export default {
     },
     data() {
         return {
-            suppliers: [],
+            suppliers: null,
+            list: [],
             addSupplier: false,
             editSupplier: false,
             selected: null,
@@ -151,11 +163,11 @@ export default {
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        getSuppliers() {
-            axios
-                .get("api/suppliers")
+        getSuppliers(page) {
+            API.listSuppliers(page)
                 .then(({ data }) => {
                     this.suppliers = data;
+                    this.list = data.data;
                 })
                 .catch((error) => {
                     console.log(error.message);

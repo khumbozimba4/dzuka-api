@@ -16,12 +16,12 @@ class UserController extends Controller
      */
     public function index(): Response
     {
-        return response(User::with('role')->get());
+        return response(User::with('role')->orderBy('created_at', 'desc')->paginate(10));
     }
 
     public function search($name)
     {
-        return User::where('name','like','%'.$name.'%')->orWhere('email','like','%'.$name.'%')->get();
+        return User::where('name','like','%'.$name.'%')->orWhere('email','like','%'.$name.'%')->paginate(10);
     }
 
 

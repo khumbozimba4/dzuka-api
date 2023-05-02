@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/dzuklpqw/repositories/dzuka-shopping-system/
+    - /bin/cp * $DEPLOYPATH

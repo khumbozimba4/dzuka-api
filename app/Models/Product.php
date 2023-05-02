@@ -12,7 +12,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable =[
+    protected $fillable = [
         'product_name',
         'price',
         'description',
@@ -21,28 +21,33 @@ class Product extends Model
         'stock',
     ];
 
+    public static function findByZeroStock()
+    {
+        return static::where('stock', 0)->get();
+    }
 
-    public function sales():HasMany
+
+    public function sales(): HasMany
     {
         return $this->hasMany(Sale::class);
     }
 
-    public function category():BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function histories():HasMany
+    public function histories(): HasMany
     {
         return $this->hasMany(ProductStockHistory::class);
-     }
+    }
 
-     public function addInventories():HasMany
+    public function addInventories(): HasMany
     {
         return $this->hasMany(AddInventory::class);
     }
 
-    public function submitAuditStocks():HasMany
+    public function submitAuditStocks(): HasMany
     {
         return $this->hasMany(SubmitAuditStock::class);
     }

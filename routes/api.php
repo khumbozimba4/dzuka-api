@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AddInventoryController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
@@ -30,6 +31,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::get('/summaries', [DashboardController::class, 'summaries']);
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);

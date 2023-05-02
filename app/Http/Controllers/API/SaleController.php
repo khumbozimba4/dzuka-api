@@ -12,6 +12,6 @@ class SaleController extends Controller
 {
     public function index()
     {
-        return Sale::with('product')->get();
+        return Sale::with('product')->orderBy('created_at', 'desc')->paginate(10);
     }
 }

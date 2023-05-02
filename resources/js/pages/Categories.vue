@@ -7,7 +7,7 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <CollectionIcon class="Icon"/>
+                <CollectionIcon class="Icon" />
                 <p>Centers</p>
             </div>
             <div class="Search__Bar">
@@ -17,14 +17,14 @@
                     placeholder="Search..."
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon"/>
+                <SearchIcon class="Search__Icon" />
             </div>
             <div class="Options"></div>
         </div>
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon"/>
+                    <AdjustmentsIcon class="Icon" />
                     Filters
                 </div>
                 <div class="Right__Side">
@@ -35,7 +35,7 @@
                     >
                         Add Center
                     </div>
-                    <PrinterIcon class="Icon"/>
+                    <PrinterIcon class="Icon" />
                 </div>
                 <AddCategory
                     @getCategories="getCategories"
@@ -46,57 +46,61 @@
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                    <tr class="Tr">
-                        <td>#</td>
-                        <td>Center Name</td>
-                        <td>Center Products</td>
-                        <td v-if="userInfo.role !== 'Finance'">Actions</td>
-                        <td>View</td>
-                    </tr>
+                        <tr class="Tr">
+                            <td>#</td>
+                            <td>Center Name</td>
+                            <td>Center Products</td>
+                            <td v-if="userInfo.role !== 'Finance'">Actions</td>
+                            <td>View</td>
+                        </tr>
                     </thead>
                     <tbody class="Table__Body">
-                    <tr v-if="!categories.list.length">
-                        No centers available!
-                    </tr>
-                    <tr
-                        class="Tr"
-                        v-for="(category, index) in categories.list"
-                        :key="category.id"
-                    >
-                        <td>
-                            <strong>{{ index + 1 }}</strong>
-                        </td>
-                        <td>{{ category.category_name }}</td>
-                        <td>{{ category.products.length }}</td>
-                        <td class="Icons" v-if="userInfo.role !== 'Finance'">
-                            <PencilIcon
-                                class="Icon"
-                                @click="toggleEditCategory(category)"
-                            />
-                            <TrashIcon
-                                class="Icon Icon_Delete"
-                                @click="toggleDeleteCategory(category.id)"
-                            />
-                            <EditCategory
-                                :category="category"
-                                @getCategories="getCategories"
-                                @closeModal="editCategoryOpen = false"
-                                v-if="
+                        <tr v-if="!list?.length">
+                            No centers available!
+                        </tr>
+                        <tr
+                            class="Tr"
+                            v-for="(category, index) in list"
+                            :key="category.id"
+                        >
+                            <td>
+                                <strong>{{ index + 1 }}</strong>
+                            </td>
+                            <td>{{ category.category_name }}</td>
+                            <td>{{ category.products.length }}</td>
+                            <td
+                                class="Icons"
+                                v-if="userInfo.role !== 'Finance'"
+                            >
+                                <PencilIcon
+                                    class="Icon"
+                                    @click="toggleEditCategory(category)"
+                                />
+                                <TrashIcon
+                                    class="Icon Icon_Delete"
+                                    @click="toggleDeleteCategory(category.id)"
+                                />
+                                <EditCategory
+                                    :category="category"
+                                    @getCategories="getCategories"
+                                    @closeModal="editCategoryOpen = false"
+                                    v-if="
                                         editCategoryOpen &&
                                         selected === categories[index]
                                     "
-                            />
-                        </td>
-                        <td>
-                            <ArrowNarrowRightIcon
-                                class="Icon"
-                                @click="gotoProducts(category)"
-                            />
-                        </td>
-                    </tr>
+                                />
+                            </td>
+                            <td>
+                                <ArrowNarrowRightIcon
+                                    class="Icon"
+                                    @click="gotoProducts(category)"
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <TablePagination
+                    v-if="list.length"
                     :current="categories.current_page"
                     :total="categories.total"
                     :per_page="categories.per_page"
@@ -122,10 +126,10 @@ import {
 import AddCategory from "../components/categories/AddCategory.vue";
 import EditCategory from "../components/categories/EditCategory.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
-import {mapActions, mapGetters} from "vuex";
-import {API} from "../api";
-import VueTailwindPagination from '@ocrv/vue-tailwind-pagination';
-import '@ocrv/vue-tailwind-pagination/styles'
+import { mapActions, mapGetters } from "vuex";
+import { API } from "../api";
+import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
+import "@ocrv/vue-tailwind-pagination/styles";
 import TablePagination from "../components/TablePagination";
 
 export default {
@@ -147,14 +151,8 @@ export default {
     data() {
         return {
             isOpen: false,
-            categories: {
-                list: [],
-                current_page: 1,
-                per_page: null,
-                total: null,
-                next_page_url: null,
-                prev_page_url: null,
-            },
+            categories: null,
+            list: [],
             search: "",
             editCategoryOpen: null,
             selected: [],
@@ -166,20 +164,16 @@ export default {
         ...mapGetters(["userInfo"]),
     },
     created() {
-        this.getCategories(this.categories.current_page);
+        this.getCategories(1);
     },
     methods: {
         ...mapActions(["changeLoading"]),
         getCategories(page) {
             this.changeLoading();
             API.listCategories(page)
-                .then(({data}) => {
-                    this.categories.list = data.data;
-                    this.categories.current_page = data.current_page;
-                    this.categories.per_page = data.per_page;
-                    this.categories.total = data.total;
-                    this.categories.next_page_url = data.next_page_url;
-                    this.categories.prev_page_url = data.prev_page_url;
+                .then(({ data }) => {
+                    this.categories = data;
+                    this.list = data.data;
                 })
                 .then(() => {
                     this.isOpen = false;
@@ -292,7 +286,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-        0 4px 6px -4px rgb(0 0 0 / 0.1);
+            0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             display: flex;

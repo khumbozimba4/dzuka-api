@@ -41,17 +41,18 @@
                             <td>#</td>
                             <td>Date</td>
                             <td>Product</td>
-                            <td>Stock Sold</td>
+                            <td>Price</td>
+                            <td>Quantity</td>
                             <td>Total Amount (MWK)</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!sales.length">
+                        <tr v-if="!list.length">
                             No sales made yet!
                         </tr>
                         <tr
                             class="Tr"
-                            v-for="(sale, index) in sales"
+                            v-for="(sale, index) in list"
                             :key="sale.id"
                         >
                             <td>
@@ -59,6 +60,7 @@
                             </td>
                             <td>{{ getDate(sale.created_at) }}</td>
                             <td>{{ sale.product.product_name }}</td>
+                            <td>{{ sale.product.price }}</td>
                             <td>{{ sale.quantity }}</td>
                             <td>
                                 {{ getCurrency(sale.amount) }}
@@ -66,6 +68,15 @@
                         </tr>
                     </tbody>
                 </table>
+                <TablePagination
+                    v-if="list.length"
+                    :current="sales.current_page"
+                    :total="sales.total"
+                    :per_page="sales.per_page"
+                    :prev_page_url="sales.prev_page_url"
+                    :next_page_url="sales.next_page_url"
+                    @change="(value) => getSales(value)"
+                />
             </div>
         </div>
         <div v-if="errorMessage">{{ errorMessage }}</div>
@@ -86,20 +97,17 @@ import {
     TrashIcon,
 } from "@heroicons/vue/outline";
 import { XCircleIcon } from "@heroicons/vue/solid";
-import SaleSearch from "../components/SaleSearch.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
-import axios from "axios";
-import "@ocrv/vue-tailwind-pagination/styles";
-import VueTailwindPagination from "@ocrv/vue-tailwind-pagination";
+import TablePagination from "../components/TablePagination.vue";
 import { mapActions, mapGetters } from "vuex";
 import moment from "moment";
 import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
+import { API } from "../api";
 
 export default {
     components: {
-        SaleSearch,
         ConfirmDelete,
-        VueTailwindPagination,
+        TablePagination,
         TrashIcon,
         SortAscendingIcon,
         XCircleIcon,
@@ -114,23 +122,24 @@ export default {
     },
     data() {
         return {
-            sales: [],
+            sales: null,
+            list: [],
         };
     },
     computed: {
         ...mapGetters(["userInfo"]),
     },
     created() {
-        this.getProducts();
+        this.getSales();
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        getProducts() {
+        getSales(page) {
             this.changeLoading();
-            axios
-                .get("api/sales")
-                .then((res) => {
-                    this.sales = res.data;
+            API.listSales(page)
+                .then(({ data }) => {
+                    this.sales = data;
+                    this.list = data.data;
                 })
                 .then(() => {
                     this.changeLoading();

@@ -8,12 +8,12 @@
                     <div class="inputs">
                         <!-- Name -->
                         <div class="input">
-                            <input placeholder="Username" v-model="name" />
+                            <input placeholder="Username" v-model="name" type="text" required/>
                             <UserIcon class="icon" />
                         </div>
                         <!-- Email -->
                         <div class="input">
-                            <input placeholder="Email" v-model="email" />
+                            <input placeholder="Email" v-model="email" type="email" required/>
                             <MailIcon class="icon" />
                         </div>
                         <!-- Role -->
@@ -35,6 +35,7 @@
                                 type="password"
                                 placeholder="Password"
                                 v-model="password"
+                                required
                             />
                             <LockClosedIcon class="icon" />
                         </div>
@@ -44,6 +45,7 @@
                                 type="password"
                                 placeholder="Confirm Password"
                                 v-model="password_confirmation"
+                                required
                             />
                             <LockClosedIcon class="icon" />
                         </div>

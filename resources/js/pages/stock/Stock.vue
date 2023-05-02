@@ -33,16 +33,17 @@
                             <td>Product</td>
                             <td>Price(MKW)</td>
                             <td>Stock Count</td>
+                            <td>Center</td>
                             <td>Action</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!products.length">
+                        <tr v-if="!list.length">
                             No products available!
                         </tr>
                         <tr
                             class="Tr"
-                            v-for="(product, index) in products"
+                            v-for="(product, index) in list"
                             :key="product.id"
                         >
                             <td>
@@ -51,18 +52,23 @@
                             <td>{{ product.product_name }}</td>
                             <td>{{ getCurrency(product.price) }}</td>
                             <td>{{ product.stock }}</td>
+                            <td>{{ product.category.category_name }}</td>
                             <td class="Allocate__Stock">
                                 <button
                                     @click="toggleEdit(index)"
-                                    class="button button_submit"
+                                    :class="
+                                        product.stock
+                                            ? 'button button_submit'
+                                            : 'button button_submit_disabled'
+                                    "
+                                    :disabled="!product.stock"
                                 >
                                     Submit Audited Stock
                                 </button>
 
-                                <EditStock
+                                <SubmitAuditStock
                                     v-if="
-                                        isOpen &&
-                                        products[index] === clickedProduct
+                                        isOpen && list[index] === clickedProduct
                                     "
                                     :product="product"
                                     @getProducts="getProducts"
@@ -72,6 +78,15 @@
                         </tr>
                     </tbody>
                 </table>
+                <TablePagination
+                    v-if="list.length"
+                    :current="products.current_page"
+                    :total="products.total"
+                    :per_page="products.per_page"
+                    :prev_page_url="products.prev_page_url"
+                    :next_page_url="products.next_page_url"
+                    @change="(value) => getProducts(value)"
+                />
             </div>
         </div>
     </div>
@@ -88,14 +103,16 @@ import {
     PencilIcon,
     XIcon,
 } from "@heroicons/vue/outline";
-import EditStock from "../../components/stock/SubmitAuditStock.vue";
+import SubmitAuditStock from "../../components/stock/SubmitAuditStock.vue";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 import { CurrencyFormatter } from "../../factories/CurrencyFormatterFactory";
+import TablePagination from "../../components/TablePagination.vue";
+import { API } from "../../api";
 
 export default {
     components: {
-        EditStock,
+        SubmitAuditStock,
         SearchIcon,
         MinusIcon,
         CollectionIcon,
@@ -104,10 +121,12 @@ export default {
         PrinterIcon,
         PencilIcon,
         XIcon,
+        TablePagination,
     },
     data() {
         return {
-            products: [],
+            products: null,
+            list: [],
             errorMessage: null,
             allocateIsOpen: false,
             isOpen: false,
@@ -115,27 +134,22 @@ export default {
             search: "",
             searchedProducts: [],
             isOpenSearch: false,
-            finance: "",
         };
     },
     computed: {
         ...mapGetters(["userInfo"]),
     },
     created() {
-        this.getProducts();
-        this.setFinanceVariable();
+        this.getProducts(1);
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        setFinanceVariable() {
-            this.finance = "finance";
-        },
-        getProducts() {
+        getProducts(page) {
             this.changeLoading();
-            axios
-                .get("api/products")
-                .then((res) => {
-                    this.products = res.data;
+            API.listProducts(page)
+                .then(({ data }) => {
+                    this.products = data;
+                    this.list = data.data;
                 })
                 .then(() => {
                     this.changeLoading();
@@ -145,22 +159,12 @@ export default {
                 });
         },
         toggleEdit(index) {
-            this.clickedProduct = this.products[index];
+            this.clickedProduct = this.list[index];
             this.isOpen = !this.isOpen;
         },
         toggleEditSearch(index) {
-            this.clickedProduct = this.products[index];
+            this.clickedProduct = this.list[index];
             this.isOpenSearch = !this.isOpenSearch;
-        },
-        toggleStockHistory(product) {
-            this.$store.commit("setHistories", product.histories);
-            this.$router.push({
-                name: "history",
-                params: {
-                    product_id: product.id,
-                    product_name: product.product_name,
-                },
-            });
         },
         goToAudits() {
             this.$router.push({
@@ -327,14 +331,18 @@ export default {
                                 margin-top: 5px;
                                 text-transform: capitalize;
                                 border-radius: 3px;
-
-                                &:hover {
-                                    opacity: 0.5;
-                                }
                             }
 
                             .button_submit {
                                 background-color: rgb(34 197 94);
+                                &:hover {
+                                    background-color: rgb(22 163 74);
+                                }
+                            }
+
+                            .button_submit_disabled {
+                                background-color: rgb(34 197 94);
+                                opacity: 0.5;
                             }
                         }
                     }

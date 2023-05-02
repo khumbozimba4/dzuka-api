@@ -17,12 +17,14 @@ class ExpenseController extends Controller
      */
     public function index(): Response
     {
-        return \response(Expense::orderBy('created_at', 'desc')->get());
+        return \response(Expense::orderBy('created_at', 'desc')->paginate(10));
     }
 
     public function search($name)
     {
-        return Expense::where('expense_on','like','%'.$name.'%')->get();
+        return Expense::where('expense_on','like','%'.$name.'%')
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
     }
 
     public function store(ExpenseRequest $request)
