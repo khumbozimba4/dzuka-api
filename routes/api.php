@@ -11,7 +11,6 @@ use App\Http\Controllers\API\SubmitAuditStockController;
 use App\Http\Controllers\API\SupplierController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
-use App\Http\Middleware\Footprints;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,11 +25,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware('permissions');
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('auth/register', [AuthController::class, 'register']);
+    Route::post('auth/logout', [AuthController::class, 'logout']);
 
     Route::get('/summaries', [DashboardController::class, 'summaries']);
 

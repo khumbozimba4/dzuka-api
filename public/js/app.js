@@ -29412,7 +29412,7 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.createStore)({
       var commit = _ref5.commit;
       this.isLoading = true;
       commit("setIsLoading", this.isLoading);
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/login", credentials).then(function (_ref6) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/auth/login", credentials).then(function (_ref6) {
         var data = _ref6.data;
         commit("setUserData", data);
 
@@ -29439,7 +29439,7 @@ var store = (0,vuex__WEBPACK_IMPORTED_MODULE_2__.createStore)({
       var commit = _ref7.commit;
       this.isLoading = true;
       commit("setIsLoading", this.isLoading);
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/register", credentials).then(function (_ref8) {
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("api/auth/register", credentials).then(function (_ref8) {
         var data = _ref8.data;
 
         if (data) {
