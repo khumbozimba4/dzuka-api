@@ -6,6 +6,8 @@ use App\Models\Permission;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class HasRoutePermissions
 {
@@ -14,12 +16,12 @@ class HasRoutePermissions
      *
      * @param Request $request
      * @param Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return JsonResponse
+     * @return Response
      */
-    public function handle(Request $request, Closure $next): JsonResponse
+    public function handle(Request $request, Closure $next): Response
     {
         if ($this->hasPermission()) return $next($request);
-        return response()->json(['message' => 'You are not allowed to access this resource.'], 403);
+        return \response([], ResponseAlias::HTTP_FORBIDDEN);
     }
 
     private function hasPermission(): bool

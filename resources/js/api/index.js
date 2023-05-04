@@ -11,6 +11,14 @@ export class API {
         });
     }
 
+    static addProduct(formData) {
+        return axios.post(`${baseUrl}/products`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    }
+
     static deleteProduct(product) {
         return axios.delete(`api/products/${product}`);
     }

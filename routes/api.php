@@ -9,9 +9,7 @@ use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
 use App\Http\Controllers\API\SubmitAuditStockController;
 use App\Http\Controllers\API\SupplierController;
-use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*

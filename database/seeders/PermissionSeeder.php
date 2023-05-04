@@ -16,7 +16,7 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         Permission::add('create.api.register', 'api/auth/register', 'POST', 'Create user', 'Auth');
-        Permission::add('remove.api.logout', 'api/auth/logout', 'POST', 'Create API Request', 'Auth');
+        Permission::add('remove.api.logout', 'api/auth/logout', 'POST', 'Logout user', 'Auth');
 
         Permission::add('get.api.reports', 'api/reports', 'GET', 'Get reports', 'Reports');
 
