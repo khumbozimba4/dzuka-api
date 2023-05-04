@@ -79,7 +79,7 @@ export default {
             formData.append("category_id", this.category_id);
             console.log(formData);
             axios
-                .post("api/products/store", formData, {
+                .post("api/products", formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },

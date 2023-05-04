@@ -7,19 +7,25 @@ use App\Models\AddInventory;
 use App\Models\Product;
 use App\Models\ProductStockHistory;
 use App\Models\Sale;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
 
-    public function index()
+    public function index(): LengthAwarePaginator
     {
-        return Product::with("category")->orderBy('created_at', 'desc')->paginate(10);
+        return Product::with("category")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
     }
 
-    public function search($name)
+    public function search($product)
     {
-        return Product::where('product_name','like','%'.$name.'%')->with('category','sales')->orderBy('created_at', 'desc')->paginate(10);
+        return Product::where('product_name','like','%'.$product.'%')
+            ->with('category','sales')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
     }
 
     public function store(Request $request): Product
@@ -41,7 +47,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function destroy(Product $product)
+    public function destroy(Product $product): ?bool
     {
         return $product->delete();
     }

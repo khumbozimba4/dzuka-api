@@ -126,7 +126,6 @@ import {
     TrashIcon,
 } from "@heroicons/vue/outline";
 import AddExpense from "../components/expenses/AddExpense.vue";
-import ExpenseSearch from "../components/expenses/ExpenseSearch.vue";
 import EditExpense from "../components/expenses/EditExpense.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
@@ -139,7 +138,6 @@ import TablePagination from "../components/TablePagination.vue";
 export default {
     components: {
         AddExpense,
-        ExpenseSearch,
         EditExpense,
         ConfirmDelete,
         SearchIcon,
@@ -200,8 +198,7 @@ export default {
         },
         toggleDelete() {
             this.changeLoading();
-            axios
-                .delete(`api/expenses/${this.deletedItem}/destroy`)
+            API.deleteExpense(this.deletedItem)
                 .then(() => {
                     this.confirmDelete = false;
                 })

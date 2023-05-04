@@ -8,12 +8,12 @@
         />
         <div class="NavBar__Container">
             <div class="Title">
-                <CollectionIcon class="Icon" />
+                <CollectionIcon class="Icon"/>
                 <p>{{ categoryName }} | Products</p>
             </div>
             <div class="Search__Bar">
-                <input type="text" class="Input" placeholder="Search..." />
-                <SearchIcon class="Search__Icon" />
+                <input type="text" class="Input" placeholder="Search..."/>
+                <SearchIcon class="Search__Icon"/>
             </div>
             <div class="Options"></div>
         </div>
@@ -21,7 +21,7 @@
         <div class="Contents__Container">
             <div class="Heading">
                 <div class="Left__Side">
-                    <AdjustmentsIcon class="Icon" />
+                    <AdjustmentsIcon class="Icon"/>
                     Filters
                 </div>
                 <div class="Right__Side">
@@ -32,7 +32,7 @@
                     >
                         Add Product
                     </div>
-                    <PrinterIcon class="Icon" />
+                    <PrinterIcon class="Icon"/>
                 </div>
                 <AddProduct
                     v-if="isOpen"
@@ -45,36 +45,36 @@
             <div class="Table__Container" v-if="!errorMessage">
                 <table class="Table">
                     <thead class="Table__Head">
-                        <tr class="Tr">
-                            <td>#</td>
-                            <td>Product name</td>
-                            <td>Total Stock</td>
-                            <td>Price (MWK)</td>
-                            <td v-if="userInfo.role !== finance">Actions</td>
-                        </tr>
+                    <tr class="Tr">
+                        <td>#</td>
+                        <td>Product name</td>
+                        <td>Total Stock</td>
+                        <td>Price (MWK)</td>
+                        <td v-if="userInfo.role !== finance">Actions</td>
+                    </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr v-if="!products.length">
-                            No products available!
-                        </tr>
-                        <tr
-                            class="Tr"
-                            v-for="(product, index) in products"
-                            :key="product.id"
-                        >
-                            <td>
-                                <strong>{{ index + 1 }}</strong>
-                            </td>
-                            <td>{{ product.product_name }}</td>
-                            <td>{{ product.stock }}</td>
-                            <td>{{ getCurrency(product.price) }}</td>
-                            <td v-if="userInfo.role !== finance">
-                                <TrashIcon
-                                    class="Icon Icon_Delete"
-                                    @click="toggleDeleteProduct(product.id)"
-                                />
-                            </td>
-                        </tr>
+                    <tr v-if="!products.length">
+                        No products available!
+                    </tr>
+                    <tr
+                        class="Tr"
+                        v-for="(product, index) in products"
+                        :key="product.id"
+                    >
+                        <td>
+                            <strong>{{ index + 1 }}</strong>
+                        </td>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td>{{ getCurrency(product.price) }}</td>
+                        <td v-if="userInfo.role !== finance">
+                            <TrashIcon
+                                class="Icon Icon_Delete"
+                                @click="toggleDeleteProduct(product.id)"
+                            />
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -95,9 +95,9 @@ import {
 import AddProduct from "../components/products/AddProduct.vue";
 import ConfirmDelete from "../components/ConfirmDelete.vue";
 import axios from "axios";
-import { mapActions, mapGetters } from "vuex";
-import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
-import { API } from "../api";
+import {mapActions, mapGetters} from "vuex";
+import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+import {API} from "../api";
 
 export default {
     components: {
@@ -142,7 +142,7 @@ export default {
             this.categoryName = this.$route.params.categoryName;
             this.category_id = this.$route.params.category_id;
 
-            API.getCategoryProducts(this.$route.params.category_id)
+            API.listCategoryProducts(this.$route.params.category_id)
                 .then((response) => {
                     this.products = response.data;
                 })
@@ -163,8 +163,7 @@ export default {
         },
         toggleDelete() {
             this.changeLoading();
-            axios
-                .delete(`api/products/${this.deletedItem}/destroy`)
+            API.deleteProduct(this.deletedItem)
                 .then(() => {
                     this.confirmDelete = false;
                 })
@@ -245,7 +244,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-            0 4px 6px -4px rgb(0 0 0 / 0.1);
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             display: flex;

@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const baseUrl = "api";
 
 export class API {
@@ -8,6 +9,10 @@ export class API {
                 page: page,
             },
         });
+    }
+
+    static deleteProduct(product) {
+        return axios.delete(`api/products/${product}`);
     }
 
     static listAudits(page = 1) {
@@ -24,6 +29,10 @@ export class API {
                 page: page,
             },
         });
+    }
+
+    static listCategoryProducts(category) {
+        return axios.get(`api/categories/${category}`);
     }
 
     static listSales(page = 1) {
@@ -58,23 +67,36 @@ export class API {
         });
     }
 
-    static listSummaries() {
-        return axios.get(`${baseUrl}/summaries`);
+    static addExpense(data) {
+        return axios.post(`${baseUrl}/expenses`, data);
+    }
+
+    static updateExpense(expense, data) {
+        return axios.patch(`${baseUrl}/expenses/${expense}`, data);
+    }
+
+    static deleteExpense(expense) {
+        return axios.patch(`${baseUrl}/expenses/${expense}`);
+    }
+
+    static listReports() {
+        return axios.get(`${baseUrl}/reports`);
     }
 
     static searchCategory(name) {
         return axios.get(`api/categories/${name}/search`);
     }
-    static getCategoryProducts(category) {
-        return axios.get(`api/categories/${category}`);
-    }
+
     static addCategory(body) {
         return axios.post(`api/categories`, body);
     }
+
     static updateCategory(category, body) {
         return axios.patch(`api/categories/${category}`, body);
     }
+
     static deleteCategory(category) {
         return axios.delete(`api/categories/${category}`);
     }
+
 }

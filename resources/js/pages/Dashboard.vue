@@ -136,7 +136,7 @@ export default {
     },
     methods: {
         getSummaries() {
-            API.listSummaries()
+            API.listReports()
                 .then(({ data }) => {
                     console.log(data);
                     this.total_sales = data["total_sales"];
