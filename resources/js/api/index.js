@@ -59,6 +59,10 @@ export class API {
         });
     }
 
+    static addSupplier(data) {
+        return axios.post(`${baseUrl}/suppliers`, data);
+    }
+
     static listUsers(page = 1) {
         return axios.get(`${baseUrl}/users`, {
             params: {

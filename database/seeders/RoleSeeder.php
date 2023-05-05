@@ -17,10 +17,20 @@ class RoleSeeder extends Seeder
     {
         $this->call(PermissionSeeder::class);
 
-        $role = Role::create([
+        $admin = Role::create([
             'name' => 'Admin'
         ]);
 
-        $role->permissions()->attach(Permission::all());
+        $operations = Role::create([
+            'name' => 'Operations'
+        ]);
+
+        $finance = Role::create([
+            'name' => 'Finance'
+        ]);
+
+        $admin->permissions()->attach(Permission::all());
+        $operations->permissions()->attach(Permission::findByOperations());
+        $finance->permissions()->attach(Permission::findByFinance());
     }
 }

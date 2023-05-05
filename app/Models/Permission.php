@@ -17,7 +17,17 @@ class Permission extends LaratrustPermission
         return self::create(['code' => $code, 'endpoint' => $endpoint, 'method' => $method, 'name' => $name, 'group' => $group]);
     }
 
-    public function roles():BelongsToMany
+    public static function findByOperations()
+    {
+        return static::where('group', '!=', 'Users')->where('group', '!=', 'Auth')->get();
+    }
+
+    public static function findByFinance()
+    {
+        return static::where('group', '!=', 'Users')->where('group', '!=', 'Auth')->where('method', 'GET')->get();
+    }
+
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }

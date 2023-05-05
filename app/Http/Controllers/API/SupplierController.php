@@ -5,26 +5,27 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SupplierRequest;
 use App\Models\Supplier;
+use http\Env\Response;
 
 class SupplierController extends Controller
 {
     public function index()
     {
-        return Supplier::orderBy('created_at', 'desc')->paginate(10);
+        return response(Supplier::orderBy('created_at', 'desc')->paginate(10));
     }
 
     public function store(SupplierRequest $request)
     {
-        return Supplier::create($request->validated());
+        return response(Supplier::create($request->validated()));
     }
 
-    public function update(SupplierRequest $request, Supplier $supplier): bool
+    public function update(SupplierRequest $request, Supplier $supplier)
     {
-       return $supplier->update($request->validated());
+       return response($supplier->update($request->validated())) ;
     }
 
-    public function destroy(Supplier $supplier): ?bool
+    public function destroy(Supplier $supplier)
     {
-       return $supplier->delete();
+       return response($supplier->delete());
     }
 }

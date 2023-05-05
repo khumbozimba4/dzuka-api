@@ -22,24 +22,23 @@ class ExpenseController extends Controller
 
     public function search($name)
     {
-        return Expense::where('expense_on','like','%'.$name.'%')
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+        return \response(Expense::where('expense_on', 'like', '%' . $name . '%')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10));
     }
 
     public function store(ExpenseRequest $request)
     {
-        return Expense::create($request->validated());
+        return \response(Expense::create($request->validated()));
     }
 
-    public function update(ExpenseRequest $request, Expense $expense): Expense
+    public function update(ExpenseRequest $request, Expense $expense)
     {
-        $expense->update($request->validated());
-        return $expense;
+        return \response($expense->update($request->validated()));
     }
 
-    public function destroy(Expense $expense): ?bool
+    public function destroy(Expense $expense)
     {
-        return $expense->delete();
+        return \response($expense->delete());
     }
 }

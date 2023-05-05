@@ -16,27 +16,31 @@ class UserController extends Controller
      */
     public function index(): Response
     {
-        return response(User::with('role')->orderBy('created_at', 'desc')->paginate(10));
+        return response(User::with('role')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10));
     }
 
     public function search($name)
     {
-        return User::where('name','like','%'.$name.'%')->orWhere('email','like','%'.$name.'%')->paginate(10);
+        return response(User::where('name', 'like', '%' . $name . '%')
+            ->orWhere('email', 'like', '%' . $name . '%')
+            ->paginate(10));
     }
 
 
-    public function update(Request $request, User $user): User
+    public function update(Request $request, User $user)
     {
-        $user->update([
-            "name"=>$request->get('name'),
-            "email"=>$request->get('email'),
-            "role_id"=>$request->get('role_id'),
-        ]);
-        return $user;
+
+        return \response($user->update([
+            "name" => $request->get('name'),
+            "email" => $request->get('email'),
+            "role_id" => $request->get('role_id'),
+        ]));
     }
 
-    public function destroy(User $user): ?bool
+    public function destroy(User $user)
     {
-        return $user->delete();
+        return \response($user->delete());
     }
 }
