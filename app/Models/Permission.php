@@ -21,7 +21,6 @@ class Permission extends LaratrustPermission
     {
         return static::where('group', '!=', 'Users')
             ->where('group', '!=', 'Auth')
-            ->where('method', 'GET')
             ->get();
     }
 
