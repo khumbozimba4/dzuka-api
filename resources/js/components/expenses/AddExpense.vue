@@ -54,6 +54,7 @@
 <script>
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
+import {API} from "../../api";
 export default {
     emits: ["getExpenses", "closeModal"],
     data() {
@@ -73,8 +74,7 @@ export default {
         ...mapActions(["changeLoading"]),
         addExpense() {
             this.changeLoading();
-            axios
-                .post("api/expenses/store", {
+                API.addExpense({
                     date: this.date,
                     expense_on: this.expense_on,
                     amount: this.amount,

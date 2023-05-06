@@ -12,15 +12,17 @@ class AddInventoryController extends Controller
 {
     public function index()
     {
-        return AddInventory::with('product', 'supplier')->orderBy('created_at', 'desc')->get();
+        return response(AddInventory::with('product', 'supplier')
+            ->orderBy('created_at', 'desc')
+            ->get());
     }
 
-    public function store(AddInventoryRequest $request): AddInventory
+    public function store(AddInventoryRequest $request)
     {
         $product = Product::find($request->get('product_id'));
         $product->update([
             'stock' => $request->get('quantity') + $product->{'stock'}
         ]);
-        return AddInventory::create($request->validated());
+        return response(AddInventory::create($request->validated()));
     }
 }

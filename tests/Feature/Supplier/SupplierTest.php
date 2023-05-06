@@ -2,6 +2,7 @@
 
 namespace Supplier;
 
+use App\Models\Permission;
 use App\Models\Supplier;
 use Tests\TestCase;
 
@@ -28,7 +29,14 @@ class SupplierTest extends TestCase
             'phone_number' => '0996679617',
         ];
 
-        $this->login()->post('api/suppliers', $data);
+        Permission::factory()->create([
+            'endpoint' => 'api/suppliers',
+            'method' => 'POST',
+            'group' => 'Suppliers'
+        ]);
+        $this->kampingo->{'role'}->permissions()->attach(Permission::findByOperations());
+        $response = $this->login()->post('api/suppliers', $data);
+        $response->assertOk();
 
         $this->assertDatabaseHas('suppliers',$data);
     }

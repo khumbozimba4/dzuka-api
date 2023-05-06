@@ -13,17 +13,22 @@ use Illuminate\Http\Request;
 
 class SubmitAuditStockController extends Controller
 {
-    public function index(){
-        return SubmitAuditStock::with(['product', 'user'])->orderBy('created_at', 'desc')->paginate(10);
+    public function index()
+    {
+        return response(SubmitAuditStock::with(['product', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+        );
     }
 
-    public function store(SubmitAuditStockRequest $request){
+    public function store(SubmitAuditStockRequest $request)
+    {
         $product = Product::find($request->get('product_id'));
 
         SubmitAuditStock::create([
             'product_id' => $request->get('product_id'),
-            'stock_count'=>$request->get('stock_count'),
-            'user_id'=>auth()->user()->id
+            'stock_count' => $request->get('stock_count'),
+            'user_id' => auth()->user()->id
         ]);
 
         $sale_quantity = $product->{'stock'} - $request->get('stock_count');
@@ -34,6 +39,6 @@ class SubmitAuditStockController extends Controller
             'quantity' => $sale_quantity
         ]);
 
-        return $product->update(['stock' => $request->get('stock_count')]);
+        return response($product->update(['stock' => $request->get('stock_count')]));
     }
 }

@@ -65,7 +65,7 @@ const store = createStore({
             this.isLoading = true;
             commit("setIsLoading", this.isLoading);
             axios
-                .post("api/login", credentials)
+                .post("api/auth/login", credentials)
                 .then(({ data }) => {
                     commit("setUserData", data);
                     if (data) {
@@ -92,7 +92,7 @@ const store = createStore({
             this.isLoading = true;
             commit("setIsLoading", this.isLoading);
             axios
-                .post("api/register", credentials)
+                .post("api/auth/register", credentials)
                 .then(({ data }) => {
 
                     if (data) {

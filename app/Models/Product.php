@@ -12,18 +12,16 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'product_name',
-        'price',
-        'description',
-        'category_id',
-        'product_photo_path',
-        'stock',
-    ];
+    protected $guarded;
 
     public static function findByZeroStock()
     {
         return static::where('stock', 0)->get();
+    }
+
+    public static function findByCategoryExists()
+    {
+        return static::whereNull('category')->get();
     }
 
 
@@ -37,10 +35,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function histories(): HasMany
-    {
-        return $this->hasMany(ProductStockHistory::class);
-    }
 
     public function addInventories(): HasMany
     {

@@ -86,7 +86,7 @@
                                     @closeModal="editCategoryOpen = false"
                                     v-if="
                                         editCategoryOpen &&
-                                        selected === categories[index]
+                                        selected === list[index]
                                     "
                                 />
                             </td>

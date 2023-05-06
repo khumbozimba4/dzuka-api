@@ -10,18 +10,18 @@
             >
                 <h1>
                     <strong style="text-transform: capitalize"
-                        >Add Product</strong
+                    >Add Product</strong
                     >
                 </h1>
                 <button @click="close">Close</button>
             </div>
             <div class="Input__Container">
                 <label for="name">Name</label>
-                <input name="name" v-model="name" required />
+                <input name="name" v-model="name" required/>
             </div>
             <div class="Input__Container">
                 <label for="price">Price (MWK)</label>
-                <input name="price" type="number" v-model="price" required />
+                <input name="price" type="number" v-model="price" required/>
             </div>
             <div class="Input__Container">
                 <label for="description">Description (Optional)</label>
@@ -53,7 +53,8 @@
 
 <script>
 import axios from "axios";
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
+import {API} from "../../api";
 
 export default {
     emits: ["getProducts", "closeModal"],
@@ -77,13 +78,8 @@ export default {
             formData.append("description", this.description);
             formData.append("price", this.price);
             formData.append("category_id", this.category_id);
-            console.log(formData);
-            axios
-                .post("api/products/store", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                })
+
+            API.addProduct(formData)
                 .then(() => {
                     this.$emit("closeModal");
                 })

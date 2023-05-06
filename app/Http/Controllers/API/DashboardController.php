@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    public function summaries()
+    public function reports()
     {
         return response([
             'total_sales' => sizeof(Sale::findByToday()),

@@ -9,10 +9,7 @@ use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
 use App\Http\Controllers\API\SubmitAuditStockController;
 use App\Http\Controllers\API\SupplierController;
-use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
-use App\Http\Middleware\Footprints;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,17 +23,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware('permissions');
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('auth/register', [AuthController::class, 'register']);
+    Route::post('auth/logout', [AuthController::class, 'logout']);
 
-    Route::get('/summaries', [DashboardController::class, 'summaries']);
+    Route::get('/reports', [DashboardController::class, 'reports']);
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);
-        Route::get('/search/{name}', [UserController::class, 'search']);
         Route::patch('/{user}/', [UserController::class, 'update']);
         Route::delete('/{user}', [UserController::class, 'destroy']);
     });
@@ -60,7 +56,6 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
 
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/',[CategoriesController::class,'index']);
-        Route::get('/{name}/search',[CategoriesController::class,'search']);
         Route::get('/{category}',[CategoriesController::class,'show']);
         Route::post('/',[CategoriesController::class,'store']);
         Route::patch('/{category}',[CategoriesController::class,'update']);
@@ -69,9 +64,9 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
 
     Route::group(['prefix' => 'products'], function () {
         Route::get('/',[ProductController::class,'index']);
-        Route::get('/search/{name}',[ProductController::class,'search']);
-        Route::post('/store',[ProductController::class,'store']);
-        Route::delete('/{product}/destroy',[ProductController::class,'destroy']);
+        Route::get('/{product}',[ProductController::class,'search']);
+        Route::post('/',[ProductController::class,'store']);
+        Route::delete('/{product}',[ProductController::class,'destroy']);
     });
 
     Route::group(['prefix' => 'sales'], function () {
@@ -80,21 +75,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
 
     Route::group(['prefix' => 'expenses'], function () {
         Route::get('/',[ExpenseController::class,'index']);
-        Route::get('/search/{name}',[ExpenseController::class,'search']);
-        Route::get('/today',[ExpenseController::class,'today']);
-        Route::post('/store',[ExpenseController::class,'store']);
-        Route::patch('/{expense}/update',[ExpenseController::class,'update']);
-        Route::delete('/{expense}/destroy',[ExpenseController::class,'destroy']);
-    });
-
-    Route::group(['prefix' => 'transactions'], function () {
-        Route::get('/',[TransactionController::class,'index']);
-        Route::get('/search/{name}',[TransactionController::class,'search']);
-        Route::get('/today',[TransactionController::class,'today']);
-        Route::post('/store',[TransactionController::class,'store']);
-    });
-
-    Route::get('/user',function(Request $request){
-        return $request->user();
+        Route::post('/',[ExpenseController::class,'store']);
+        Route::patch('/{expense}',[ExpenseController::class,'update']);
+        Route::delete('/{expense}',[ExpenseController::class,'destroy']);
     });
 });

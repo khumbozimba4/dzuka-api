@@ -37,14 +37,8 @@ class  AuthController extends Controller
             'role_id' => $request->get('role_id'),
             'password' => bcrypt($request->get('password'),),
         ]);
-        $token = $user->createToken($request->get('name'))->plainTextToken;
-        $response = [
-            'user' => array_merge($user->toArray(), [
-                'role' => $user->role->{'name'}
-            ]),
-            'token' => $token
-        ];
-        return response($response, 200);
+
+        return response($user, 200);
     }
 
 }

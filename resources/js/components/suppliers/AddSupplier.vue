@@ -23,7 +23,7 @@
             </div>
             <div class="Input__Container">
                 <label for="pin">Pin (4 digits)</label>
-                <input name="pin" type="number" v-model="pin" maxlength = "4" required/>
+                <input name="pin" type="number" v-model="pin" minlength="4" required/>
             </div>
             <button>Add</button>
 
@@ -35,6 +35,7 @@
 <script>
 import axios from "axios";
 import { mapActions } from "vuex";
+import {API} from "../../api";
 export default {
     name: "AddSupplier",
     emits: ["getSuppliers", "closeModal"],
@@ -51,8 +52,7 @@ export default {
         ...mapActions(["changeLoading"]),
         addSupplier() {
             this.changeLoading();
-            axios
-                .post("api/suppliers",{
+                API.addSupplier({
                     name: this.name,
                     location: this.location,
                     phone_number: this.phone_number,

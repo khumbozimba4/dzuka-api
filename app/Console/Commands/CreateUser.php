@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -50,6 +51,7 @@ class CreateUser extends Command
 
                 if (!$role) {
                     $role = Role::create(['name' => 'Admin']);
+                    $role->permissions()->attach(Permission::all());
                 }
 
                 $user = User::create([

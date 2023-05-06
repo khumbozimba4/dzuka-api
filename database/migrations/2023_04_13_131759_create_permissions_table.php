@@ -20,7 +20,6 @@ class CreatePermissionsTable extends Migration
             $table->string('endpoint');
             $table->string('method');
             $table->string('group')->nullable();
-            $table->string('type');
             $table->foreignId('created_by')->nullable();
             $table->foreignId('deleted_by')->nullable();
             $table->softDeletes();

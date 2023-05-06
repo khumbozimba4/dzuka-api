@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class RoleSeeder extends Seeder
 {
@@ -15,16 +15,22 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        DB::table("roles")->insert([
-            [
-                'name' => 'Admin',
-            ],
-            [
-                'name' => 'Operations',
-            ],
-            [
-                'name' => 'Finance',
-            ],
+        $this->call(PermissionSeeder::class);
+
+        $admin = Role::create([
+            'name' => 'Admin'
         ]);
+
+        $operations = Role::create([
+            'name' => 'Operations'
+        ]);
+
+        $finance = Role::create([
+            'name' => 'Finance'
+        ]);
+
+        $admin->permissions()->attach(Permission::all());
+        $operations->permissions()->attach(Permission::findByOperations());
+        $finance->permissions()->attach(Permission::findByFinance());
     }
 }

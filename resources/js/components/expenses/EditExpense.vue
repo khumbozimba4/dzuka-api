@@ -44,6 +44,7 @@
 
 <script>
 import { mapActions } from "vuex";
+import {API} from "../../api";
 
 export default {
     props: ["expense"],
@@ -70,8 +71,7 @@ export default {
         },
         editExpense() {
             this.changeLoading();
-            axios
-                .patch(`api/expenses/${this.expense.id}/update`, {
+                API.updateExpense(this.expense.id, {
                     amount: this.amount,
                     description: this.description,
                     expense_on: this.on,
