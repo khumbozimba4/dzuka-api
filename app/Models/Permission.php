@@ -19,7 +19,11 @@ class Permission extends LaratrustPermission
 
     public static function findByOperations()
     {
-        return static::where('group', '!=', 'Users')->where('group', '!=', 'Auth')->get();
+        return static::where('group', '!=', 'Users')
+            ->where('group', '!=', 'Auth')
+            ->where('method', 'GET')
+            ->orWhere('method', 'POST')
+            ->get();
     }
 
     public static function findByFinance()
