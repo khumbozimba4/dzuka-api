@@ -23173,9 +23173,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.name = this.category.category_name;
       this.description = this.category.description;
     },
-    editCategory: function editCategory() {
+    editCategory: function editCategory(e) {
       var _this = this;
 
+      e.preventDefault();
       this.changeLoading();
       _api__WEBPACK_IMPORTED_MODULE_0__.API.updateCategory(this.category.id, {
         category_name: this.name
@@ -24077,7 +24078,6 @@ __webpack_require__.r(__webpack_exports__);
 
       _api__WEBPACK_IMPORTED_MODULE_4__.API.listReports().then(function (_ref) {
         var data = _ref.data;
-        console.log(data);
         _this.total_sales = data["total_sales"];
         _this.total_products_out_of_stock = data["total_products_out_of_stock"];
       })["catch"](function (err) {
@@ -25441,9 +25441,9 @@ var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
-    onSubmit: _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+    onSubmit: _cache[2] || (_cache[2] = function () {
       return $options.editCategory && $options.editCategory.apply($options, arguments);
-    }, ["prevent"]))
+    })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = function () {
       return $options.close && $options.close.apply($options, arguments);
@@ -26923,7 +26923,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }
     }, null, 8
     /* PROPS */
-    , ["onClick"]), $data.editCategoryOpen && $data.selected === $data.categories[index] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_EditCategory, {
+    , ["onClick"]), $data.editCategoryOpen && $data.selected === $data.list[index] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_EditCategory, {
       key: 0,
       category: category,
       onGetCategories: $options.getCategories,
@@ -29516,7 +29516,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".loading[data-v-6ca9e6be] {\n  top: 0;\n  z-index: 101;\n  height: 100%;\n  width: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n@-webkit-keyframes spin-6ca9e6be {\nto {\n    transform: rotateZ(360deg);\n}\n}\n@keyframes spin-6ca9e6be {\nto {\n    transform: rotateZ(360deg);\n}\n}\n.loading span[data-v-6ca9e6be] {\n  display: block;\n  width: 60px;\n  height: 60px;\n  margin: 0 auto;\n  border: 3px solid transparent;\n  border-bottom-color: #fff;\n  border-top-color: #fff;\n  border-radius: 50%;\n  -webkit-animation: spin-6ca9e6be ease 1000ms infinite;\n          animation: spin-6ca9e6be ease 1000ms infinite;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".loading[data-v-6ca9e6be] {\n  top: 0;\n  z-index: 999999;\n  height: 100%;\n  width: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  position: fixed;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n@-webkit-keyframes spin-6ca9e6be {\nto {\n    transform: rotateZ(360deg);\n}\n}\n@keyframes spin-6ca9e6be {\nto {\n    transform: rotateZ(360deg);\n}\n}\n.loading span[data-v-6ca9e6be] {\n  display: block;\n  width: 60px;\n  height: 60px;\n  margin: 0 auto;\n  border: 3px solid transparent;\n  border-bottom-color: #fff;\n  border-top-color: #fff;\n  border-radius: 50%;\n  -webkit-animation: spin-6ca9e6be ease 1000ms infinite;\n          animation: spin-6ca9e6be ease 1000ms infinite;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

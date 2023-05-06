@@ -2,7 +2,7 @@
     <div class="Main__Wrapper">
         <div class="NavBar__Container">
             <div class="Title">
-                <ColorSwatchIcon class="Icon" />
+                <ColorSwatchIcon class="Icon"/>
                 <p>Dashboard</p>
             </div>
             <div class="Search__Bar">
@@ -12,7 +12,7 @@
                     placeholder="Search product"
                     v-model="search"
                 />
-                <SearchIcon class="Search__Icon" />
+                <SearchIcon class="Search__Icon"/>
             </div>
             <div class="Options"></div>
         </div>
@@ -46,35 +46,35 @@
                     </h1>
                 </div>
                 <div class="Left__Side">
-                    <PrinterIcon class="Icon" />
+                    <PrinterIcon class="Icon"/>
                 </div>
             </div>
             <div class="Table__Container">
                 <table class="Table">
                     <thead class="Table__Head">
-                        <tr class="Tr">
-                            <td>#</td>
-                            <td>Product</td>
-                            <td>Price</td>
-                            <td>Quantity</td>
-                            <td>Amount (MWK)</td>
-                        </tr>
+                    <tr class="Tr">
+                        <td>#</td>
+                        <td>Product</td>
+                        <td>Price</td>
+                        <td>Quantity</td>
+                        <td>Amount (MWK)</td>
+                    </tr>
                     </thead>
                     <tbody class="Table__Body">
-                        <tr
-                            class="Tr"
-                            v-for="(sale, index) in list"
-                            :key="sale.id"
-                        >
-                            <td>
-                                <strong>{{ index + 1 }}</strong>
-                            </td>
-                            <td>{{ sale.product.product_name }}</td>
-                            <td>{{ sale.product.price }}</td>
-                            <td>{{ sale.quantity }}</td>
-                            <td>{{ getCurrency(sale.amount) }}</td>
-                        </tr>
-                        <div v-if="!list.length">No sales made yet!</div>
+                    <tr
+                        class="Tr"
+                        v-for="(sale, index) in list"
+                        :key="sale.id"
+                    >
+                        <td>
+                            <strong>{{ index + 1 }}</strong>
+                        </td>
+                        <td>{{ sale.product.product_name }}</td>
+                        <td>{{ sale.product.price }}</td>
+                        <td>{{ sale.quantity }}</td>
+                        <td>{{ getCurrency(sale.amount) }}</td>
+                    </tr>
+                    <div v-if="!list.length">No sales made yet!</div>
                     </tbody>
                 </table>
                 <TablePagination
@@ -104,8 +104,8 @@ import {
 import Card from "../components/Card.vue";
 import ProductSearch from "../components/products/ProductSearch.vue";
 import moment from "moment";
-import { CurrencyFormatter } from "../factories/CurrencyFormatterFactory";
-import { API } from "../api";
+import {CurrencyFormatter} from "../factories/CurrencyFormatterFactory";
+import {API} from "../api";
 import TablePagination from "../components/TablePagination.vue";
 
 export default {
@@ -137,8 +137,7 @@ export default {
     methods: {
         getSummaries() {
             API.listReports()
-                .then(({ data }) => {
-                    console.log(data);
+                .then(({data}) => {
                     this.total_sales = data["total_sales"];
                     this.total_products_out_of_stock =
                         data["total_products_out_of_stock"];
@@ -149,7 +148,7 @@ export default {
         },
         getSales(page) {
             API.listSales(page)
-                .then(({ data }) => {
+                .then(({data}) => {
                     this.sales = data;
                     this.list = data.data;
                 })
@@ -240,7 +239,7 @@ export default {
         display: flex;
         flex-direction: column;
         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
-            0 4px 6px -4px rgb(0 0 0 / 0.1);
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
 
         .Heading {
             position: relative;

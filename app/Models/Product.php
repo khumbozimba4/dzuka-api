@@ -19,6 +19,11 @@ class Product extends Model
         return static::where('stock', 0)->get();
     }
 
+    public static function findByCategoryExists()
+    {
+        return static::whereNull('category')->get();
+    }
+
 
     public function sales(): HasMany
     {
@@ -30,10 +35,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function histories(): HasMany
-    {
-        return $this->hasMany(ProductStockHistory::class);
-    }
 
     public function addInventories(): HasMany
     {

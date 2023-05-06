@@ -1,6 +1,6 @@
 <template>
     <div class="Modal">
-        <form @submit.prevent="editCategory">
+        <form @submit="editCategory">
             <div
                 style="
                     display: flex;
@@ -44,7 +44,8 @@ export default {
             this.name = this.category.category_name;
             this.description = this.category.description;
         },
-        editCategory() {
+        editCategory(e) {
+            e.preventDefault();
             this.changeLoading();
             API.updateCategory(this.category.id, {
                 category_name: this.name,

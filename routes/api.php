@@ -29,7 +29,7 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('auth/register', [AuthController::class, 'register']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
 
-    Route::get('/summaries', [DashboardController::class, 'summaries']);
+    Route::get('/reports', [DashboardController::class, 'reports']);
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);

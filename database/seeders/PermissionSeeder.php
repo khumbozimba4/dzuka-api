@@ -41,6 +41,7 @@ class PermissionSeeder extends Seeder
         Permission::add('delete.api.suppliers', 'api/suppliers/{supplier}', 'DELETE', 'Delete supplier', 'Suppliers');
 
         Permission::add('get.api.categories', 'api/categories', 'GET', 'Get categories', 'Categories');
+        Permission::add('show.api.categories', 'api/categories/{category}', 'GET', 'Get category', 'Categories');
         Permission::add('create.api.categories', 'api/categories', 'POST', 'Create category', 'Categories');
         Permission::add('update.api.categories', 'api/categories/{category}', 'PATCH', 'Update category', 'Categories');
         Permission::add('delete.api.categories', 'api/categories/{category}', 'DELETE', 'Delete category', 'Categories');
