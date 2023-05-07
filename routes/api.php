@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', [AuthController::class, 'login'])->withoutMiddleware('permissions');
+Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware('permissions');
 
 Route::group(['middleware'=>['auth:sanctum']],function(){
     Route::post('auth/register', [AuthController::class, 'register']);
