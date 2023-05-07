@@ -27,7 +27,7 @@
             </div>
             <button>Save</button>
 
-            <div v-if="errorMessage">{{ errorMessage }}</div>
+            <div v-if="errorMessage" style="margin-top: 5px; color: red;">{{ errorMessage }}</div>
         </form>
     </div>
 </template>
@@ -61,6 +61,10 @@ export default {
             this.pin = this.supplier.pin;
         },
         editSupplier() {
+            if(this.pin.toString().length > 4 || this.pin.toString().length < 4){
+                this.errorMessage = "Pin must be 4 numbers"
+                return;
+            }
             this.changeLoading();
             axios
                 .patch(`api/suppliers/${this.supplier.id}`, {

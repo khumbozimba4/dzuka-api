@@ -29,11 +29,12 @@
                     v-model="input_stock"
                     type="number"
                     required
+                    min="0"
                 />
+                <div v-if="errorMessage" style="color: red; margin-top: 5px">{{ errorMessage }}</div>
             </div>
 
             <button>Save</button>
-            <div v-if="errorMessage">{{ errorMessage }}</div>
         </form>
     </div>
 </template>
@@ -62,6 +63,10 @@ export default {
     methods: {
         ...mapActions(["changeLoading"]),
         addToStock() {
+            if(this.input_stock > this.product.stock){
+                this.errorMessage = "Submitted stock count is greater than the available"
+                return;
+            }
             this.changeLoading();
             axios
                 .post(`api/submit-audit-stock`, {

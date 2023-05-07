@@ -28,7 +28,7 @@
                     <div
                         class="Add__Category"
                         @click="isOpen = !isOpen"
-                        v-if="userInfo.role !== finance"
+                        v-if="userInfo.role !== 'Finance'"
                     >
                         Add Product
                     </div>
@@ -50,7 +50,7 @@
                         <td>Product name</td>
                         <td>Total Stock</td>
                         <td>Price (MWK)</td>
-                        <td v-if="userInfo.role !== finance">Actions</td>
+                        <td v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'">Actions</td>
                     </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -68,7 +68,7 @@
                         <td>{{ product.product_name }}</td>
                         <td>{{ product.stock }}</td>
                         <td>{{ getCurrency(product.price) }}</td>
-                        <td v-if="userInfo.role !== finance">
+                        <td v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'">
                             <TrashIcon
                                 class="Icon Icon_Delete"
                                 @click="toggleDeleteProduct(product.id)"
@@ -119,7 +119,6 @@ export default {
             errorMessage: null,
             confirmDelete: false,
             deletedItem: null,
-            finance: "",
         };
     },
     computed: {
@@ -127,13 +126,9 @@ export default {
     },
     created() {
         this.getProducts();
-        this.setFinanceVariable();
     },
     methods: {
         ...mapActions(["changeLoading"]),
-        setFinanceVariable() {
-            this.finance = "finance";
-        },
         getCurrency(amount) {
             return CurrencyFormatter.getCurrency(amount);
         },

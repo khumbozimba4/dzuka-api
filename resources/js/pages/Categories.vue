@@ -50,7 +50,7 @@
                             <td>#</td>
                             <td>Center Name</td>
                             <td>Center Products</td>
-                            <td v-if="userInfo.role !== 'Finance'">Actions</td>
+                            <td v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'">Actions</td>
                             <td>View</td>
                         </tr>
                     </thead>
@@ -70,7 +70,7 @@
                             <td>{{ category.products.length }}</td>
                             <td
                                 class="Icons"
-                                v-if="userInfo.role !== 'Finance'"
+                                v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'"
                             >
                                 <PencilIcon
                                     class="Icon"

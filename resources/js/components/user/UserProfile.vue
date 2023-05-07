@@ -33,7 +33,7 @@
                         <div><strong>Role:</strong> {{ userInfo.role }}</div>
                         <!-- Sign Up -->
                         <div>
-                            <button class="button" type="submit">
+                            <button v-if="userInfo.role === 'Admin'" class="button" type="submit">
                                 <p v-if="!saving">Save</p>
                                 <p v-if="saving">Saving...</p>
                             </button>
