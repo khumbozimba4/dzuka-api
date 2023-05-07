@@ -12,6 +12,7 @@ class Footprints
 
     public function handle(Request $request, Closure $next)
     {
+        if (!defined('LARAVEL_START')) define('LARAVEL_START', microtime(true));
         return $next($request);
     }
 
