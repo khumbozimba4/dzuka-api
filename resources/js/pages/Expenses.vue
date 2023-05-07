@@ -34,7 +34,7 @@
                     <div
                         class="Add__Category"
                         @click="isOpen = !isOpen"
-                        v-if="userInfo.role !== finance"
+                        v-if="userInfo.role !== 'Finance'"
                     >
                         Record Expense
                     </div>
@@ -55,7 +55,7 @@
                             <td>Expense on</td>
                             <td>Amount (MWK)</td>
                             <td>Description</td>
-                            <td v-if="userInfo.role !== finance">Actions</td>
+                            <td v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'">Actions</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -70,10 +70,10 @@
                             <td>{{ getDate(expense.date) }}</td>
                             <td>{{ expense.expense_on }}</td>
                             <td>{{ getCurrency(expense.amount) }}</td>
-                            <td>{{ expense.description }}</td>
+                            <td>{{ expense.description ? expense.description : "N/A" }}</td>
                             <td
                                 class="Icons"
-                                v-if="userInfo.role !== 'finance'"
+                                v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'"
                             >
                                 <PencilIcon
                                     class="Icon"
@@ -89,7 +89,7 @@
                                     @getExpenses="getExpenses"
                                     v-if="
                                         editExpenseOpen &&
-                                        selected == list[index]
+                                        selected === list[index]
                                     "
                                 />
                             </td>

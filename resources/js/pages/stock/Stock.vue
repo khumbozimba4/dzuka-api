@@ -34,7 +34,7 @@
                             <td>Price(MKW)</td>
                             <td>Stock Count</td>
                             <td>Center</td>
-                            <td>Action</td>
+                            <td v-if="userInfo.role !== 'Finance'">Action</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -53,7 +53,7 @@
                             <td>{{ getCurrency(product.price) }}</td>
                             <td>{{ product.stock }}</td>
                             <td>{{ product.category.category_name }}</td>
-                            <td class="Allocate__Stock">
+                            <td class="Allocate__Stock" v-if="userInfo.role !== 'Finance'">
                                 <button
                                     @click="toggleEdit(index)"
                                     :class="
@@ -61,7 +61,7 @@
                                             ? 'button button_submit'
                                             : 'button button_submit_disabled'
                                     "
-                                    :disabled="!product.stock"
+
                                 >
                                     Submit Audited Stock
                                 </button>

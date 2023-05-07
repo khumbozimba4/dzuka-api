@@ -52,7 +52,7 @@
                             <td>Supplier Name</td>
                             <td>Phone Number</td>
                             <td>Location</td>
-                            <td v-if="userInfo.role !== finance">Actions</td>
+                            <td v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'">Actions</td>
                         </tr>
                     </thead>
                     <tbody class="Table__Body">
@@ -72,7 +72,7 @@
                                 {{ getPhoneNumber(`${supplier.phone_number}`) }}
                             </td>
                             <td>{{ supplier.location }}</td>
-                            <td class="Icons" v-if="userInfo.role !== finance">
+                            <td class="Icons" v-if="userInfo.role !== 'Finance' && userInfo.role !== 'Operations'">
                                 <PencilIcon
                                     class="Icon"
                                     @click="toggleEditSupplier(supplier)"

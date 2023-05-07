@@ -27,7 +27,7 @@
             </div>
             <button>Add</button>
 
-            <div v-if="errorMessage">{{ errorMessage }}</div>
+            <div v-if="errorMessage" style="color: red; margin-top: 5px">{{ errorMessage }}</div>
         </form>
     </div>
 </template>
@@ -51,6 +51,10 @@ export default {
     methods: {
         ...mapActions(["changeLoading"]),
         addSupplier() {
+            if(this.pin.toString().length > 4 || this.pin.toString().length < 4){
+                this.errorMessage = "Pin must be 4 numbers"
+                return;
+            }
             this.changeLoading();
                 API.addSupplier({
                     name: this.name,
