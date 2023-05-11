@@ -35,7 +35,10 @@ class CategoriesController extends Controller
 
     public function show(Category $category)
     {
-        return response($category->{'products'});
+        return response([
+            'category' => $category,
+            'products' => $category->{'products'}
+        ]);
     }
 
     public function update(CategoryRequest $request, Category $category)
