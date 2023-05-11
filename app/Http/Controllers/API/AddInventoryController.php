@@ -14,7 +14,7 @@ class AddInventoryController extends Controller
     {
         return response(AddInventory::with('product', 'supplier')
             ->orderBy('created_at', 'desc')
-            ->get());
+            ->paginate(2));
     }
 
     public function store(AddInventoryRequest $request)

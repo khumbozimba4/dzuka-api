@@ -19,11 +19,6 @@ class Product extends Model
         return static::where('stock', 0)->get();
     }
 
-    public static function findByCategoryExists()
-    {
-        return static::whereNull('category')->get();
-    }
-
 
     public function sales(): HasMany
     {
