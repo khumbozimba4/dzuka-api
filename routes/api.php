@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware('permissions');
 
-Route::group(['middleware'=>['auth:sanctum']],function(){
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('auth/register', [AuthController::class, 'register']);
     Route::post('auth/logout', [AuthController::class, 'logout']);
 
@@ -55,28 +55,34 @@ Route::group(['middleware'=>['auth:sanctum']],function(){
     });
 
     Route::group(['prefix' => 'categories'], function () {
-        Route::get('/',[CategoriesController::class,'index']);
-        Route::get('/{category}',[CategoriesController::class,'show']);
-        Route::post('/',[CategoriesController::class,'store']);
-        Route::patch('/{category}',[CategoriesController::class,'update']);
-        Route::delete('/{category}',[CategoriesController::class,'destroy']);
+        Route::get('/', [CategoriesController::class, 'index']);
+        Route::get('/{category}', [CategoriesController::class, 'show']);
+        Route::post('/', [CategoriesController::class, 'store']);
+        Route::patch('/{category}', [CategoriesController::class, 'update']);
+        Route::delete('/{category}', [CategoriesController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'products'], function () {
-        Route::get('/',[ProductController::class,'index']);
-        Route::get('/{product}',[ProductController::class,'search']);
-        Route::post('/',[ProductController::class,'store']);
-        Route::delete('/{product}',[ProductController::class,'destroy']);
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/{product}', [ProductController::class, 'search']);
+        Route::post('/', [ProductController::class, 'store']);
+        Route::delete('/{product}', [ProductController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'sales'], function () {
-        Route::get('/',[SaleController::class,'index']);
+        Route::get('/', [SaleController::class, 'index']);
     });
 
     Route::group(['prefix' => 'expenses'], function () {
-        Route::get('/',[ExpenseController::class,'index']);
-        Route::post('/',[ExpenseController::class,'store']);
-        Route::patch('/{expense}',[ExpenseController::class,'update']);
-        Route::delete('/{expense}',[ExpenseController::class,'destroy']);
+        Route::get('/', [ExpenseController::class, 'index']);
+        Route::post('/', [ExpenseController::class, 'store']);
+        Route::patch('/{expense}', [ExpenseController::class, 'update']);
+        Route::delete('/{expense}', [ExpenseController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'mobile'], function () {
+            Route::post('/add-inventory', [AddInventoryController::class, 'store']);
+            Route::get('/suppliers', \App\Http\Controllers\Mobile\SupplierController::class);
+            Route::get('/products', \App\Http\Controllers\Mobile\ProductController::class);
     });
 });

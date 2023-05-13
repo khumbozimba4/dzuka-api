@@ -58,5 +58,8 @@ class PermissionSeeder extends Seeder
         Permission::add('update.api.expenses', 'api/expenses/{expense}', 'PATCH', 'Update expense', 'Expenses');
         Permission::add('delete.api.expenses', 'api/expenses/{expense}', 'DELETE', 'Delete expense', 'Expenses');
 
+        Permission::add('create.api.mobile.add-inventory', 'api/mobile/add-inventory', 'POST', 'Add inventory', 'Mobile');
+        Permission::add('get.api.mobile.suppliers', 'api/mobile/suppliers', 'GET', 'Get all suppliers on mobile', 'Mobile');
+        Permission::add('get.api.mobile.products', 'api/mobile/products', 'GET', 'Get all products on mobile', 'Mobile');
     }
 }
