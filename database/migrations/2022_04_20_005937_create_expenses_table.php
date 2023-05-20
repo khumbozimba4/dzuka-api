@@ -19,6 +19,7 @@ class CreateExpensesTable extends Migration
             $table->string('expense_on');
             $table->float('amount');
             $table->string('description')->nullable();
+            $table->foreignId('category_id');
             $table->timestamps();
         });
     }

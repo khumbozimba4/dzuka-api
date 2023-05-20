@@ -13,6 +13,7 @@ class ExpenseRequest extends FormRequest
             "expense_on" => "required",
             "amount" => "required",
             "description" => "sometimes",
+            "category_id" => "required",
         ];
     }
 }

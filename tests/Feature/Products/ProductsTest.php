@@ -22,4 +22,18 @@ class ProductsTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_delete_product():void
+    {
+        Permission::factory()->create([
+            'endpoint' => 'api/products/{product}',
+            'method' => 'DELETE',
+            'group' => 'Products'
+        ]);
+        $this->kampingo->{'role'}->permissions()->attach(Permission::all());
+        $product = Product::factory()->create();
+        $response =  $this->login()->delete(sprintf('api/products/%s', $product->getKey()));
+        $response->assertOk();
+        $this->assertDatabaseCount('products', 0);
+    }
+
 }

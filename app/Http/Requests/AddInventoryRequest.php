@@ -12,6 +12,7 @@ class AddInventoryRequest extends FormRequest
             'product_id' => 'required',
             'supplier_id' => 'required',
             'quantity' => 'required',
+            'unit_cost_price' => 'required',
         ];
     }
 }
