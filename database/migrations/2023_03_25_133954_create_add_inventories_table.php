@@ -18,7 +18,7 @@ class CreateAddInventoriesTable extends Migration
             $table->foreignId('product_id')->constrained();
             $table->foreignId('supplier_id')->constrained();
             $table->integer('quantity');
-            $table->float('unit_cost_price');
+            $table->float('unit_cost_price')->default(0);
             $table->boolean('approved')->default(false);
             $table->timestamps();
         });
