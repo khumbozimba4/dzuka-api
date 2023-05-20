@@ -10,6 +10,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             "category_name"=>"required",
+            "petty_cash" => "sometimes"
         ];
     }
 }

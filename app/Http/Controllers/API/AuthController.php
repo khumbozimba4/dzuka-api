@@ -19,9 +19,11 @@ class  AuthController extends Controller
             ], 401);
         }
         $token = $user->createToken($user->{'name'})->plainTextToken;
+        $category = $user->role_id == 2 ? $user->category->{'category_name'} : null;
         $response = [
             'user' => array_merge($user->toArray(), [
-                'role' => $user->role->{'name'}
+                'role' => $user->role->{'name'},
+                'category' => $category
             ]),
             'token' => $token
         ];
@@ -35,6 +37,7 @@ class  AuthController extends Controller
             'name' => $request->get('name'),
             'email' => $request->get('email'),
             'role_id' => $request->get('role_id'),
+            'category_id' => $request->get('category_id'),
             'password' => bcrypt($request->get('password'),),
         ]);
 
