@@ -27,6 +27,8 @@ class PermissionSeeder extends Seeder
 
         Permission::add('get.api.add-inventory', 'api/add-inventory', 'GET', 'Get add-inventories', 'Add-inventory');
         Permission::add('create.api.add-inventory', 'api/add-inventory', 'POST', 'Create add-inventory', 'Add-inventory');
+        Permission::add('approve.api.add-inventory', 'api/add-inventory/{addInventory}/approve', 'PATCH', 'Approve add-inventory', 'Add-inventory');
+        Permission::add('reject.api.add-inventory', 'api/add-inventory/{addInventory}/reject', 'PATCH', 'Reject add-inventory', 'Add-inventory');
 
         Permission::add('get.api.submit-audit-stock', 'api/submit-audit-stock', 'GET', 'Get audits', 'Submit-audit-stock');
         Permission::add('create.api.submit-audit-stock', 'api/submit-audit-stock', 'POST', 'Create audit', 'Submit-audit-stock');

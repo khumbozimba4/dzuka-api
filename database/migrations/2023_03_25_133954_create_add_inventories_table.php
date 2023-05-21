@@ -19,7 +19,10 @@ class CreateAddInventoriesTable extends Migration
             $table->foreignId('supplier_id')->constrained();
             $table->integer('quantity');
             $table->float('unit_cost_price')->default(0);
-            $table->boolean('approved')->default(false);
+            $table->date('approved_at')->nullable();
+            $table->foreignId('approved_by')->nullable();
+            $table->date('rejected_at')->nullable();
+            $table->foreignId('rejected_by')->nullable();
             $table->timestamps();
         });
     }
