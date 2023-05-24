@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -38,6 +39,17 @@ class UserController extends Controller
             "role_id" => $request->get('role_id'),
             "category_id" => $request->get('category_id'),
         ]));
+    }
+
+    public function changePin(Request $request, User $user)
+    {
+        if (!Hash::check($request->get('password'), $user->{'password'})) {
+            return \response(['message' => 'Old password is incorrect'], 401);
+        }
+
+        $user->{'password'} = Hash::make($request->get('new_password'));
+        $user->save();
+        return \response($user);
     }
 
     public function destroy(User $user)
