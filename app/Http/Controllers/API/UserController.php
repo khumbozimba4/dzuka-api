@@ -36,6 +36,7 @@ class UserController extends Controller
             "name" => $request->get('name'),
             "email" => $request->get('email'),
             "role_id" => $request->get('role_id'),
+            "category_id" => $request->get('category_id'),
         ]));
     }
 

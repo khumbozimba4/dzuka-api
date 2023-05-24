@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'add-inventory'], function () {
         Route::get('/', [AddInventoryController::class, 'index']);
         Route::post('/', [AddInventoryController::class, 'store']);
+        Route::patch('/{addInventory}/approve', [AddInventoryController::class, 'approve']);
+        Route::patch('/{addInventory}/reject', [AddInventoryController::class, 'reject']);
     });
 
     Route::group(['prefix' => 'submit-audit-stock'], function () {
