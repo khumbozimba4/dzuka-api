@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UserController::class, 'index']);
         Route::patch('/{user}/', [UserController::class, 'update']);
+        Route::patch('/{user}/change-pin', [UserController::class, 'changePin']);
         Route::delete('/{user}', [UserController::class, 'destroy']);
     });
 

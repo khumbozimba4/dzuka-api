@@ -23,6 +23,7 @@ class PermissionSeeder extends Seeder
         Permission::add('get.api.users', 'api/users', 'GET', 'Get users', 'Users');
         Permission::add('search.api.users', 'api/users/{user}', 'GET', 'Search user', 'Users');
         Permission::add('update.api.users', 'api/users/{user}', 'PATCH', 'Update user', 'Users');
+        Permission::add('update.api.users.pin', 'api/users/{user}/change-pin', 'PATCH', 'Update user pin', 'Users');
         Permission::add('delete.api.users', 'api/users/{user}', 'DELETE', 'Delete user', 'Users');
 
         Permission::add('get.api.add-inventory', 'api/add-inventory', 'GET', 'Get add-inventories', 'Add-inventory');
