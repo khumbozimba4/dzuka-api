@@ -5,6 +5,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ExpenseController;
+use App\Http\Controllers\API\PettyCashAllocationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
 use App\Http\Controllers\API\SubmitAuditStockController;
@@ -63,6 +64,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::patch('/{category}', [CategoriesController::class, 'update']);
         Route::delete('/{category}', [CategoriesController::class, 'destroy']);
     });
+
+    Route::post('petty-cash-allocation', PettyCashAllocationController::class);
 
     Route::group(['prefix' => 'products'], function () {
         Route::get('/', [ProductController::class, 'index']);
