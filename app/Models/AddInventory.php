@@ -11,11 +11,7 @@ class AddInventory extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'product_id',
-        'quantity',
-        'supplier_id'
-    ];
+    protected $guarded;
 
     public static function getByToday()
     {

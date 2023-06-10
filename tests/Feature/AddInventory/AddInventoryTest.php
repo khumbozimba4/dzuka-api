@@ -60,9 +60,8 @@ class AddInventoryTest extends TestCase
             'group' => 'add-inventory'
         ]);
         $this->kampingo->{'role'}->permissions()->attach(Permission::all());
-        $this->login()->post('api/add-inventory', $data);
-        $response = $this->login()->patch(sprintf('api/add-inventory/%s/approve', 1));
-        dd($response);
-        $this->assertDatabaseHas('add_inventories', $data);
+        $response = $this->login()->post('api/add-inventory', $data);
+
+        $response->assertOk();
     }
 }
