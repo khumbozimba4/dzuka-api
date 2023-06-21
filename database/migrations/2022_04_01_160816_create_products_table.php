@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->integer('stock')->default(0);
             $table->string('description')->nullable();
             $table->string('product_photo_path')->nullable();
+            $table->string('product_photo_url')->nullable();
             $table->timestamps();
         });
     }
