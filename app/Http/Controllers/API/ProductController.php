@@ -39,12 +39,15 @@ class ProductController extends Controller
 
         $path = $request->file('product_photo')->move(public_path('/images/products'), $imageName);
 
+        $product_photo_url = sprintf("https://pamsika-api.dzuka-africa.org/images/products/%s",$imageName);
+
         return response(Product::create([
             'product_name' => $request->get('product_name'),
             'description' => $request->get('description'),
             'price' => $request->get('price'),
             'category_id' => $request->get('category_id'),
-            'product_photo_path' => $path
+            'product_photo_path' => $path,
+            'product_photo_url' => $product_photo_url,
         ]));
     }
 
