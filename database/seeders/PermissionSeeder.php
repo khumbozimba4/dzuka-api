@@ -49,6 +49,12 @@ class PermissionSeeder extends Seeder
         Permission::add('update.api.categories', 'api/categories/{category}', 'PATCH', 'Update category', 'Categories');
         Permission::add('delete.api.categories', 'api/categories/{category}', 'DELETE', 'Delete category', 'Categories');
 
+        Permission::add('list.api.centers', 'api/centers', 'GET', 'Get centers', 'Centers');
+        Permission::add('show.api.centers', 'api/centers/{center}', 'GET', 'Get center', 'Centers');
+        Permission::add('create.api.centers', 'api/centers', 'POST', 'Create center', 'Centers');
+        Permission::add('update.api.centers', 'api/centers/{center}', 'PATCH', 'Update center', 'Centers');
+        Permission::add('delete.api.centers', 'api/centers/{center}', 'DELETE', 'Delete center', 'Centers');
+
         Permission::add('create.api.petty-cash-allocation', 'api/petty-cash-allocation', 'POST', 'Allocate petty cash', 'Petty-cash-allocation');
 
         Permission::add('get.api.products', 'api/products', 'GET', 'Get products', 'Products');

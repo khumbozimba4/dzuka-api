@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Models\Center;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CategoryFactory extends Factory
+class CenterFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -15,8 +14,8 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            'category_name' => $this->faker->name,
-            'center_id' => Center::factory()->create()->getKey()
+            'name' => $this->faker->name,
+            'petty_cash' => $this->faker->randomFloat()
         ];
     }
 }

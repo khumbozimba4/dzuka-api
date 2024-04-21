@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class PettyCashAllocationRequest extends FormRequest
 {
@@ -12,7 +11,7 @@ class PettyCashAllocationRequest extends FormRequest
     {
         return [
             'amount' => 'required',
-            'category_id' => 'required'
+            'center_id' => 'required'
         ];
     }
 }

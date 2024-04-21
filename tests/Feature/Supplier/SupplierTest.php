@@ -29,12 +29,6 @@ class SupplierTest extends TestCase
             'phone_number' => '0996679617',
         ];
 
-        Permission::factory()->create([
-            'endpoint' => 'api/suppliers',
-            'method' => 'POST',
-            'group' => 'Suppliers'
-        ]);
-        $this->kampingo->{'role'}->permissions()->attach(Permission::findByOperations());
         $response = $this->login()->post('api/suppliers', $data);
         $response->assertOk();
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc6f501b5f5eb548a7230099078c9bea",
+    "content-hash": "3ca8061efd85668f2c45980b443f7129",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -115,6 +115,56 @@
                 "source": "https://github.com/Bacon/BaconQrCode/tree/2.0.8"
             },
             "time": "2022-12-07T17:46:57+00:00"
+        },
+        {
+            "name": "bluecloud/response-builder",
+            "version": "v1.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bluecloudafrica/response-builder.git",
+                "reference": "8d34b71fbd1102270f6c9f2dd7cec2dcc4b58095"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bluecloudafrica/response-builder/zipball/8d34b71fbd1102270f6c9f2dd7cec2dcc4b58095",
+                "reference": "8d34b71fbd1102270f6c9f2dd7cec2dcc4b58095",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo": "*"
+            },
+            "require-dev": {
+                "laravel/framework": "^8.55"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Bluecloud\\ResponseBuilder\\ResponseBuilderServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bluecloud\\ResponseBuilder\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "BlueCloud Solutions",
+                    "email": "info@bluecloud.africa"
+                }
+            ],
+            "description": "API response builder",
+            "support": {
+                "issues": "https://github.com/bluecloudafrica/response-builder/issues",
+                "source": "https://github.com/bluecloudafrica/response-builder/tree/v1.6.2"
+            },
+            "time": "2023-07-12T08:15:41+00:00"
         },
         {
             "name": "brick/math",
@@ -3625,6 +3675,77 @@
                 }
             ],
             "time": "2023-02-19T12:04:38+00:00"
+        },
+        {
+            "name": "spatie/laravel-query-builder",
+            "version": "4.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-query-builder.git",
+                "reference": "fa289437588dfce89c72a16515113f3bade0590b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-query-builder/zipball/fa289437588dfce89c72a16515113f3bade0590b",
+                "reference": "fa289437588dfce89c72a16515113f3bade0590b",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^6.20.13|^7.30.4|^8.22.2",
+                "illuminate/http": "^6.20.13|^7.30.4|^8.22.2",
+                "illuminate/support": "^6.20.13|^7.30.4|^8.22.2",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "laravel/legacy-factories": "^1.0.4",
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^4.9|^5.8|^6.3",
+                "phpunit/phpunit": "^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\QueryBuilder\\QueryBuilderServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\QueryBuilder\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily build Eloquent queries from API requests",
+            "homepage": "https://github.com/spatie/laravel-query-builder",
+            "keywords": [
+                "laravel-query-builder",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-query-builder/issues",
+                "source": "https://github.com/spatie/laravel-query-builder"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                }
+            ],
+            "time": "2022-11-28T13:50:55+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -8614,9 +8735,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3|^8.0",
-        "ext-json": "*"
+        "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

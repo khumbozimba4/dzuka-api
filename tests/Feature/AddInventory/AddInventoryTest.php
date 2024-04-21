@@ -29,9 +29,12 @@ class AddInventoryTest extends TestCase
             'product_id' => $product->getKey(),
             'supplier_id' => $supplier->getKey(),
             'quantity' => 5,
+            'unit_cost_price' => 5,
         ];
 
-        $this->login()->post('api/add-inventory', $data);
+        $response = $this->login()->post('api/add-inventory', $data);
+
+        $response->assertOk();
 
         $this->assertDatabaseHas('add_inventories', $data);
     }
@@ -49,17 +52,6 @@ class AddInventoryTest extends TestCase
             'quantity' => 5,
             'unit_cost_price' => 2000
         ];
-        Permission::factory()->create([
-            'endpoint' => 'api/add-inventory',
-            'method' => 'POST',
-            'group' => 'add-inventory'
-        ]);
-        Permission::factory()->create([
-            'endpoint' => 'api/add-inventory/{addInventory}/approve',
-            'method' => 'PATCH',
-            'group' => 'add-inventory'
-        ]);
-        $this->kampingo->{'role'}->permissions()->attach(Permission::all());
         $response = $this->login()->post('api/add-inventory', $data);
 
         $response->assertOk();

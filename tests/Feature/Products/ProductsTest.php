@@ -11,12 +11,6 @@ class ProductsTest extends TestCase
 {
     public function test_get_products():void
     {
-        Permission::factory()->create([
-            'endpoint' => 'api/products',
-            'method' => 'GET',
-            'group' => 'Products'
-        ]);
-        $this->kampingo->{'role'}->permissions()->attach(Permission::all());
         Product::factory()->create();
         $response =  $this->login()->get('api/products');
         $response->assertOk();
@@ -24,12 +18,6 @@ class ProductsTest extends TestCase
 
     public function test_delete_product():void
     {
-        Permission::factory()->create([
-            'endpoint' => 'api/products/{product}',
-            'method' => 'DELETE',
-            'group' => 'Products'
-        ]);
-        $this->kampingo->{'role'}->permissions()->attach(Permission::all());
         $product = Product::factory()->create();
         $response =  $this->login()->delete(sprintf('api/products/%s', $product->getKey()));
         $response->assertOk();
