@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AddInventoryController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
+use App\Http\Controllers\API\CenterController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\PettyCashAllocationController;
@@ -74,6 +75,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post('/', [ProductController::class, 'store']);
         Route::patch('/{product}', [ProductController::class, 'update']);
         Route::delete('/{product}', [ProductController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'centers'], function () {
+        Route::get('/', [CenterController::class, 'index']);
+        Route::get('/{center}', [CenterController::class, 'show']);
+        Route::post('/', [CenterController::class, 'store']);
+        Route::patch('/{center}', [CenterController::class, 'update']);
+        Route::delete('/{center}', [CenterController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'sales'], function () {

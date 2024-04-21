@@ -16,7 +16,7 @@ class CreatePettyCashAllocationsTable extends Migration
         Schema::create('petty_cash_allocations', function (Blueprint $table) {
             $table->id();
             $table->integer('amount');
-            $table->foreignId('category_id');
+            $table->foreignId('center_id');
             $table->foreignId('user_id');
             $table->date('approved_at')->nullable();
             $table->foreignId('approved_by')->nullable();

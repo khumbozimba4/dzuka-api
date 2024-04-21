@@ -4,13 +4,12 @@ namespace App\Http\Requests;
 
 use Bluecloud\ResponseBuilder\Requests\BaseFormRequest;
 
-class CategoryRequest extends BaseFormRequest
+class CenterRequest extends BaseFormRequest
 {
     public function rules(): array
     {
         return [
-            "category_name"=>"required",
-            "center_id"=>"required",
+            "name"=>"required",
         ];
     }
 }

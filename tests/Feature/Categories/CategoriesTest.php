@@ -11,12 +11,6 @@ class CategoriesTest extends TestCase
 {
     public function test_get_categories():void
     {
-        Permission::factory()->create([
-            'endpoint' => 'api/categories/{category}',
-            'method' => 'GET',
-            'group' => 'Categories'
-        ]);
-        $this->kampingo->{'role'}->permissions()->attach(Permission::all());
         $category = Category::factory()->create();
         Product::factory()->create([
             'category_id' => $category->getKey()
