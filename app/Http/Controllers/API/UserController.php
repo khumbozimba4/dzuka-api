@@ -32,12 +32,11 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-
         return \response($user->update([
             "name" => $request->get('name'),
             "email" => $request->get('email'),
             "role_id" => $request->get('role_id'),
-            "category_id" => $request->get('category_id'),
+            "center_id" => $request->get('category_id'),
         ]));
     }
 

@@ -34,18 +34,12 @@ class CreateUser extends Command
         parent::__construct();
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle()
+    public function handle(): void
     {
-        $name = $this->ask("What is the users' name?");
         $email = $this->ask("What is the users' email?");
         $password = $this->ask("What is the users' password?");
 
-        if ($this->confirm(sprintf('Create %s with all permissions?', $name), true)) {
+        if ($this->confirm(sprintf('Create %s with all permissions?', $email), true)) {
             try {
                 $role = Role::where('name', 'Admin')->first();
 
@@ -55,12 +49,11 @@ class CreateUser extends Command
                 }
 
                 $user = User::create([
-                    'name' => $name,
                     'email' => $email,
                     'role_id' => $role->getKey(),
-                    'password' => Hash::make($password)
+                    'password' => Hash::make($password),
                 ]);
-                $this->info(sprintf('token => %s', ($user->createToken($user->{'name'}))->plainTextToken));
+                $this->info(sprintf('token => %s', ($user->createToken($user->{'email'}))->plainTextToken));
             } catch (\Exception $exception) {
                 $this->error($exception);
             }

@@ -13,7 +13,8 @@ use Tests\TestCase;
 
 class SubmitStockAuditTest extends TestCase
 {
-    public function test_get_submit_audit_stocks():void{
+    public function test_get_submit_audit_stocks(): void
+    {
         SubmitAuditStock::factory()->create([
             'user_id' => User::factory()->create()->getKey()
         ]);
@@ -22,7 +23,8 @@ class SubmitStockAuditTest extends TestCase
         $response->assertOk();
     }
 
-    public function test_submit_audit_stock():void{
+    public function test_submit_audit_stock(): void
+    {
         $login = $this->login();
         $category = Category::factory()->create();
         $supplier = Supplier::factory()->create();
@@ -30,28 +32,29 @@ class SubmitStockAuditTest extends TestCase
             'category_id' => $category->getKey()
         ]);
 
-        $login->post('api/add-inventory', [
-            'product_id' =>$product->getKey(),
+        $addInventory = AddInventory::factory()->create([
+            'product_id' => $product->getKey(),
             'quantity' => 10,
-            'supplier_id'=> $supplier->getKey()
-        ]);
+            'supplier_id' => $supplier->getKey()]);
+
+        $login->patch(sprintf('api/add-inventory/%s/approve', $addInventory->getKey()));
 
         $response = $login->post('api/submit-audit-stock', [
-            'product_id' =>$product->getKey(),
+            'product_id' => $product->getKey(),
             'stock_count' => 5
         ]);
 
         $response->assertOk();
-        $this->assertDatabaseHas('submit_audit_stocks',[
-            'product_id' =>$product->getKey(),
-            'stock_count' =>5
-        ]);
-        $this->assertDatabaseCount('sales',1);
-
-        $amount =$product->{'price'} * 5;
-        $this->assertDatabaseHas('sales',[
+        $this->assertDatabaseHas('submit_audit_stocks', [
             'product_id' => $product->getKey(),
-            'amount' => sprintf("%s.0",$amount),
+            'stock_count' => 5
+        ]);
+        $this->assertDatabaseCount('sales', 1);
+
+        $amount = $product->{'price'} * 5;
+        $this->assertDatabaseHas('sales', [
+            'product_id' => $product->getKey(),
+            'amount' => sprintf("%s.0", $amount),
             'quantity' => 5
         ]);
     }

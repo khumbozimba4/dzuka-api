@@ -11,9 +11,9 @@ class PettyCashAllocation extends Model
     use HasFactory;
     protected $guarded;
 
-    public function category(): BelongsTo
+    public function center(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Center::class, 'center_id');
     }
 
     public function user(): BelongsTo

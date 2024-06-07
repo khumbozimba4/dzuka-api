@@ -25,11 +25,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware('permissions');
-
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('auth/register', [AuthController::class, 'register']);
-    Route::post('auth/logout', [AuthController::class, 'logout']);
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum', 'permissions']);
+        Route::delete('/logout', [AuthController::class, 'logout'])->withoutMiddleware(['permissions']);
+        Route::post('/register', [AuthController::class, 'register']);
+    });
 
     Route::get('/reports', [DashboardController::class, 'reports']);
 
@@ -97,8 +98,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::group(['prefix' => 'mobile'], function () {
-            Route::post('/add-inventory', [AddInventoryController::class, 'store']);
-            Route::get('/suppliers', \App\Http\Controllers\Mobile\SupplierController::class);
-            Route::get('/products', \App\Http\Controllers\Mobile\ProductController::class);
+        Route::post('/add-inventory', [AddInventoryController::class, 'store']);
+        Route::get('/suppliers', \App\Http\Controllers\Mobile\SupplierController::class);
+        Route::get('/products', \App\Http\Controllers\Mobile\ProductController::class);
     });
 });
