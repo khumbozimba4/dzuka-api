@@ -28,7 +28,7 @@ class SubmitAuditStockController extends Controller
         SubmitAuditStock::create([
             'product_id' => $request->get('product_id'),
             'stock_count' => $request->get('stock_count'),
-            'user_id' => auth()->user()->id
+            'user_id' => auth()->id()
         ]);
 
         $sale_quantity = $product->{'stock'} - $request->get('stock_count');

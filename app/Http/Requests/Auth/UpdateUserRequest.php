@@ -4,7 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     public function rules(): array
     {
@@ -13,7 +13,7 @@ class RegisterRequest extends FormRequest
             'email'=>'required|string|email|unique:users,email',
             'role_id'=>'required',
             'center_id'=>'sometimes',
-            'password'=>'required|string|confirmed'
+            'password'=>'sometimes|string'
         ];
     }
 }

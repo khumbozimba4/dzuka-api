@@ -27,12 +27,13 @@ class AddInventoryController extends Controller
     public function approve(AddInventory $addInventory)
     {
         $product = $addInventory->{'product'};
-        $product->update([
-            'stock' => $addInventory->{'quantity'} + $product->{'stock'}
+
+        $addInventory->update([
+            'approved_at' => Carbon::now(),
+            'approved_by' => Auth::user()->{'id'}
         ]);
-        $addInventory->{'approved_at'} = Carbon::now();
-        $addInventory->{'approved_by'} = Auth::user()->{'id'};
-        $addInventory->save();
+
+        $product->update(['stock' => $addInventory->{'quantity'} + $product->{'stock'}]);
 
         return response($addInventory);
     }

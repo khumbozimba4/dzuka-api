@@ -66,8 +66,8 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class,'role_id');
     }
 
-    public function category():BelongsTo
+    public function center():BelongsTo
     {
-        return $this->belongsTo(Category::class,'category_id');
+        return $this->belongsTo(Center::class,'center_id');
     }
 }

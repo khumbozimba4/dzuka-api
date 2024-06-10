@@ -14,9 +14,9 @@ class Center extends Model
 
     protected $guarded = [];
 
-    public function categories(): HasMany
+    public function centers(): HasMany
     {
-        return $this->hasMany(Category::class);
+        return $this->hasMany(Center::class);
     }
 
     public static function useFilter(): QueryBuilder
