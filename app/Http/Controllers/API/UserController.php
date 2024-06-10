@@ -37,6 +37,7 @@ class UserController extends Controller
             "email" => $request->get('email'),
             "role_id" => $request->get('role_id'),
             "center_id" => $request->get('category_id'),
+            "password" => Hash::make($request->get('password')),
         ]));
     }
 
