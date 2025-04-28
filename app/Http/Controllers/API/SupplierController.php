@@ -10,7 +10,7 @@ class SupplierController extends Controller
 {
     public function index()
     {
-        return response(Supplier::orderBy('created_at', 'desc')->paginate(10));
+        return response(Supplier::with('category')->orderBy('created_at', 'desc')->paginate(10));
     }
 
     public function store(SupplierRequest $request)

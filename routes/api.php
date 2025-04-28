@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AddInventoryController;
+use App\Http\Controllers\API\AdvertisementBannerController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
 use App\Http\Controllers\API\CenterController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\PettyCashAllocationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
+use App\Http\Controllers\API\SponsorController;
 use App\Http\Controllers\API\SubmitAuditStockController;
 use App\Http\Controllers\API\SupplierController;
 use App\Http\Controllers\API\UserController;
@@ -24,6 +26,22 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+ // Sponsors
+ Route::group(['prefix' => 'sponsors'], function () {
+    Route::get('/', [SponsorController::class, 'index']);
+    Route::post('/', [SponsorController::class, 'store']);
+    Route::patch('/{sponsor}', [SponsorController::class, 'update']);
+    Route::delete('/{sponsor}', [SponsorController::class, 'destroy']);
+});
+
+    // Advertisement Banners
+Route::group(['prefix' => 'banners'], function () {
+    Route::get('/', [AdvertisementBannerController::class, 'index']);
+    Route::post('/', [AdvertisementBannerController::class, 'store']);
+    Route::patch('/{advertisementBanner}', [AdvertisementBannerController::class, 'update']);
+    Route::delete('/{advertisementBanner}', [AdvertisementBannerController::class, 'destroy']);
+});
+
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'auth'], function () {
@@ -62,11 +80,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/', [CategoriesController::class, 'index']);
+        Route::get('/getAll', [CategoriesController::class, 'getCategories']);
         Route::get('/{category}', [CategoriesController::class, 'show']);
         Route::post('/', [CategoriesController::class, 'store']);
         Route::patch('/{category}', [CategoriesController::class, 'update']);
         Route::delete('/{category}', [CategoriesController::class, 'destroy']);
     });
+
+   
+
+
 
     Route::post('petty-cash-allocation', PettyCashAllocationController::class);
 

@@ -6,6 +6,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\UpdateUserRequest;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class  AuthController extends Controller
@@ -42,6 +43,16 @@ class  AuthController extends Controller
         ]);
 
         return response($user, 200);
+    }
+
+    public function logout(Request $request)
+    {
+        // Revoke the current user's token
+        $request->user()->currentAccessToken()->delete();
+        
+        return response([
+            'message' => 'Successfully logged out'
+        ], 200);
     }
 
 }

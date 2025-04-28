@@ -13,6 +13,7 @@ class SupplierRequest extends FormRequest
             'location' => 'sometimes',
             'pin' => 'required',
             'phone_number' => 'sometimes',
+            'category_id'=>'required'
         ];
     }
 }

@@ -1,0 +1,2 @@
+[21-Apr-2024 19:13:07 UTC] PHP Fatal error:  Trait "Bluecloud\ResponseBuilder\Traits\BuildResponse" not found in /home/dzuklpqw/pamsika-api.dzuka-africa.org/app/Http/Controllers/Controller.php on line 11
+[21-Apr-2024 19:14:17 UTC] PHP Fatal error:  Trait "Bluecloud\ResponseBuilder\Traits\BuildResponse" not found in /home/dzuklpqw/pamsika-api.dzuka-africa.org/app/Http/Controllers/Controller.php on line 11

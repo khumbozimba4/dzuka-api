@@ -19,6 +19,11 @@ class CategoriesController extends Controller
             ->paginate(10));
     }
 
+    public function getCategories()
+    {
+        return response(Category::orderBy('created_at', 'desc')->get());
+    }
+
     public function search($name)
     {
         return response(
