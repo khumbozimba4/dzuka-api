@@ -14,6 +14,13 @@ class SponsorController extends Controller
     {
         return response(Sponsor::orderBy('CreatedAt', 'desc')->paginate(10));
     }
+    public function all()
+    {
+        return response()->json(
+            Sponsor::select(['SponsorId', 'SponsorName'])->get()
+        );
+    }
+    
 
     // Add new sponsor
     public function store(Request $request)
@@ -31,9 +38,8 @@ class SponsorController extends Controller
 
         // Upload logo
         $imageName = time() . '_' . $request->file('Logo')->getClientOriginalName();
-        $path = $request->file('Logo')->move(public_path('/images/sponsors'), $imageName);
-
-        $logoUrl = sprintf("https://pamsika-api.dzuka-africa.org/images/sponsors/%s", $imageName);
+        $path = $request->file('Logo')->move(public_path('storage/images/sponsors'), $imageName);
+        $logoUrl = config('app.url') . "/storage/images/sponsors/{$imageName}";
 
         // Create sponsor
         $sponsor = Sponsor::create([
@@ -73,17 +79,13 @@ class SponsorController extends Controller
                 }
     
                 $imageName = uniqid('sponsor_') . '.' . $request->file('Logo')->getClientOriginalExtension();
-                $request->file('Logo')->move(public_path('/images/sponsors'), $imageName);
-                $validated['LogoUrl'] = sprintf("https://pamsika-api.dzuka-africa.org/images/sponsors/%s", $imageName);
+                $request->file('Logo')->move(public_path('storage/images/sponsors'), $imageName);
+                $validated['LogoUrl']  = config('app.url') . "/storage/images/sponsors/{$imageName}";
+
             }
 
-            Log::info("Validated data: ", $validated); // Log the validated data
-
-    
             $sponsor->update($validated);
-    
-            Log::info('Sponsor updated successfully');
-    
+        
             return response()->json($sponsor);
     
         } catch (\Throwable $th) {

@@ -44,6 +44,7 @@ class ProductController extends Controller
         return response(Product::create([
             'product_name' => $request->get('product_name'),
             'description' => $request->get('description'),
+            'SponsorId' => $request->get('SponsorId'),
             'price' => $request->get('price'),
             'category_id' => $request->get('category_id'),
             'product_photo_path' => $path,
@@ -57,6 +58,7 @@ class ProductController extends Controller
             'product_name' => $request->get('product_name'),
             'description' => $request->get('description'),
             'price' => $request->get('price'),
+            'SponsorId' => $request->get('SponsorId'),
         ]));
     }
 

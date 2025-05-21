@@ -14,7 +14,7 @@ class CategoriesController extends Controller
 
     public function index()
     {
-        return response(Category::with('products')
+        return response(Category::with('suppliers')
             ->orderBy('created_at', 'desc')
             ->paginate(10));
     }

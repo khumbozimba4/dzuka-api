@@ -27,4 +27,8 @@ class Category extends Model
     {
         return $this->hasMany(Expense::class);
     }
+    public function suppliers(): HasMany
+    {
+    return $this->hasMany(Supplier::class);
+    }
 }

@@ -27,8 +27,9 @@ class AdvertisementBannerController extends Controller
         ]);
 
         $imageName = time() . '.' . $request->file('BannerImage')->extension();
-        $path = $request->file('BannerImage')->move(public_path('/images/banners'), $imageName);
-        $bannerImageUrl = sprintf("https://pamsika-api.dzuka-africa.org/images/banners/%s", $imageName);
+        $path = $request->file('BannerImage')->move(public_path('storage/images/banners'), $imageName);
+       // $bannerImageUrl = sprintf("https://pamsika-api.dzuka-africa.org/images/banners/%s", $imageName);
+        $bannerImageUrl = config('app.url') . "/storage/images/banners/{$imageName}";
 
         return response(AdvertisementBanner::create([
             'Title' => $request->get('Title'),
@@ -69,8 +70,8 @@ class AdvertisementBannerController extends Controller
             ]);
 
             $imageName = time() . '.' . $request->file('BannerImage')->extension();
-            $path = $request->file('BannerImage')->move(public_path('/images/banners'), $imageName);
-            $bannerImageUrl = sprintf("https://pamsika-api.dzuka-africa.org/images/banners/%s", $imageName);
+            $path = $request->file('BannerImage')->move(public_path('storage/images/banners'), $imageName);
+            $bannerImageUrl = config('app.url') . "/storage/images/banners/{$imageName}";
 
             $advertisementBanner->update([
                 'BannerImageUrl' => $bannerImageUrl,

@@ -29,8 +29,9 @@ use Illuminate\Support\Facades\Route;
  // Sponsors
  Route::group(['prefix' => 'sponsors'], function () {
     Route::get('/', [SponsorController::class, 'index']);
+    Route::get('/all', [SponsorController::class, 'all']);
     Route::post('/', [SponsorController::class, 'store']);
-    Route::patch('/{sponsor}', [SponsorController::class, 'update']);
+    Route::match(['patch', 'post'],'/{sponsor}', [SponsorController::class, 'update']);
     Route::delete('/{sponsor}', [SponsorController::class, 'destroy']);
 });
 
@@ -38,7 +39,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'banners'], function () {
     Route::get('/', [AdvertisementBannerController::class, 'index']);
     Route::post('/', [AdvertisementBannerController::class, 'store']);
-    Route::patch('/{advertisementBanner}', [AdvertisementBannerController::class, 'update']);
+    Route::match(['patch', 'post'], '/{advertisementBanner}', [AdvertisementBannerController::class, 'update']);
     Route::delete('/{advertisementBanner}', [AdvertisementBannerController::class, 'destroy']);
 });
 
