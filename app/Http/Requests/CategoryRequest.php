@@ -10,7 +10,6 @@ class CategoryRequest extends BaseFormRequest
     {
         return [
             "category_name"=>"required",
-            "center_id"=>"required",
         ];
     }
 }

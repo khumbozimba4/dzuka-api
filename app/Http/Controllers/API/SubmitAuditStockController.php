@@ -4,12 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SubmitAuditStockRequest;
-use App\Models\AddInventory;
 use App\Models\Product;
-use App\Models\ProductStockHistory;
 use App\Models\Sale;
 use App\Models\SubmitAuditStock;
-use Illuminate\Http\Request;
 
 class SubmitAuditStockController extends Controller
 {

@@ -1,0 +1,1 @@
+ALTER TABLE suppliers ADD COLUMN center_id BIGINT UNSIGNED NULL, ADD CONSTRAINT fk_suppliers_center_id FOREIGN KEY (center_id) REFERENCES centres(id) ON DELETE CASCADE;

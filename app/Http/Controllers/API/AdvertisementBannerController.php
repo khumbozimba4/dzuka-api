@@ -42,6 +42,7 @@ class AdvertisementBannerController extends Controller
         ]));
     }
 
+
     public function update(AdvertisementBanner $advertisementBanner, Request $request)
     {
         Log::info("The submitted data is:", $request->all());

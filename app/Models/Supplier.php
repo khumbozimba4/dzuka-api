@@ -16,10 +16,45 @@ class Supplier extends Model
         'location',
         'pin',
         'category_id', // <-- add this!
+        'center_id'
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+    public function center(): BelongsTo
+    {
+        return $this->belongsTo(Center::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function artisanReports()
+    {
+        return $this->hasMany(ArtisanReport::class);
+    }
+
+    public function ingredientUsage()
+    {
+        return $this->hasMany(IngredientUsage::class);
+    }
+
+    public function completedOrders()
+    {
+        return $this->hasMany(Order::class)->where('status', 'delivered');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function getTotalCommissionAttribute()
+    {
+        return $this->orders()->sum('artisan_commission');
     }
 }

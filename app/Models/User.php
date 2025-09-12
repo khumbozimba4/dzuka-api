@@ -70,4 +70,42 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Center::class,'center_id');
     }
+
+    public function assignedOrders()
+    {
+        return $this->hasMany(Order::class, 'assigned_by');
+    }
+
+    const ROLES = [
+        'admin' => 'Admin',
+        'inventory_manager' => 'Inventory Manager',
+        'order_manager' => 'Order Manager',
+        'delivery_manager' => 'Delivery Manager'
+    ];
+
+
+    public function ingredientAllocations()
+    {
+        return $this->hasMany(IngredientAllocation::class, 'allocated_by');
+    }
+
+    public function stockReconciliations()
+    {
+        return $this->hasMany(StockReconciliation::class, 'reconciled_by');
+    }
+
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class, 'assigned_by');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function getRoleNameAttribute()
+    {
+        return self::ROLES[$this->role] ?? $this->role;
+    }
 }

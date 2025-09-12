@@ -74,6 +74,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::group(['prefix' => 'suppliers'], function () {
         Route::get('/', [SupplierController::class, 'index']);
+        Route::get('/all', [SupplierController::class, 'getAll']);
         Route::post('/', [SupplierController::class, 'store']);
         Route::patch('/{supplier}', [SupplierController::class, 'update']);
         Route::delete('/{supplier}', [SupplierController::class, 'destroy']);
@@ -98,12 +99,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/', [ProductController::class, 'index']);
         Route::get('/{product}', [ProductController::class, 'search']);
         Route::post('/', [ProductController::class, 'store']);
-        Route::patch('/{product}', [ProductController::class, 'update']);
+        Route::match(['patch', 'post'], '/{product}', [ProductController::class, 'update']);
         Route::delete('/{product}', [ProductController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'centers'], function () {
         Route::get('/', [CenterController::class, 'index']);
+        Route::get('/all', [CenterController::class, 'getAllCentres']);
         Route::get('/{center}', [CenterController::class, 'show']);
         Route::post('/', [CenterController::class, 'store']);
         Route::patch('/{center}', [CenterController::class, 'update']);

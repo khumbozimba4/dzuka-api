@@ -9,16 +9,24 @@ use Illuminate\Http\JsonResponse;
 
 class CenterController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
         return $this->respond()->key('centers')->ok(Center::useFilter()->paginate(10))->toJson();
     }
 
-    public function show(Center $center): JsonResponse
+    public function getAllCentres()
     {
-        return $this->respond()->key('center')->ok($center->loadRelations()->toArray())->toJson();
+        return response(Center::orderBy('created_at', 'desc')->get());
     }
 
+    public function show(Center $center)
+    {
+        return $this->respond()
+            ->key('center')
+            ->ok($center->toArray()) // No relations loaded
+            ->toJson();
+    }
+    
     public function store(CenterRequest $request)
     {
         return response(Center::create($request->validated()));

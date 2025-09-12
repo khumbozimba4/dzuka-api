@@ -13,6 +13,11 @@ class SupplierController extends Controller
         return response(Supplier::with('category')->orderBy('created_at', 'desc')->paginate(10));
     }
 
+    public function getAll()
+    {
+        return response(Supplier::all());
+    }
+
     public function store(SupplierRequest $request)
     {
         return response(Supplier::create($request->validated()));

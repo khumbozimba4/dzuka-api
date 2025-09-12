@@ -13,6 +13,19 @@ class Product extends Model
 
     protected $guarded;
 
+    protected $fillable = [
+        'product_name',
+        'category_id',
+        'SponsorId',
+        'price',
+        'stock',
+        'description',
+        'product_photo_path',
+        'product_photo_url',
+        'supplier_id',
+        'brochure_pdf_path'
+    ];
+
     public static function findByZeroStock()
     {
         return static::where('stock', 0)->get();
