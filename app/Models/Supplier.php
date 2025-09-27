@@ -16,6 +16,7 @@ class Supplier extends Model
         'is_active',
         'location',
         'pin',
+        'user_id',
         'category_id', // <-- add this!
         'center_id'
     ];

@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AddInventoryController;
 use App\Http\Controllers\API\AdvertisementBannerController;
 use App\Http\Controllers\API\ArtisanController;
+use App\Http\Controllers\API\ArtisanReportController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
 use App\Http\Controllers\API\CenterController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\API\CommodityIngredientController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\IngredientController;
+use App\Http\Controllers\API\OrderAllocationController;
 use App\Http\Controllers\API\PettyCashAllocationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
@@ -52,6 +54,27 @@ Route::group(['prefix' => 'banners'], function () {
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
+
+        // Order payment routes
+    Route::post('orders/{id}/deposit-payment', [OrderController::class, 'recordDepositPayment']);
+    Route::post('orders/{id}/balance-payment', [OrderController::class, 'recordBalancePayment']);
+
+    // Ingredient allocation routes
+    Route::post('orders/{id}/allocate-ingredients', [OrderController::class, 'allocateIngredients']);
+    Route::get('orders/{id}/ingredient-allocations', [OrderController::class, 'getIngredientAllocations']);
+    Route::put('orders/{orderId}/ingredient-allocations/{allocationId}', [OrderController::class, 'updateIngredientAllocation']);
+    Route::delete('orders/{orderId}/ingredient-allocations/{allocationId}', [OrderController::class, 'deleteIngredientAllocation']);
+
+    // Ingredient management routes
+    Route::get('ingredients/list', [IngredientController::class, 'list']); // For dropdowns
+    Route::get('ingredients/low-stock', [IngredientController::class, 'lowStock']);
+    Route::post('ingredients/{id}/add-stock', [IngredientController::class, 'addStock']);
+    Route::post('ingredients/{id}/reduce-stock', [IngredientController::class, 'reduceStock']);
+    Route::patch('ingredients/{id}/toggle-status', [IngredientController::class, 'toggleStatus']);
+    Route::get('ingredients/statistics', [IngredientController::class, 'statistics']);
+
+
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum', 'permissions']);
         Route::delete('/logout', [AuthController::class, 'logout'])->withoutMiddleware(['permissions']);
@@ -137,6 +160,44 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/suppliers', \App\Http\Controllers\Mobile\SupplierController::class);
         Route::get('/products', \App\Http\Controllers\Mobile\ProductController::class);
     });
+
+
+
+
+    Route::prefix('artisans/{artisanId}')->group(function () {
+
+        // Main Dashboard Data
+        Route::get('/dashboard', [ArtisanReportController::class, 'getDashboardData']);
+
+        // Orders Management
+        Route::get('/orders', [ArtisanReportController::class, 'getArtisanOrders']);
+        Route::post('/orders/{orderId}/accept', [ArtisanReportController::class, 'acceptOrder']);
+        Route::post('/orders/{orderId}/decline', [ArtisanReportController::class, 'declineOrder']);
+        Route::post('/orders/{orderId}/request-deposit', [ArtisanReportController::class, 'requestDeposit']);
+        Route::post('/orders/{orderId}/start-production', [ArtisanReportController::class, 'startProduction']);
+        Route::post('/orders/{orderId}/complete-production', [ArtisanReportController::class, 'completeProduction']);
+
+        // Analytics
+        Route::get('/analytics/revenue', [ArtisanReportController::class, 'getRevenueAnalytics']);
+        Route::get('/analytics/costs', [ArtisanReportController::class, 'getCostAnalytics']);
+
+        // Inventory Management
+        Route::put('/inventory/{itemId}', [ArtisanReportController::class, 'updateInventory']);
+
+    });
+});
+
+
+Route::group(['prefix' => 'orders', 'middleware' => ['auth:sanctum']], function () {
+    // Allocation routes
+    Route::get('{order}/allocation-suggestions', [OrderAllocationController::class, 'getOrderAllocationSuggestions']);
+    Route::post('{order}/auto-allocate', [OrderAllocationController::class, 'autoAllocateOrder']);
+    Route::post('{order}/manual-allocate', [OrderAllocationController::class, 'manualAllocateOrder']);
+    Route::post('batch-allocate', [OrderAllocationController::class, 'batchAllocateOrders']);
+});
+
+Route::group(['prefix' => 'artisans', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('availability', [OrderAllocationController::class, 'getArtisanAvailability']);
 });
 
 Route::prefix('public')->group(function () {

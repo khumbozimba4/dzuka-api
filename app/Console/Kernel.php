@@ -16,6 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('orders:process-pending --limit=20')
+        ->everyFiveMinutes()
+        ->between('8:00', '18:00');
     }
 
     /**

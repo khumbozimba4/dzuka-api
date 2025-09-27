@@ -14,6 +14,7 @@ class Order extends Model
         'supplier_id',
         'assigned_by',
         'status',
+        'estimated_completion_date',
         'total_amount',
         'deposit_amount',
         'balance_amount',
