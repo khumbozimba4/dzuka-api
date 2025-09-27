@@ -2,18 +2,25 @@
 
 use App\Http\Controllers\API\AddInventoryController;
 use App\Http\Controllers\API\AdvertisementBannerController;
+use App\Http\Controllers\API\ArtisanController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CategoriesController;
 use App\Http\Controllers\API\CenterController;
+use App\Http\Controllers\API\CommodityController;
+use App\Http\Controllers\API\CommodityIngredientController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ExpenseController;
+use App\Http\Controllers\API\IngredientController;
 use App\Http\Controllers\API\PettyCashAllocationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\SaleController;
+use App\Http\Controllers\API\SectorController;
 use App\Http\Controllers\API\SponsorController;
 use App\Http\Controllers\API\SubmitAuditStockController;
 use App\Http\Controllers\API\SupplierController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -83,13 +90,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'categories'], function () {
         Route::get('/', [CategoriesController::class, 'index']);
         Route::get('/getAll', [CategoriesController::class, 'getCategories']);
+        Route::get('/getAllCategories', [CategoriesController::class, 'getAllCategories']);
         Route::get('/{category}', [CategoriesController::class, 'show']);
         Route::post('/', [CategoriesController::class, 'store']);
         Route::patch('/{category}', [CategoriesController::class, 'update']);
         Route::delete('/{category}', [CategoriesController::class, 'destroy']);
     });
 
-   
+
 
 
 
@@ -106,6 +114,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix' => 'centers'], function () {
         Route::get('/', [CenterController::class, 'index']);
         Route::get('/all', [CenterController::class, 'getAllCentres']);
+        Route::get('/getAll', [CenterController::class, 'getCentres']);
         Route::get('/{center}', [CenterController::class, 'show']);
         Route::post('/', [CenterController::class, 'store']);
         Route::patch('/{center}', [CenterController::class, 'update']);
@@ -128,4 +137,148 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/suppliers', \App\Http\Controllers\Mobile\SupplierController::class);
         Route::get('/products', \App\Http\Controllers\Mobile\ProductController::class);
     });
+});
+
+Route::prefix('public')->group(function () {
+        // Sector catalogue for customers
+
+    Route::get('/sectors/catalogue', [SectorController::class, 'catalogue']);
+    Route::get('/sectors/list', [SectorController::class, 'list']);
+    Route::get('/sectors/{id}/public', [SectorController::class, 'showPublic']);
+
+    // Product catalogue for customers
+    Route::get('/commodities/catalogue', [CommodityController::class, 'catalogue']);
+    Route::get('/commodities/featured', [CommodityController::class, 'featured']);
+    Route::get('/commodities/sector/{sectorId}', [CommodityController::class, 'getBySector']);
+    Route::get('/commodities/{id}/customer', [CommodityController::class, 'showForCustomer']);
+});
+
+// Protected routes - require authentication
+Route::middleware(['auth:sanctum'])->group(function () {
+
+     // Sector management
+     Route::apiResource('sectors', SectorController::class);
+     Route::get('/sectors/list', [SectorController::class, 'list']);
+     Route::get('/sectors/dashboard', [SectorController::class, 'dashboard']);
+     Route::get('/sectors/available-for-products', [SectorController::class, 'availableForProducts']);
+     Route::get('/sectors/{id}/capacity-check', [SectorController::class, 'checkCapacity']);
+     Route::patch('/sectors/{id}/toggle-status', [SectorController::class, 'toggleStatus']);
+     Route::get('/sectors/statistics', [SectorController::class, 'statistics']);
+     Route::post('/sectors/bulk-action', [SectorController::class, 'bulkAction']);
+
+
+    // Commodity/Product management
+    Route::apiResource('commodities', CommodityController::class);
+    Route::get('/commodities/{id}/customer', [CommodityController::class, 'showForCustomer']);
+    Route::patch('/commodities/{id}/toggle-status', [CommodityController::class, 'toggleStatus']);
+    Route::get('/commodities/statistics', [CommodityController::class, 'statistics']);
+
+    // Ingredient management
+    Route::get('/ingredients/list', [IngredientController::class, 'list']);
+    Route::get('/ingredients/low-stock', [IngredientController::class, 'lowStock']);
+    Route::post('/ingredients/{id}/add-stock', [IngredientController::class, 'addStock']);
+    Route::post('/ingredients/{id}/reduce-stock', [IngredientController::class, 'reduceStock']);
+    Route::patch('/ingredients/{id}/toggle-status', [IngredientController::class, 'toggleStatus']);
+    Route::get('/ingredients/stats/overview', [IngredientController::class, 'statistics']);
+
+    Route::apiResource('ingredients', IngredientController::class);
+
+    // Commodity-Ingredient relationship management (Bill of Materials)
+    Route::prefix('commodities/{commodityId}')->group(function () {
+        Route::get('/ingredients', [CommodityIngredientController::class, 'index']);
+        Route::post('/ingredients', [CommodityIngredientController::class, 'store']);
+        Route::get('/ingredients/{ingredientId}', [CommodityIngredientController::class, 'show']);
+        Route::put('/ingredients/{ingredientId}', [CommodityIngredientController::class, 'update']);
+        Route::delete('/ingredients/{ingredientId}', [CommodityIngredientController::class, 'destroy']);
+        Route::put('/ingredients/bulk', [CommodityIngredientController::class, 'bulkUpdate']);
+        Route::get('/ingredients/availability', [CommodityIngredientController::class, 'checkAvailability']);
+        Route::get('/ingredients/cost-calculation', [CommodityIngredientController::class, 'calculateCost']);
+    });
+
+
+
+
+        // RESTful resource routes (index, store, show, update, destroy)
+    Route::apiResource('orders', OrderController::class);
+
+    // Custom workflow routes
+    Route::prefix('orders')->group(function () {
+        Route::get('{id}/statistics', [OrderController::class, 'statistics']);   // Order stats
+        Route::patch('{id}/assign', [OrderController::class, 'assignToArtisan']); // Assign artisan
+
+        // (Optional extra workflow methods you may add later)
+        Route::patch('{id}/accept', [OrderController::class, 'acceptOrder']);           // Artisan accepts
+        Route::patch('{id}/mark-deposit-paid', [OrderController::class, 'markDepositPaid']);
+        Route::patch('{id}/start-production', [OrderController::class, 'startProduction']);
+        Route::patch('{id}/complete-production', [OrderController::class, 'completeProduction']);
+        Route::patch('{id}/mark-delivered', [OrderController::class, 'markDelivered']);
+        Route::patch('{id}/cancel', [OrderController::class, 'cancelOrder']);
+    });
+
+
+// Custom workflow/payment routes
+Route::prefix('payments')->group(function () {
+    Route::get('order/{orderId}', [PaymentController::class, 'getByOrder']);   // Payments for a given order
+    Route::patch('{id}/mark-completed', [PaymentController::class, 'markCompleted']); // Mark as completed
+    Route::patch('{id}/refund', [PaymentController::class, 'refund']); // Refund a payment
+});
+});
+// RESTful resource routes (index, store, show, update, destroy)
+Route::apiResource('payments', PaymentController::class);
+
+
+
+
+
+ // Additional routes that don't fit the resource pattern
+ Route::prefix('artisans')->group(function () {
+     Route::get('by-category', [ArtisanController::class, 'getByCategory']);
+     Route::get('category/{categoryId}', [ArtisanController::class, 'getByCategoryId']);
+     Route::get('center/{centerId}', [ArtisanController::class, 'getByCenterId']);
+     Route::get('available/{categoryId}', [ArtisanController::class, 'getAvailableForAllocation']);
+     Route::get('statistics', [ArtisanController::class, 'statistics']);
+     Route::post('{id}/verify-pin', [ArtisanController::class, 'verifyPin']);
+     Route::patch('{id}/toggle-status', [ArtisanController::class, 'toggleStatus']);
+     Route::patch('{id}/update-pin', [ArtisanController::class, 'updatePin']);
+     Route::get('{id}/profile', [ArtisanController::class, 'getProfile']);
+     Route::get('{id}/orders', [ArtisanController::class, 'getOrders']);
+ });
+  // Standard resource routes
+  Route::apiResource('artisans', ArtisanController::class);
+
+// Admin-only routes - require admin role
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+    // Admin commodity management
+    Route::post('/commodities', [CommodityController::class, 'store']);
+    Route::put('/commodities/{id}', [CommodityController::class, 'update']);
+    Route::delete('/commodities/{id}', [CommodityController::class, 'destroy']);
+    Route::get('/commodities/statistics', [CommodityController::class, 'statistics']);
+
+    // Admin ingredient management
+    Route::post('/ingredients', [IngredientController::class, 'store']);
+    Route::put('/ingredients/{id}', [IngredientController::class, 'update']);
+    Route::delete('/ingredients/{id}', [IngredientController::class, 'destroy']);
+    Route::get('/ingredients/statistics', [IngredientController::class, 'statistics']);
+
+    // Admin Bill of Materials management
+    Route::prefix('commodities/{commodityId}')->group(function () {
+        Route::post('/ingredients', [CommodityIngredientController::class, 'store']);
+        Route::put('/ingredients/{ingredientId}', [CommodityIngredientController::class, 'update']);
+        Route::delete('/ingredients/{ingredientId}', [CommodityIngredientController::class, 'destroy']);
+        Route::put('/ingredients/bulk', [CommodityIngredientController::class, 'bulkUpdate']);
+    });
+});
+
+// Artisan-specific routes - require artisan role
+Route::middleware(['auth:sanctum', 'role:artisan'])->prefix('artisan')->group(function () {
+    // Artisan can view commodities and check ingredient availability
+    Route::get('/commodities', [CommodityController::class, 'index']);
+    Route::get('/commodities/{id}', [CommodityController::class, 'show']);
+    Route::get('/commodities/{id}/ingredients/availability', [CommodityIngredientController::class, 'checkAvailability']);
+    Route::get('/commodities/{id}/ingredients/cost-calculation', [CommodityIngredientController::class, 'calculateCost']);
+
+    // Artisan ingredient viewing (for production planning)
+    Route::get('/ingredients', [IngredientController::class, 'index']);
+    Route::get('/ingredients/{id}', [IngredientController::class, 'show']);
+    Route::get('/ingredients/low-stock', [IngredientController::class, 'lowStock']);
 });

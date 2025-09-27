@@ -18,6 +18,17 @@ class CategoriesController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10));
     }
+    public function getAllCategories()
+    {
+        $categories = Category::orderBy('category_name')
+        ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $categories,
+            'message' => 'Artisans by category retrieved successfully'
+        ]);
+    }
 
     public function getCategories()
     {

@@ -10,7 +10,7 @@ class Order extends Model
     use HasFactory;
     protected $fillable = [
         'order_number',
-        'customer_id',
+        'user_id',
         'supplier_id',
         'assigned_by',
         'status',
@@ -60,7 +60,7 @@ class Order extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class);
     }
 
     public function supplier()
@@ -105,7 +105,7 @@ class Order extends Model
 
     public function scopeByCustomer($query, $customerId)
     {
-        return $query->where('customer_id', $customerId);
+        return $query->where('user_id', $customerId);
     }
 
     public function scopeBySupplier($query, $supplierId)

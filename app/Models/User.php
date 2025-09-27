@@ -108,4 +108,15 @@ class User extends Authenticatable
     {
         return self::ROLES[$this->role] ?? $this->role;
     }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+
 }

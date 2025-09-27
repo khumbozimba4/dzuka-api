@@ -20,7 +20,7 @@ class Sector extends Model
         'is_active' => 'boolean',
     ];
 
-    public function products()
+    public function commodities()
     {
         return $this->hasMany(Commodity::class);
     }

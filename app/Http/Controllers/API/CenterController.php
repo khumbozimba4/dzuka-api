@@ -18,7 +18,17 @@ class CenterController extends Controller
     {
         return response(Center::orderBy('created_at', 'desc')->get());
     }
+    public function getCentres()
+    {
+        $centres = Center::orderBy('name')
+        ->get();
 
+        return response()->json([
+            'status' => 'success',
+            'data' => $centres,
+            'message' => 'Centresretrieved successfully'
+        ]);
+    }
     public function show(Center $center)
     {
         return $this->respond()
@@ -26,7 +36,7 @@ class CenterController extends Controller
             ->ok($center->toArray()) // No relations loaded
             ->toJson();
     }
-    
+
     public function store(CenterRequest $request)
     {
         return response(Center::create($request->validated()));

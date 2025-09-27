@@ -13,12 +13,14 @@ class Supplier extends Model
     protected $fillable = [
         'name',
         'phone_number',
+        'is_active',
         'location',
         'pin',
         'category_id', // <-- add this!
         'center_id'
     ];
 
+    protected $table='suppliers';
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

@@ -28,7 +28,7 @@ class Ingredient extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Commodity::class, 'product_ingredients')
+        return $this->belongsToMany(Commodity::class, 'commodity_ingredients')
                     ->withPivot('quantity_required', 'cost_per_unit')
                     ->withTimestamps();
     }
