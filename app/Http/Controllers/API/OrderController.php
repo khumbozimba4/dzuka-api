@@ -16,8 +16,13 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with(['customer', 'supplier', 'items', 'payments', 'delivery']);
-
+        $query = Order::with([
+            'customer',
+            'supplier',
+            'items.commodity:id,name',
+            'payments',
+            'delivery'
+        ]);
         if ($request->has('status')) {
             $query->byStatus($request->status);
         }
@@ -101,7 +106,11 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with(['customer', 'supplier', 'items', 'payments', 'delivery'])
+        $order = Order::with(['customer',
+         'supplier',
+         'items.commodity:id,name',
+         'payments',
+          'delivery'])
                       ->findOrFail($id);
 
         return response()->json([
