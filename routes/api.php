@@ -227,7 +227,6 @@ Route::prefix('public')->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
 
      // Sector management
-     Route::apiResource('sectors', SectorController::class);
      Route::get('/sectors/list', [SectorController::class, 'list']);
      Route::get('/sectors/dashboard', [SectorController::class, 'dashboard']);
      Route::get('/sectors/available-for-products', [SectorController::class, 'availableForProducts']);
@@ -235,6 +234,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
      Route::patch('/sectors/{id}/toggle-status', [SectorController::class, 'toggleStatus']);
      Route::get('/sectors/statistics', [SectorController::class, 'statistics']);
      Route::post('/sectors/bulk-action', [SectorController::class, 'bulkAction']);
+
+     Route::apiResource('sectors', SectorController::class);
+
 
 
     // Commodity/Product management

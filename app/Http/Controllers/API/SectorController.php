@@ -286,8 +286,8 @@ class SectorController extends Controller
 
         // If deactivating sector, optionally deactivate all its products
         if (!$sector->is_active) {
-            $affectedProducts = $sector->products()->where('is_active', true)->count();
-            $sector->products()->update(['is_active' => false]);
+            $affectedProducts = $sector->commodities()->where('is_active', true)->count();
+            $sector->commodities()->update(['is_active' => false]);
 
             return response()->json([
                 'status' => 'success',
@@ -413,7 +413,7 @@ class SectorController extends Controller
         $sector = Sector::findOrFail($id);
 
         // Check if sector has products
-        $productCount = $sector->products()->count();
+        $productCount = $sector->commodities()->count();
 
         if ($productCount > 0) {
             return response()->json([
@@ -469,7 +469,7 @@ class SectorController extends Controller
                     ->with('products')
                     ->get()
                     ->sum(function($sector) {
-                        return $sector->products()->update(['is_active' => false]);
+                        return $sector->commodities()->update(['is_active' => false]);
                     });
                 $message = "{$affectedCount} sectors and {$productCount} products deactivated successfully";
                 break;
