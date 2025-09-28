@@ -10,6 +10,7 @@ use App\Http\Controllers\API\CenterController;
 use App\Http\Controllers\API\CommodityController;
 use App\Http\Controllers\API\CommodityIngredientController;
 use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\DeliveryController;
 use App\Http\Controllers\API\ExpenseController;
 use App\Http\Controllers\API\IngredientController;
 use App\Http\Controllers\API\OrderAllocationController;
@@ -121,6 +122,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
 
+        // In routes/api.php
+    Route::get('deliveries/today', [DeliveryController::class, 'today']);
+    Route::get('deliveries/statistics', [DeliveryController::class, 'statistics']);
+    Route::patch('deliveries/{id}/mark-in-transit', [DeliveryController::class, 'markInTransit']);
+    Route::patch('deliveries/{id}/mark-delivered', [DeliveryController::class, 'markDelivered']);
+    Route::patch('deliveries/{id}/mark-failed', [DeliveryController::class, 'markFailed']);
+    Route::patch('deliveries/{id}/reschedule', [DeliveryController::class, 'reschedule']);
+    Route::apiResource('deliveries', DeliveryController::class);
 
 
 
