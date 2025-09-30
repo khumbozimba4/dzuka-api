@@ -24,6 +24,7 @@ use App\Http\Controllers\API\SupplierController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,6 +57,17 @@ Route::group(['prefix' => 'banners'], function () {
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
+
+    // Dashboard routes
+    Route::prefix('admin/dashboard')->group(function () {
+        Route::get('statistics', [AdminDashboardController::class, 'statistics']);
+        Route::get('revenue-breakdown', [AdminDashboardController::class, 'revenueBreakdown']);
+        Route::get('sector-performance', [AdminDashboardController::class, 'sectorPerformance']);
+        Route::get('recent-orders', [AdminDashboardController::class, 'recentOrders']);
+        Route::get('alerts', [AdminDashboardController::class, 'alerts']);
+        Route::get('top-artisans', [AdminDashboardController::class, 'topArtisans']);
+        Route::get('trends', [AdminDashboardController::class, 'trends']);
+    });
 
         // Order payment routes
     Route::post('orders/{id}/deposit-payment', [OrderController::class, 'recordDepositPayment']);
@@ -277,7 +289,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('orders')->group(function () {
         Route::get('{id}/statistics', [OrderController::class, 'statistics']);   // Order stats
         Route::patch('{id}/assign', [OrderController::class, 'assignToArtisan']); // Assign artisan
-
+        Route::get('{id}/required-ingredients', [OrderController::class, 'getRequiredIngredients']);
         // (Optional extra workflow methods you may add later)
         Route::patch('{id}/accept', [OrderController::class, 'acceptOrder']);           // Artisan accepts
         Route::patch('{id}/mark-deposit-paid', [OrderController::class, 'markDepositPaid']);

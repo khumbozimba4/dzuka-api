@@ -17,7 +17,11 @@ class DeliveryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Delivery::with(['order:id,order_number,customer_name,total_amount', 'assignedBy:id,name']);
+        $query = Delivery::with([
+            'order:id,order_number,user_id,total_amount,status',
+            'order.customer:id,name,email',
+            'assignedBy:id,name'
+        ]);
 
         // Filter by status
         if ($request->has('status')) {
@@ -46,10 +50,14 @@ class DeliveryController extends Controller
         // Search functionality
         if ($request->has('search')) {
             $search = $request->search;
-            $query->whereHas('order', function($q) use ($search) {
-                $q->where('order_number', 'LIKE', "%{$search}%")
-                  ->orWhere('customer_name', 'LIKE', "%{$search}%");
-            })->orWhere('delivery_address', 'LIKE', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->whereHas('order', function($orderQuery) use ($search) {
+                    $orderQuery->where('order_number', 'LIKE', "%{$search}%")
+                        ->orWhereHas('customer', function($customerQuery) use ($search) {
+                            $customerQuery->where('name', 'LIKE', "%{$search}%");
+                        });
+                })->orWhere('delivery_address', 'LIKE', "%{$search}%");
+            });
         }
 
         // Order by scheduled_at by default
@@ -70,7 +78,11 @@ class DeliveryController extends Controller
      */
     public function today()
     {
-        $deliveries = Delivery::with(['order:id,order_number,customer_name,total_amount', 'assignedBy:id,name'])
+        $deliveries = Delivery::with([
+            'order:id,order_number,user_id,total_amount,status',
+            'order.customer:id,name,email',
+            'assignedBy:id,name'
+        ])
             ->scheduledForToday()
             ->orderBy('scheduled_at')
             ->get();
@@ -117,8 +129,7 @@ class DeliveryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'order_id' => 'required|exists:orders,id',
-            'assigned_by' => 'required|exists:users,id',
+            'order_number' => 'required|exists:orders,order_number',
             'delivery_method' => 'required|in:' . implode(',', [
                 Delivery::METHOD_PICKUP,
                 Delivery::METHOD_COURIER,
@@ -138,8 +149,17 @@ class DeliveryController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $order = Order::where('order_number', $request->order_number)->first();
+
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
         // Check if order already has a delivery scheduled
-        $existingDelivery = Delivery::where('order_id', $request->order_id)
+        $existingDelivery = Delivery::where('order_id', $order->id)
             ->whereIn('status', [Delivery::STATUS_SCHEDULED, Delivery::STATUS_IN_TRANSIT])
             ->exists();
 
@@ -150,13 +170,24 @@ class DeliveryController extends Controller
             ], Response::HTTP_CONFLICT);
         }
 
-        $deliveryData = $request->all();
-        $deliveryData['status'] = Delivery::STATUS_SCHEDULED;
-
-        $delivery = Delivery::create($deliveryData);
+        // Explicitly specify what to create
+        $delivery = Delivery::create([
+            'order_id' => $order->id,
+            'delivery_method' => $request->delivery_method,
+            'delivery_address' => $request->delivery_address,
+            'delivery_fee' => $request->delivery_fee,
+            'scheduled_at' => $request->scheduled_at,
+            'delivery_notes' => $request->delivery_notes,
+            'status' => Delivery::STATUS_SCHEDULED,
+            'assigned_by' => auth()->id(),
+        ]);
 
         // Load relationships for response
-        $delivery->load(['order:id,order_number,customer_name,total_amount', 'assignedBy:id,name']);
+        $delivery->load([
+            'order:id,order_number,user_id,total_amount,status',
+            'order.customer:id,name,email',
+            'assignedBy:id,name'
+        ]);
 
         return response()->json([
             'status' => 'success',
@@ -172,10 +203,8 @@ class DeliveryController extends Controller
     public function show($id)
     {
         $delivery = Delivery::with([
-            'order' => function($query) {
-                $query->select('id', 'order_number', 'customer_name', 'customer_phone',
-                              'total_amount', 'status', 'created_at');
-            },
+            'order:id,order_number,user_id,total_amount,status,created_at',
+            'order.customer:id,name,email',
             'assignedBy:id,name,email'
         ])->findOrFail($id);
 
@@ -232,7 +261,11 @@ class DeliveryController extends Controller
         $delivery->update($request->all());
 
         // Load relationships for response
-        $delivery->load(['order:id,order_number,customer_name,total_amount', 'assignedBy:id,name']);
+        $delivery->load([
+            'order:id,order_number,user_id,total_amount,status',
+            'order.customer:id,name,email',
+            'assignedBy:id,name'
+        ]);
 
         return response()->json([
             'status' => 'success',

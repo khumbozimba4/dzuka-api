@@ -446,6 +446,7 @@ class OrderController extends Controller
                     'ingredient_id' => $allocationData['ingredient_id'],
                     'quantity_allocated' => $allocationData['quantity_allocated'],
                     'cost_per_unit' => $allocationData['cost_per_unit'],
+                    'total_cost' => $allocationData['quantity_allocated'] * $allocationData['cost_per_unit'], // Add this
                     'allocated_by' => $allocationData['allocated_by'],
                     'allocated_at' => now()
                 ]);
@@ -623,4 +624,59 @@ class OrderController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         }
     }
+    /**
+ * Get required ingredients for order production
+ * GET /api/orders/{id}/required-ingredients
+ */
+public function getRequiredIngredients($id)
+{
+    $order = Order::with(['items.commodity.ingredients'])->findOrFail($id);
+
+    $requiredIngredients = [];
+
+    foreach ($order->items as $orderItem) {
+        $commodity = $orderItem->commodity;
+
+        if (!$commodity) continue;
+
+        foreach ($commodity->ingredients as $ingredient) {
+            $requiredQuantity = $ingredient->pivot->quantity_required * $orderItem->quantity;
+            $costPerUnit = $ingredient->pivot->cost_per_unit;
+
+            // If ingredient already in array, add to quantity
+            if (isset($requiredIngredients[$ingredient->id])) {
+                $requiredIngredients[$ingredient->id]['total_required'] += $requiredQuantity;
+                $requiredIngredients[$ingredient->id]['total_cost'] =
+                    $requiredIngredients[$ingredient->id]['total_required'] * $costPerUnit;
+            } else {
+                $requiredIngredients[$ingredient->id] = [
+                    'ingredient_id' => $ingredient->id,
+                    'ingredient_name' => $ingredient->name,
+                    'unit_of_measurement' => $ingredient->unit_of_measurement,
+                    'current_stock' => $ingredient->current_stock,
+                    'quantity_per_unit' => $ingredient->pivot->quantity_required,
+                    'total_required' => $requiredQuantity,
+                    'cost_per_unit' => $costPerUnit,
+                    'total_cost' => $requiredQuantity * $costPerUnit,
+                    'is_sufficient' => $ingredient->current_stock >= $requiredQuantity
+                ];
+            }
+        }
+    }
+
+    $totalCost = array_sum(array_column($requiredIngredients, 'total_cost'));
+    $hasSufficientStock = collect($requiredIngredients)->every('is_sufficient');
+
+    return response()->json([
+        'status' => 'success',
+        'data' => [
+            'order' => $order->only(['id', 'order_number', 'status']),
+            'required_ingredients' => array_values($requiredIngredients),
+            'total_cost' => $totalCost,
+            'has_sufficient_stock' => $hasSufficientStock,
+            'ingredients_count' => count($requiredIngredients)
+        ],
+        'message' => 'Required ingredients retrieved successfully'
+    ]);
+}
 }

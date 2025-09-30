@@ -109,10 +109,14 @@ class Order extends Model
         return $query->where('user_id', $customerId);
     }
 
-    public function scopeBySupplier($query, $supplierId)
+    public function scopeBySupplier($query, $supplierUserId)
     {
-        return $query->where('supplier_id', $supplierId);
+        return $query->whereHas('supplier', function ($q) use ($supplierUserId) {
+            $q->where('user_id', $supplierUserId);
+        });
     }
+
+
 
     public function calculateCommissions()
     {
