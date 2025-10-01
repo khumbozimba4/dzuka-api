@@ -25,6 +25,8 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\AdminDashboardController;
+use App\Http\Controllers\API\CustomerController;
+use App\Http\Controllers\API\StockReconciliationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -185,6 +187,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
 
 
+
+
     Route::prefix('artisans/{artisanId}')->group(function () {
 
         // Main Dashboard Data
@@ -238,6 +242,28 @@ Route::prefix('public')->group(function () {
 // Protected routes - require authentication
 Route::middleware(['auth:sanctum'])->group(function () {
 
+     // Stock Reconciliations
+     Route::get('stock-reconciliations/statistics', [StockReconciliationController::class, 'statistics']);
+     Route::get('stock-reconciliations/analytics', [StockReconciliationController::class, 'analytics']);
+     Route::get('ingredients/{ingredient}/reconciliations', [StockReconciliationController::class, 'ingredientReconciliations']);
+     Route::apiResource('stock-reconciliations', StockReconciliationController::class);
+
+
+    Route::prefix('customers')->group(function () {
+        Route::get('/', [CustomerController::class, 'index']);
+        Route::post('/', [CustomerController::class, 'store']);
+        Route::get('/statistics', [CustomerController::class, 'statistics']);
+        Route::get('/{id}', [CustomerController::class, 'show']);
+        Route::put('/{id}', [CustomerController::class, 'update']);
+        Route::delete('/{id}', [CustomerController::class, 'destroy']);
+        Route::patch('/{id}/toggle-status', [CustomerController::class, 'toggleStatus']);
+        Route::get('/{id}/profile', [CustomerController::class, 'profile']);
+        Route::get('/{id}/orders', [CustomerController::class, 'orders']);
+        Route::post('/{id}/send-welcome-email', [CustomerController::class, 'sendWelcomeEmail']);
+        Route::post('/{id}/reset-password', [CustomerController::class, 'resetPassword']);
+    });
+
+
      // Sector management
      Route::get('/sectors/list', [SectorController::class, 'list']);
      Route::get('/sectors/dashboard', [SectorController::class, 'dashboard']);
@@ -249,6 +275,39 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
      Route::apiResource('sectors', SectorController::class);
 
+
+     Route::prefix('commodities')->group(function () {
+
+        // Calculate costs for a specific commodity
+        Route::post('/{id}/calculate-costs', [CommodityController::class, 'calculateCosts']);
+
+        // Get detailed cost breakdown
+        Route::get('/{id}/cost-breakdown', [CommodityController::class, 'getCostBreakdown']);
+
+        // Get revenue distribution
+        Route::get('/{id}/revenue-distribution', [CommodityController::class, 'getRevenueDistribution']);
+
+        // Compare ingredient costs
+        Route::get('/{id}/compare-ingredient-costs', [CommodityController::class, 'compareIngredientCosts']);
+
+        // Get cost per hour
+        Route::get('/{id}/cost-per-hour', [CommodityController::class, 'getCostPerHour']);
+
+        // Update price by target margin
+        Route::put('/{id}/update-price-by-margin', [CommodityController::class, 'updatePriceByMargin']);
+
+        // Bulk operations
+        Route::post('/calculate-bulk-costs', [CommodityController::class, 'calculateBulkCosts']);
+
+        // Get summary for all commodities
+        Route::get('/cost-summary', [CommodityController::class, 'getAllCommoditiesCostSummary']);
+
+        // Recalculate all active commodities
+        Route::post('/recalculate-all', [CommodityController::class, 'recalculateAllActiveCommodities']);
+
+        // Validate cost structure
+        Route::get('/validate-cost-structure', [CommodityController::class, 'validateCostStructure']);
+    });
 
 
     // Commodity/Product management
