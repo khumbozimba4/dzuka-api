@@ -1,0 +1,78 @@
+{
+    "statusCode" : 1,
+    "remark" : "Terminal Activated, pending for confirmation request",
+    "data" : {
+      "activatedTerminal" : {
+        "terminalId" : "2ab31f90-851c-42f8-a4e4-a20d8280e51d",
+        "terminalPosition" : 219,
+        "taxpayerId" : 2,
+        "activationDate" : "2025-12-03T17:23:49.2606773+02:00",
+        "terminalCredentials" : {
+          "jwtToken" : "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiMjAyMDIwMjAiLCJodHRwczovL21yYS5tdy9EZXZpY2VJZCI6IjJhYjMxZjkwLTg1MWMtNDJmOC1hNGU0LWEyMGQ4MjgwZTUxZCIsImh0dHBzOi8vbXJhLm13L1NlY3JldEtleSI6IjYxYTgyYWY1ZjBjNzkyMjRiYmQwYmM5ODJiYjZhMDJhZWUyOGZjOCIsImh0dHBzOi8vbXJhLm13L0FQSUtleSI6IjYxYTgyYWY1ZjBjNzkyMjRiYmQwYmM5ODJiYjZhMDJhZWUyOGZjOCIsImh0dHBzOi8vbXJhLm13L1RJTiI6IjIwMjAyMDIwIiwiaXNzIjoiTVJBIiwiYXVkIjoiRUlTVGVybWluYWxzIn0.6j1cSdqNX6b_LiG5yN87shb_8DTmvgrgDJqwHtLLCtD1aEkCjAl4dsI-dUKMUizvhv0abJLGRslFb_p5UyKjPw",
+          "secretKey" : "61a82af5f0c79224bbd0bc982bb6a02aee28fc8"
+        }
+      },
+      "configuration" : {
+        "globalConfiguration" : {
+          "id" : 3835,
+          "versionNo" : 1,
+          "taxrates" : [ {
+            "id" : "A",
+            "name" : "Standard Rated",
+            "chargeMode" : "Item",
+            "ordinal" : 100,
+            "rate" : 16.5
+          }, {
+            "id" : "B",
+            "name" : "Zero Rated",
+            "chargeMode" : "Item",
+            "ordinal" : 100,
+            "rate" : 0.0
+          }, {
+            "id" : "E",
+            "name" : "Exempt",
+            "chargeMode" : "Item",
+            "ordinal" : 100,
+            "rate" : 0.0
+          } ]
+        },
+        "terminalConfiguration" : {
+          "versionNo" : 1,
+          "terminalLabel" : "SmartStore1",
+          "isActiveTerminal" : false,
+          "emailAddress" : "gthomu@mra.mw",
+          "phoneNumber" : "0999956000",
+          "tradingName" : "Sample Trader",
+          "addressLines" : [ "Area 25" ],
+          "terminalSite" : {
+            "siteId" : "AR834486de-0086-4044-bfea-72d1a08e2ac6",
+            "siteName" : "Area 25"
+          },
+          "offlineLimit" : {
+            "maxTransactionAgeInHours" : 72,
+            "maxCummulativeAmount" : 40540
+          }
+        },
+        "taxpayerConfiguration" : {
+          "versionNo" : 1,
+          "tin" : "20202020",
+          "isVATRegistered" : true,
+          "taxOfficeCode" : "SWE",
+          "taxOffice" : {
+            "code" : "SWE",
+            "name" : "Songwe"
+          },
+          "activatedTaxRateIds" : [ "FIN", "VAT" ],
+          "activatedTaxrates" : null,
+          "activatedLevies" : [ {
+            "id" : "TL",
+            "name" : "Tourism Levy - Standard",
+            "chargeMode" : "Percentage",
+            "rate" : 1.0,
+            "isActive" : true
+          } ]
+        }
+      }
+    },
+    "errors" : [ ]
+  }

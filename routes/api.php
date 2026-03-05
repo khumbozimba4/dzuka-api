@@ -27,6 +27,8 @@ use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\AdminDashboardController;
 use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\StockReconciliationController;
+use App\Http\Controllers\API\WarehouseController;
+use App\Http\Controllers\API\WarehouseTransferController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,6 +71,41 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('alerts', [AdminDashboardController::class, 'alerts']);
         Route::get('top-artisans', [AdminDashboardController::class, 'topArtisans']);
         Route::get('trends', [AdminDashboardController::class, 'trends']);
+    });
+
+
+
+    // Warehouse Management Routes
+    Route::prefix('warehouses')->group(function () {
+        Route::get('/', [WarehouseController::class, 'index']);
+        Route::get('/list', [WarehouseController::class, 'list']);
+        Route::get('/statistics', [WarehouseController::class, 'statistics']);
+        Route::get('/{id}', [WarehouseController::class, 'show']);
+        Route::post('/', [WarehouseController::class, 'store']);
+        Route::put('/{id}', [WarehouseController::class, 'update']);
+        Route::delete('/{id}', [WarehouseController::class, 'destroy']);
+
+        // Stock Management
+        Route::get('/{id}/stock', [WarehouseController::class, 'getStock']);
+        Route::post('/{id}/stock', [WarehouseController::class, 'addStock']);
+        Route::post('/{id}/reduce-stock', [WarehouseController::class, 'reduceStock']);
+        Route::get('/{id}/low-stock', [WarehouseController::class, 'getLowStock']);
+
+        // Status Management
+        Route::patch('/{id}/toggle-status', [WarehouseController::class, 'toggleStatus']);
+    });
+
+    // Warehouse Transfer Routes
+    Route::prefix('warehouse-transfers')->group(function () {
+        Route::get('/', [WarehouseTransferController::class, 'index']);
+        Route::get('/statistics', [WarehouseTransferController::class, 'statistics']);
+        Route::get('/{id}', [WarehouseTransferController::class, 'show']);
+        Route::post('/', [WarehouseTransferController::class, 'store']);
+
+        // Transfer Actions
+        Route::post('/{id}/approve', [WarehouseTransferController::class, 'approve']);
+        Route::post('/{id}/complete', [WarehouseTransferController::class, 'complete']);
+        Route::post('/{id}/cancel', [WarehouseTransferController::class, 'cancel']);
     });
 
         // Order payment routes
